@@ -122,9 +122,9 @@ tmbn.setAttribute("id", "thumbsPrev");
 
 var video=videoTags[i];
 
-tmbn.style.zoom=(25*window.innerWidth).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
+tmbn.style.zoom=(24*(window.innerWidth/video.videoWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
 window.addEventListener('resize', function () {
-tmbn.style.zoom=(25*window.innerWidth).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
+tmbn.style.zoom=(24*(window.innerWidth/video.videoWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
 });
 hed.style.cssText="display: -webkit-box; overflow: overlay;"
 hed.insertAdjacentElement('beforeend',tmbn);
@@ -163,7 +163,7 @@ var thumbs = tmbn;
 video.pause();
     video.currentTime = 0;
 
-t=Math.max(Math.ceil(video.duration/30),5); // /(at least one thumbnail every 30 seconds, or 6 thumbnail)
+t=Math.max(Math.ceil(video.duration/30),7); // /(at least one thumbnail every 30 seconds, or 8 thumbnail)
 	thumbs.innerHTML = "";
 	
 //video.addEventListener('loadeddata', function() {
