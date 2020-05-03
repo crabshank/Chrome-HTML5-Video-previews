@@ -21,6 +21,9 @@ function removeEls(d, array) {
 
 var hed=document.getElementsByTagName('head')[0];
 var OG_Hd_CSS=hed.style.cssText;
+var hider=document.createElement('style');
+hide_HTML="*:not(video){visibility:hidden;}, video{visibility:initial;}, div#thumbsPrev {visibility:initial;}";
+
 var tmbn=document.createElement('div');
 
 chrome.runtime.onMessage.addListener(gotMessage);
@@ -33,21 +36,24 @@ chrome.extension.sendMessage({
 message: "Flush!"
 }, function(response) {});
 console.log(message);
+hider.innerHTML="*{visibility:initial;}";
+var prv_butns = document.getElementsByClassName("prv_butn");
 
-var sync_butns = document.getElementsByClassName("sync_butn");
-
-for (var i = sync_butns.length - 1; 0 <= i; i--){
-if (sync_butns[i] && sync_butns[i].parentElement)
-sync_butns[i].parentElement.removeChild(sync_butns[i]);
+for (var i = prv_butns.length - 1; 0 <= i; i--){
+if (prv_butns[i] && prv_butns[i].parentElement)
+prv_butns[i].parentElement.removeChild(prv_butns[i]);
 }
-tmbn.parentElement.removeChild(tmbn);
-hed.style.cssText=OG_Hd_CSS;
-
+//tmbn.parentElement.removeChild(tmbn);
+//hider.parentElement.removeChild(hider);
 break;
 
 
 case "Scan!":
+hider.innerHTML=hide_HTML;
+tmbn.style.visibility="initial";
+hed.insertAdjacentElement('beforeend',hider);
 console.log(message);
+
 var butn = [];
 var videoTags = [...document.getElementsByTagName('video')];
 var tmpVidTags = videoTags;
@@ -100,8 +106,11 @@ console.log(videoTags);
                         }
 
                         function createbutn(i, video, src) {
+							video.controls=true;
+							video.style.visibility='initial';
+							video.style.display='initial';
                                 butn[i] = document.createElement("button");
-                                butn[i].style.cssText = "position: absolute; z-index: "+(Number.MAX_SAFE_INTEGER)+";";
+                                butn[i].style.cssText = "position: absolute; visibility:initial; z-index: "+(Number.MAX_SAFE_INTEGER)+";";
                                 butn[i].innerHTML = "Preview: " + video.nodeName + ", " + src+'<br> Duration: '+formatTime(video.duration);
                                 butn[i].className = "prv_butn";
                                 video.insertAdjacentElement('beforebegin', butn[i]);
@@ -126,12 +135,9 @@ tmbn.style.zoom=(24*(window.innerWidth/video.videoWidth)).toLocaleString('en', {
 window.addEventListener('resize', function () {
 tmbn.style.zoom=(24*(window.innerWidth/video.videoWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
 });
-hed.style.cssText="display: -webkit-box; overflow: overlay;"
+hed.style.cssText="display: -webkit-box; overflow: overlay;  visibility:initial;"
 hed.insertAdjacentElement('beforeend',tmbn);
 var t=0;
-
-
-
 
 doThumbs();
 
@@ -162,7 +168,7 @@ var thumbs = tmbn;
 
 video.pause();
     video.currentTime = 0;
-
+video.pause();
 t=Math.max(Math.ceil(video.duration/30),7); // /(at least one thumbnail every 30 seconds, or 8 thumbnail)
 	thumbs.innerHTML = "";
 	
@@ -173,10 +179,7 @@ t=Math.max(Math.ceil(video.duration/30),7); // /(at least one thumbnail every 30
 video.addEventListener('seeked', function() {
 
 if(aseek==1){
-if (!video.paused){
-	video.pause();
-	   video.currentTime = sk;
-}else{
+
     generateThumbnail();
 
     ttmp++;
@@ -186,11 +189,12 @@ sk=ttmp*(video.duration/(t+1));
 
         video.currentTime = sk;
 
-    }
-	
-	else {
+    }else {
 
 aseek=0;
+video.pause();
+video.currentTime=0;
+video.pause();
  var sync_butns = document.getElementsByClassName("prv_butn");
 						
                         for (var i = sync_butns.length - 1; 0 <= i; i--){
@@ -199,7 +203,7 @@ aseek=0;
 						}
     return;
     }
-}
+
 }else{
 return;
 }
@@ -210,11 +214,12 @@ return;
 function generateThumbnail() {
 
 var f = document.createElement("figure");
-f.style.cssText="display: inline-grid; margin: 0px;"
+f.style.cssText="display: inline-grid; margin: 0px;  visibility:initial;"
 var ct=document.createElement("figcaption");
-ct.style.cssText="color: white;	font-size: 100%; display: inline-grid;	position: absolute;	background-color: #00000099;"
+ct.style.cssText="color: white;	font-size: 100%; display: inline-grid;	position: absolute;	background-color: #00000099;  visibility:initial;"
 console.log(f);
 var c = document.createElement("canvas");
+c.style.visibility="initial";
 var ctx = c.getContext("2d");
 
 let v_width = video.videoWidth;
