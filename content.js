@@ -173,7 +173,7 @@ t=Math.max(Math.ceil(video.duration/30),7); // /(at least one thumbnail every 30
 video.addEventListener('seeked', function() {
 
 if(aseek==1){
-if (video.playing){
+if (!video.paused){
 	video.pause();
 	   video.currentTime = sk;
 }else{
