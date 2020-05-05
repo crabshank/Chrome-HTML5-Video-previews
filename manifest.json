@@ -15,7 +15,7 @@
     "scripts": ["background.js"],
     "persistent": true
   },
-  "permissions": ["tabs","activeTab", "storage"],
+  "permissions": ["tabs","activeTab"],
   "browser_action": {
     "default_icon": "ct.png",
     "default_popup": "index.html",
