@@ -135,7 +135,7 @@ tmbn.style.zoom=(24*(window.innerWidth/video.videoWidth)).toLocaleString('en', {
 window.addEventListener('resize', function () {
 tmbn.style.zoom=(24*(window.innerWidth/video.videoWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
 });
-hed.style.cssText="display: -webkit-box; overflow: overlay;  visibility:initial;"
+hed.style.cssText="display: flex; overflow: overlay;  visibility:initial;"
 hed.insertAdjacentElement('beforeend',tmbn);
 var t=0;
 
