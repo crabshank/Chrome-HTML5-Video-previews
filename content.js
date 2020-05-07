@@ -20,9 +20,11 @@ function removeEls(d, array) {
   
 
 var hed=document.getElementsByTagName('head')[0];
-var OG_Hd_CSS=hed.style.cssText;
+var bdy=document.getElementsByTagName('body')[0];
+//var OG_Hd_CSS=hed.style.cssText;
+//var OG_bdy_CSS=bdy.style.cssText;
 var hider=document.createElement('style');
-hide_HTML="*:not(video){visibility:hidden;}, video{visibility:initial;}, div#thumbsPrev {visibility:initial;}";
+hide_HTML="*:not(video){visibility:hidden;};";
 
 var tmbn=document.createElement('div');
 
@@ -50,7 +52,7 @@ break;
 
 case "Scan!":
 hider.innerHTML=hide_HTML;
-tmbn.style.visibility="initial";
+tmbn.style.cssText="visibility: initial !important;";
 hed.insertAdjacentElement('beforeend',hider);
 console.log(message);
 
@@ -87,15 +89,15 @@ console.log(videoTags);
                         function b_hide(b, v) {
                                 var timer;
                                 var hide = false;
-                                b.style.display = '';
+                                b.style.cssText = "display: initial !important; visibility: initial !important; z-index: "+Number.MAX_SAFE_INTEGER+" !important; webkit-text-fill-color: black !important; border-width: 2px !important; border-style: outset !important; background-color: buttonface !important; border-color: buttonface !important; position: absolute !important;";
                                 v.addEventListener('mousemove', cursorhide, true);
 
                                 function cursorhide() {
                                         if (!hide) {
-                                                b.style.display = '';
+                                                b.style.cssText = "display: initial !important; visibility: initial !important; z-index: "+Number.MAX_SAFE_INTEGER+" !important;  webkit-text-fill-color: black !important; border-width: 2px !important; border-style: outset !important; background-color: buttonface !important; border-color: buttonface !important; position: absolute !important;";
                                                 clearTimeout(timer);
                                                 timer = setTimeout(function() {
-                                                        b.style.display = 'none';
+                                                        b.style.cssText = "display: none !important; visibility: hidden !important;";
                                                         hide = true;
                                                         setTimeout(function() {
                                                                 hide = false;
@@ -107,10 +109,9 @@ console.log(videoTags);
 
                         function createbutn(i, video, src) {
 							video.controls=true;
-							video.style.visibility='initial';
-							video.style.display='initial';
+							   video.style.cssText = "display: initial !important; visibility: initial !important; width: initial; height: initial;";
                                 butn[i] = document.createElement("button");
-                                butn[i].style.cssText = "position: absolute; visibility:initial; z-index: "+(Number.MAX_SAFE_INTEGER)+";";
+                                butn[i].style.cssText = "display: initial !important; visibility: initial !important; z-index: "+Number.MAX_SAFE_INTEGER+" !important;  webkit-text-fill-color: black !important; border-width: 2px !important; border-style: outset !important; background-color: buttonface !important; border-color: buttonface !important; position: absolute !important;";
                                 butn[i].innerHTML = "Preview: " + video.nodeName + ", " + src+'<br> Duration: '+formatTime(video.duration);
                                 butn[i].className = "prv_butn";
                                 video.insertAdjacentElement('beforebegin', butn[i]);
@@ -119,23 +120,21 @@ console.log(videoTags);
 								console.log(src);
                         }
 						
-
-
                         function btclk(i, src) {
                                 return function() {
 
-
-
 tmbn.setAttribute("id", "thumbsPrev");
-
 
 var video=videoTags[i];
 
-tmbn.style.zoom=(24*(window.innerWidth/video.videoWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
+tmbn.style.cssText="visibility: initial !important; zoom: "+(24*(window.innerWidth/video.videoWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"% !important;";
+
 window.addEventListener('resize', function () {
-tmbn.style.zoom=(24*(window.innerWidth/video.videoWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
+tmbn.style.cssText="visibility: initial !important; zoom: "+(24*(window.innerWidth/video.videoWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"% !important;";
 });
-hed.style.cssText="display: flex; overflow: overlay;  visibility:initial;"
+hed.style.cssText="display: flex !important; overflow: overlay !important;"
+bdy.style.cssText+="position: relative !important;"
+bdy.style.position+="relative";
 hed.insertAdjacentElement('beforeend',tmbn);
 var t=0;
 
@@ -214,12 +213,12 @@ return;
 function generateThumbnail() {
 
 var f = document.createElement("figure");
-f.style.cssText="display: inline-grid; margin: 0px;  visibility:initial;"
+f.style.cssText="display: inline-grid !important; margin: 0px !important;  visibility:initial !important;"
 var ct=document.createElement("figcaption");
-ct.style.cssText="color: white;	font-size: 100%; display: inline-grid;	position: absolute;	background-color: #00000099;  visibility:initial;"
+ct.style.cssText="color: white !important; font-size: 100% !important; display: inline-grid !important; position: absolute !important; background-color: #00000099 !important;  visibility:initial !important;"
 console.log(f);
 var c = document.createElement("canvas");
-c.style.visibility="initial";
+c.style.cssText="visibility:initial !important; display:initial !important;"
 var ctx = c.getContext("2d");
 
 let v_width = video.videoWidth;
