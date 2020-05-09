@@ -109,7 +109,11 @@ console.log(videoTags);
 
                         function createbutn(i, video, src) {
 							video.controls=true;
-							   video.style.cssText = "display: initial !important; visibility: initial !important; width: initial; height: initial;";
+							   video.style.cssText += "display: initial !important; visibility: initial !important; width: initial; height: initial;";
+							   video.style.display = 'initial';
+							   video.style.visibility = 'initial';
+							   video.style.width = 'initial';
+							   video.style.height = 'initial';
                                 butn[i] = document.createElement("button");
                                 butn[i].style.cssText = "display: initial !important; visibility: initial !important; z-index: "+Number.MAX_SAFE_INTEGER+" !important;  webkit-text-fill-color: black !important; border-width: 2px !important; border-style: outset !important; background-color: buttonface !important; border-color: buttonface !important; position: absolute !important;";
                                 butn[i].innerHTML = "Preview: " + video.nodeName + ", " + src+'<br> Duration: '+formatTime(video.duration);
