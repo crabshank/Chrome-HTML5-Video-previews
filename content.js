@@ -225,7 +225,7 @@ function generateThumbnail() {
 var f = document.createElement("figure");
 f.style.cssText="display: inline-grid !important; margin: 0px !important;  visibility:initial !important;"
 var ct=document.createElement("figcaption");
-ct.style.cssText="color: white !important; font-size: 100% !important; display: inline-grid !important; position: absolute !important; background-color: #00000099 !important;  visibility:initial !important;"
+ct.style.cssText="color: white !important; font-size: 100% !important; display: inline-table !important; position: absolute !important; background-color: #00000099 !important;  visibility:initial !important; font-size: 169% !important; font-family: Microsoft JhengHei UI !important; transform-origin: top left !important;"
 console.log(f);
 var c = document.createElement("canvas");
 c.style.cssText="visibility:initial !important; display:initial !important;"
@@ -239,6 +239,7 @@ c.height=v_height;
 
 f.style.width= v_width;
 f.style.height=v_height;
+
 
 c.setAttribute('timestamp', video.currentTime);
 let format_time=formatTime(video.currentTime);
@@ -260,6 +261,7 @@ f.appendChild(c);
 
 ct.innerHTML=format_time;
 f.appendChild(ct);
+ct.style.cssText+="transform: scale("+(0.18*(f.clientWidth/ct.clientWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+");";
 
 
 
