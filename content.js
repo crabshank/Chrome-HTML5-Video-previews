@@ -159,6 +159,7 @@ tmbn.addEventListener("click", function() {
   });
 //});
 */
+var time_track=-1;
 
 function doThumbs()
 {
@@ -189,6 +190,7 @@ function thumbseek(){
 		video.currentTime = sk;
 	}else {
 		aseek=0;
+		time_track=-1;
 		video.pause();
 		video.currentTime=0;
 		video.pause();
@@ -201,20 +203,44 @@ function thumbseek(){
 	}
 }
 
+function thumbseek(){
+	if(!((ttmp==0)&&(video.readyState<2))){
+	time_track =ttmp*(video.duration/t);
+	generateThumbnail();
+	ttmp++;
+		if (ttmp<=t) {
+			video.currentTime = ttmp*(video.duration/t);
+		}else {
+			video.pause();
+			aseek=0;
+			time_track=-1;
+			ttmp=0;
+			video.currentTime=0;
+			video.pause();
+			var sync_butns = document.getElementsByClassName("prv_butn");
+
+			for (var i = sync_butns.length - 1; 0 <= i; i--){
+			if (sync_butns[i] && sync_butns[i].parentElement)
+			sync_butns[i].parentElement.removeChild(sync_butns[i]);
+			}
+		}
+	}
+}
+
 video.addEventListener('seeked', function() {
-	if(aseek==1){
+	if((aseek==1)&&(video.currentTime>time_track)){
 		thumbseek();
 	}
 }, false);
 
 video.addEventListener('waiting', function() {
-	if((aseek==1)&&(video.readyState>=2)){  
+	if((aseek==1)&&(video.readyState>=2)&&(video.currentTime>time_track)){
 		thumbseek();
 	}
 }, false);
 
 video.addEventListener('seeking', function() {
-	if((aseek==1)&&(video.readyState>=2)){  
+	if((aseek==1)&&(video.readyState>=2)&&(video.currentTime>time_track)){
 		thumbseek();
 	}
 }, false);
