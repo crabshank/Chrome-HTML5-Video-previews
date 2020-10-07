@@ -252,8 +252,10 @@ ct.style.cssText="color: white !important; font-size: 100% !important; display: 
 
 
 var c = document.createElement("canvas");
+var img = document.createElement("img");
 c.style.cssText="visibility:initial !important; display:initial !important;"
 var ctx = c.getContext("2d");
+
 
 let v_width = video.videoWidth;
 let v_height = video.videoHeight;
@@ -269,8 +271,11 @@ c.setAttribute('timestamp', video.currentTime);
 let format_time=formatTime(video.currentTime);
 c.setAttribute('timestamp_fmt', format_time);
 
+let co_flg=false;
+if (/^([\w]+\:)?\/\//.test(src) && src.indexOf(location.host) === -1) {
+ co_flg=true;
+}
 ctx.drawImage(video, 0, 0, v_width, v_height);
-
 
   f.onclick= function(){
 	video.currentTime =c.attributes.timestamp.nodeValue;
@@ -289,7 +294,10 @@ ct.innerHTML=format_time;
 f.appendChild(ct);
 ct.style.cssText+="transform: scale("+(0.18*(f.clientWidth/ct.clientWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+");";
 
-	           console.image(c.toDataURL(),f,ct,format_time,f);
+if(!co_flg){
+console.image(c.toDataURL(),f,ct,format_time,f);
+}
+
 
 
 	video.scrollIntoView();
