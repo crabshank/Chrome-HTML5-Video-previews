@@ -10,6 +10,24 @@ function removeEls(d, array) {
     return newArray;
 }
 
+ console.image = function(url,f,c,t,tg) {
+  var image = new Image();
+  var scl=(f.clientWidth/c.clientWidth)/100;
+  image.onload = function() {
+    var style = [
+      'font-size: 1px;',
+      'padding: ' + scl*this.height + 'px ' + scl*this.width + 'px;',
+      'background: url('+ url +') no-repeat;',
+      'background-size: contain;'
+     ].join(' ');
+	 console.group(t+" added:");
+     console.log('%c ', style);
+     console.log(tg);
+	 console.groupEnd();
+  };
+  image.src = url;
+};
+
    function formatTime(seconds) {
     minutes = Math.floor(seconds / 60);
     minutes = (minutes >= 10) ? minutes : "0" + minutes;
@@ -24,7 +42,7 @@ var bdy=document.getElementsByTagName('body')[0];
 //var OG_Hd_CSS=hed.style.cssText;
 //var OG_bdy_CSS=bdy.style.cssText;
 var hider=document.createElement('style');
-hide_HTML="*:not(video){visibility:hidden;};";
+hide_HTML="*{visibility:hidden;} video,embed,iframe{visibility:initial}";
 
 var tmbn=document.createElement('div');
 
@@ -252,7 +270,8 @@ var f = document.createElement("figure");
 f.style.cssText="display: inline-grid !important; margin: 0px !important;  visibility:initial !important;"
 var ct=document.createElement("figcaption");
 ct.style.cssText="color: white !important; font-size: 100% !important; display: inline-table !important; position: absolute !important; background-color: #00000099 !important;  visibility:initial !important; font-size: 169% !important; font-family: Microsoft JhengHei UI !important; transform-origin: top left !important;"
-console.log(f);
+
+
 var c = document.createElement("canvas");
 c.style.cssText="visibility:initial !important; display:initial !important;"
 var ctx = c.getContext("2d");
@@ -273,6 +292,7 @@ c.setAttribute('timestamp_fmt', format_time);
 
 ctx.drawImage(video, 0, 0, v_width, v_height);
 
+
   f.onclick= function(){
 	video.currentTime =c.attributes.timestamp.nodeValue;
 if(!document.pictureInPictureElement){
@@ -285,10 +305,15 @@ thumbs.appendChild(f);
 
 f.appendChild(c);
 
+
 ct.innerHTML=format_time;
 f.appendChild(ct);
 ct.style.cssText+="transform: scale("+(0.18*(f.clientWidth/ct.clientWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+");";
 
+	           console.image(c.toDataURL(),f,ct,format_time,f);
+
+
+	video.scrollIntoView();
 
 
 
