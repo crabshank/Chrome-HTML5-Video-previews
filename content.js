@@ -156,13 +156,15 @@ tmbn.setAttribute("id", "thumbsPrev");
 
 var video=videoTags[i];
 
-ifr.style.cssText="visibility: initial !important; width: 100% !important;";
+ifr.style.cssText="visibility: initial !important; width: 100% !important; border-bottom-width: 0px !important; border-left-width: 0px !important; border-right-width: 0px !important; border-top-width: 0px; !important";
+
 zm=0.24*(window.innerWidth/video.videoWidth);
 tmbn.style.cssText="visibility: initial !important; zoom: "+(zm*100).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"% !important;";
 
 window.addEventListener('resize', function () {
 zm=0.24*(window.innerWidth/video.videoWidth);
 tmbn.style.cssText="visibility: initial !important; zoom: "+(zm*100).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"% !important;";
+ifr.style.height=Math.ceil(tmbn.clientHeight*zm+15)+'px'
 });
 hed.style.cssText="display: flex !important; overflow: overlay !important;"
 bdy.style.cssText+="position: relative !important;"
