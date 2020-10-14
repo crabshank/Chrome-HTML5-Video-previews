@@ -36,15 +36,22 @@ function removeEls(d, array) {
     return minutes + ":" + seconds;
   }
   
-
+var zm=1;
 var hed=document.getElementsByTagName('head')[0];
 var bdy=document.getElementsByTagName('body')[0];
-//var OG_Hd_CSS=hed.style.cssText;
-//var OG_bdy_CSS=bdy.style.cssText;
+var ifr=document.createElement('iframe');
+hed.insertAdjacentElement('beforeend',ifr);
+
+var doci=ifr.contentDocument;
+var bdyi=doci.getElementsByTagName('body')[0];
+var hedi=doci.getElementsByTagName('head')[0];
+bdyi.style.cssText="margin: 0px 0px 0px 0px;";
+hedi.style.cssText="margin: 0px 0px 0px 0px;";
+
 var hider=document.createElement('style');
 hide_HTML="*{visibility:hidden;} video,embed,iframe{visibility:initial}";
 
-var tmbn=document.createElement('div');
+var tmbn=doci.createElement('div');
 
 chrome.runtime.onMessage.addListener(gotMessage);
 
@@ -63,7 +70,7 @@ for (var i = prv_butns.length - 1; 0 <= i; i--){
 if (prv_butns[i] && prv_butns[i].parentElement)
 prv_butns[i].parentElement.removeChild(prv_butns[i]);
 }
-//tmbn.parentElement.removeChild(tmbn);
+ifr.parentElement.removeChild(ifr);
 //hider.parentElement.removeChild(hider);
 break;
 
@@ -149,15 +156,18 @@ tmbn.setAttribute("id", "thumbsPrev");
 
 var video=videoTags[i];
 
-tmbn.style.cssText="visibility: initial !important; zoom: "+(24*(window.innerWidth/video.videoWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"% !important;";
+ifr.style.cssText="visibility: initial !important; width: 100% !important;";
+zm=0.24*(window.innerWidth/video.videoWidth);
+tmbn.style.cssText="visibility: initial !important; zoom: "+(zm*100).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"% !important;";
 
 window.addEventListener('resize', function () {
-tmbn.style.cssText="visibility: initial !important; zoom: "+(24*(window.innerWidth/video.videoWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"% !important;";
+zm=0.24*(window.innerWidth/video.videoWidth);
+tmbn.style.cssText="visibility: initial !important; zoom: "+(zm*100).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"% !important;";
 });
 hed.style.cssText="display: flex !important; overflow: overlay !important;"
 bdy.style.cssText+="position: relative !important;"
 bdy.style.position+="relative";
-hed.insertAdjacentElement('beforeend',tmbn);
+bdyi.insertAdjacentElement('afterbegin',tmbn);
 var t=0;
 
 doThumbs();
@@ -245,14 +255,14 @@ video.addEventListener('seeking', function() {
 
 function generateThumbnail() {
 
-var f = document.createElement("figure");
+var f = doci.createElement("figure");
 f.style.cssText="display: inline-grid !important; margin: 0px !important;  visibility:initial !important;"
-var ct=document.createElement("figcaption");
+var ct=doci.createElement("figcaption");
 ct.style.cssText="color: white !important; font-size: 100% !important; display: inline-table !important; position: absolute !important; background-color: #00000099 !important;  visibility:initial !important; font-size: 169% !important; font-family: Microsoft JhengHei UI !important; transform-origin: top left !important;"
 
 
-var c = document.createElement("canvas");
-var img = document.createElement("img");
+var c = doci.createElement("canvas");
+var img = doci.createElement("img");
 c.style.cssText="visibility:initial !important; display:initial !important;"
 var ctx = c.getContext("2d");
 
@@ -289,6 +299,7 @@ thumbs.appendChild(f);
 
 f.appendChild(c);
 
+ifr.style.height=Math.ceil(thumbs.clientHeight*zm+15)+'px';
 
 ct.innerHTML=format_time;
 f.appendChild(ct);
