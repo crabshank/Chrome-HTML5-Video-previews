@@ -287,7 +287,6 @@ let co_flg=false;
 if (/^([\w]+\:)?\/\//.test(src) && src.indexOf(location.host) === -1) {
  co_flg=true;
 }
-
 ctx.drawImage(video, 0, 0, v_width, v_height);
 
   f.onclick= function(){
@@ -310,32 +309,9 @@ ct.style.cssText+="transform: scale("+(0.18*(f.clientWidth/ct.clientWidth)).toLo
 
 if(!co_flg){
 console.image(c.toDataURL(),f,ct,format_time,f);
-
-
-
-c.toBlob(function(blob){
-  var url = URL.createObjectURL(blob);
-  var img = new Image();
-
-  img.onload = function() {
-    URL.revokeObjectURL(this.src);
-  }
-	    img.src = url;
-	
-(async function() {
-let blob = await fetch(img.src).then(r => r.blob());
-let dataUrl = await new Promise(resolve => {
-let reader = new FileReader();
-reader.onload = () => resolve(reader.result);
-reader.readAsDataURL(blob);
-});
-console.image(dataUrl,f,ct,format_time,f);
-})();
-		
-//Source: https://stackoverflow.com/a/49093626
-  
-})
 }
+
+
 
 	video.scrollIntoView();
 
