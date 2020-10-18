@@ -283,10 +283,10 @@ c.setAttribute('timestamp', video.currentTime);
 let format_time=formatTime(video.currentTime);
 c.setAttribute('timestamp_fmt', format_time);
 
-/*let co_flg=false;
+let co_flg=false;
 if (/^([\w]+\:)?\/\//.test(src) && src.indexOf(location.host) === -1) {
  co_flg=true;
-}*/
+}
 
 ctx.drawImage(video, 0, 0, v_width, v_height);
 
@@ -308,9 +308,9 @@ ct.innerHTML=format_time;
 f.appendChild(ct);
 ct.style.cssText+="transform: scale("+(0.18*(f.clientWidth/ct.clientWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+");";
 
-/*if(!co_flg){
+if(!co_flg){
 console.image(c.toDataURL(),f,ct,format_time,f);
-}*/
+
 
 
 c.toBlob(function(blob){
@@ -335,7 +335,7 @@ console.image(dataUrl,f,ct,format_time,f);
 //Source: https://stackoverflow.com/a/49093626
   
 })
-
+}
 
 	video.scrollIntoView();
 
