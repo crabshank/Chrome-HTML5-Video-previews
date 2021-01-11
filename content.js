@@ -49,7 +49,7 @@ bdyi.style.cssText="margin: 0px 0px 0px 0px;";
 hedi.style.cssText="margin: 0px 0px 0px 0px;";
 
 var hider=document.createElement('style');
-hide_HTML="*{visibility:hidden;} video,embed,iframe{visibility:initial}";
+hide_HTML="*{visibility:hidden;} video,embed,iframe{visibility:initial !important;}";
 
 var tmbn=doci.createElement('div');
 
@@ -134,11 +134,10 @@ console.log(videoTags);
 
                         function createbutn(i, video, src) {
 							video.controls=true;
-							   video.style.cssText += "display: initial !important; visibility: initial !important; width: initial; height: initial;";
-							   video.style.display = 'initial';
-							   video.style.visibility = 'initial';
-							   video.style.width = 'initial';
-							   video.style.height = 'initial';
+							   video.style.setProperty("display", "initial", "important");
+							   video.style.setProperty("visibility", "initial", "important");
+							   video.style.setProperty("width", "inherit", "important");
+							   video.style.setProperty("height", "inherit", "important");
                                 butn[i] = document.createElement("button");
                                 butn[i].style.cssText = "display: initial !important; visibility: initial !important; z-index: "+Number.MAX_SAFE_INTEGER+" !important;  webkit-text-fill-color: black !important; border-width: 2px !important; border-style: outset !important; background-color: buttonface !important; border-color: buttonface !important; position: absolute !important;";
                                 butn[i].innerHTML = "Preview: " + video.nodeName + ", " + src+'<br> Duration: '+formatTime(video.duration);
@@ -214,6 +213,9 @@ t=Math.max(Math.ceil(video.duration/30),7); // /(at least one thumbnail every 30
 
 function thumbseek(){
 	if(!((ttmp==0)&&(video.readyState<2))){
+		if(!video.paused){
+			video.pause();
+		}
 	time_track =ttmp*(video.duration/t);
 	generateThumbnail();
 	ttmp++;
