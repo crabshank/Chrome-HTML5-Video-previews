@@ -10,6 +10,14 @@ function removeEls(d, array) {
     return newArray;
 }
 
+function simpleCopyArray(array){
+		var newArray = [];
+	    for (let i = 0; i < array.length; i++) {
+            newArray.push(array[i]);
+		}
+		return newArray;
+}
+
  console.image = function(url,f,c,t,tg) {
   var image = new Image();
   var scl=(f.clientWidth/c.clientWidth)/100;
@@ -83,7 +91,7 @@ console.log(message);
 
 var butn = [];
 var videoTags = [...document.getElementsByTagName('video')];
-var tmpVidTags = videoTags;
+var tmpVidTags = simpleCopyArray(videoTags);
 getStrms();
 function getStrms(){
 for (var k = 0, len = videoTags.length; k < len; k++) {
