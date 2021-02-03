@@ -237,6 +237,7 @@ var attr_next=captions[cap_el+1].previousSibling.attributes;
 			captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
 			curr_thumb=nowFlag;
 			captions[nowFlag].style.backgroundColor="#0004ff99";
+			nowFlag=-1;
 	}else if (cap==cap_el){
 			captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
 			curr_thumb=cap_el;
