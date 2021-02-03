@@ -1,5 +1,8 @@
 var sk = 0;
-
+var captions=[];
+var nowFlag=-1;
+var cap=-1;
+var curr_thumb=0;
 function removeEls(d, array) {
     var newArray = [];
     for (let i = 0; i < array.length; i++) {
@@ -200,8 +203,84 @@ var time_track=-1;
 
 function doThumbs()
 {
-
+captions=[];
 var aseek=1;
+
+ video.ontimeupdate= function() {
+
+ if(aseek==0){
+	for(let i=0;i<captions.length;i++){
+	captions[i].innerText=captions[i].previousSibling.attributes.timestamp_fmt.nodeValue;
+	captions[i].style.backgroundColor="#00000099";
+	}
+	
+	cap=(cap!=-1)?cap:video.currentTime*(t)/video.duration;
+	let cap_el=Math.floor(cap);
+	let perc=Math.min(100,Math.max(0,(cap-cap_el)*100)).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+
+	
+if(captions.length==t+1){
+
+if (cap_el<captions.length){
+var attr=captions[cap_el].previousSibling.attributes;
+}else if (cap_el>=captions.length){
+var attr=captions[captions.length-1].previousSibling.attributes;
+}
+
+if(nowFlag>-1){
+var attr_now=captions[nowFlag].previousSibling.attributes;
+}
+
+if (cap_el+1<captions.length){
+var attr_next=captions[cap_el+1].previousSibling.attributes;
+	if(nowFlag>-1){
+			captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
+			curr_thumb=nowFlag;
+			captions[nowFlag].style.backgroundColor="#0004ff99";
+	}else if (cap==cap_el){
+			captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
+			curr_thumb=cap_el;
+			captions[cap_el].style.backgroundColor="#0004ff99";
+	}else{
+		var until=(cap_el<captions.length)?Math.max(0,attr_next.timestamp.nodeValue-video.currentTime):Math.max(0,video.duration-video.currentTime);
+		until=formatTime(until,1);
+			captions[cap_el+1].innerText=attr_next.timestamp_fmt.nodeValue+" (NEXT) ["+until+"]";
+			captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
+			curr_thumb=cap_el;
+			captions[cap_el].style.backgroundColor="#006115c7";
+	}
+}else{
+
+	if(nowFlag>-1){
+			captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
+			curr_thumb=nowFlag;
+			captions[nowFlag].style.backgroundColor="#0004ff99";
+	}else if (cap==cap_el){
+		if(cap_el>=captions.length){
+			captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+100+".0%]";
+			curr_thumb=captions.length-1;
+			captions[captions.length-1].style.backgroundColor="#006115c7";
+		}else{
+		captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
+		curr_thumb=cap_el;
+		captions[cap_el].style.backgroundColor="#0004ff99";
+		}
+	}else{
+			captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
+			curr_thumb=captions.length-1;
+			captions[captions.length-1].style.backgroundColor="#006115c7";
+	}
+		
+}
+}
+cap=-1;
+}
+ }
+
+
+
+
+
 
 var ttmp=0;
 
@@ -300,6 +379,9 @@ if (/^([\w]+\:)?\/\//.test(src) && src.indexOf(location.host) === -1) {
 ctx.drawImage(video, 0, 0, v_width, v_height);
 
   f.onclick= function(){
+    var index = captions.indexOf(this.lastElementChild);
+	nowFlag=index;
+	cap=index;
 	video.currentTime =c.attributes.timestamp.nodeValue;
 if(!document.pictureInPictureElement){
 		video.scrollIntoView();
@@ -315,6 +397,7 @@ ifr.style.height=Math.ceil(thumbs.clientHeight*zm+15)+'px';
 
 ct.innerHTML=format_time;
 f.appendChild(ct);
+captions.push(ct);
 ct.style.cssText+="transform: scale("+(0.18*(f.clientWidth/ct.clientWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+");";
 
 if(!co_flg){
