@@ -409,7 +409,7 @@ thumbs.appendChild(f);
 
 f.appendChild(c);
 
-c.onwheel= (event) => {
+f.onwheel= (event) => {
 captions[curr_thumb].scrollIntoView();
 skip(event,video,t);
 }
