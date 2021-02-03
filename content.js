@@ -47,6 +47,18 @@ function simpleCopyArray(array){
     return minutes + ":" + seconds;
   }
   
+function skip(event,vid,t) {
+event=(event.originalEvent)?event.originalEvent:event;
+event.preventDefault();
+event.stopPropagation();
+if(event.deltaY>0){
+vid.currentTime -= (vid.duration/t)*0.05;
+}
+if (event.deltaY<0){
+vid.currentTime +=  (vid.duration/t)*0.05;
+}
+}
+  
 var zm=1;
 var hed=document.getElementsByTagName('head')[0];
 var bdy=document.getElementsByTagName('body')[0];
@@ -316,6 +328,9 @@ function thumbseek(){
 			ttmp=0;
 			video.currentTime=0;
 			video.pause();
+			video.onwheel= (event) => {
+			skip(event,video,t);
+			}
 			var sync_butns = document.getElementsByClassName("prv_butn");
 
 			for (var i = sync_butns.length - 1; 0 <= i; i--){
@@ -373,10 +388,10 @@ c.setAttribute('timestamp', video.currentTime);
 let format_time=formatTime(video.currentTime);
 c.setAttribute('timestamp_fmt', format_time);
 
-let co_flg=false;
+/*let co_flg=false;
 if (/^([\w]+\:)?\/\//.test(src) && src.indexOf(location.host) === -1) {
  co_flg=true;
-}
+}*/
 ctx.drawImage(video, 0, 0, v_width, v_height);
 
   f.onclick= function(){
@@ -394,6 +409,11 @@ thumbs.appendChild(f);
 
 f.appendChild(c);
 
+c.onwheel= (event) => {
+captions[curr_thumb].scrollIntoView();
+skip(event,video,t);
+}
+
 ifr.style.height=Math.ceil(thumbs.clientHeight*zm+15)+'px';
 
 ct.innerHTML=format_time;
@@ -401,10 +421,13 @@ f.appendChild(ct);
 captions.push(ct);
 ct.style.cssText+="transform: scale("+(0.18*(f.clientWidth/ct.clientWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+");";
 
-if(!co_flg){
+try{
+//if(!co_flg){
 console.image(c.toDataURL(),f,ct,format_time,f);
+//}
+}catch(e){
+	;
 }
-
 
 
 	video.scrollIntoView();
