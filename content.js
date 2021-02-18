@@ -164,6 +164,11 @@ console.log(videoTags);
                         }
 
                         function createbutn(i, video, src) {
+							        for (let j=0; j<i; j++){
+										if (typeof butn[j]==="undefined"){
+											butn[j]="";
+										}
+									}
 							video.controls=true;
 							   video.style.setProperty("display", "initial", "important");
 							   video.style.setProperty("visibility", "initial", "important");
@@ -201,7 +206,6 @@ bdy.style.cssText+="position: relative !important;"
 bdy.style.position+="relative";
 bdyi.insertAdjacentElement('afterbegin',tmbn);
 var t=0;
-
 doThumbs();
 
 //document.querySelectorAll('#thumbs')[0].addEventListener("DOMContentLoaded", function() {
@@ -224,6 +228,9 @@ var time_track=-1;
 function doThumbs()
 {
 captions=[];
+var mx=-3000;
+var t_a=0;
+var t_b=0;
 var aseek=1;
 
  video.ontimeupdate= function() {
@@ -317,10 +324,28 @@ t=Math.max(Math.ceil(video.duration/30),7); // /(at least one thumbnail every 30
   //  video.currentTime = 0;
 //}, false);
 	
+	var gtmv = setInterval(getMoving, (Math.abs(mx)+1));
+	
+	function getMoving(){
+		let p_n=performance.now();
+		let df=p_n-t_b;
+		if(df>mx){
+			video.play();
+			t_a=p_n;
+			t_b=p_n;
+			mx=df;
+		}
+	}
+	
+	
+function endGtMv() {
+  clearInterval(gtmv);
+}
 
 
 function thumbseek(){
 	if(!((ttmp==0)&&(video.readyState<2))){
+		t_a=performance.now();
 		if(!video.paused){
 			video.pause();
 		}
@@ -328,8 +353,12 @@ function thumbseek(){
 	generateThumbnail();
 	ttmp++;
 		if (ttmp<=t) {
+			t_b=performance.now();
+			let tm=t_b-t_a;
+			mx=(tm>mx)?tm:mx;
 			video.currentTime = ttmp*(video.duration/t);
 		}else {
+			endGtMv();
 			video.pause();
 			aseek=0;
 			time_track=-1;
