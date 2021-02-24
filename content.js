@@ -145,12 +145,12 @@ console.log(videoTags);
                         function b_hide(b, v) {
                                 var timer;
                                 var hide = false;
-                                b.style.cssText = "left: 0em !important; display: initial !important; visibility: initial !important; z-index: "+Number.MAX_SAFE_INTEGER+" !important; webkit-text-fill-color: black !important; border-width: 2px !important; border-style: outset !important; background-color: buttonface !important; border-color: buttonface !important; position: absolute !important;";
+                                b.style.cssText = "left: inherit !important; display: initial !important; visibility: initial !important; z-index: "+Number.MAX_SAFE_INTEGER+" !important; webkit-text-fill-color: black !important; border-width: 2px !important; border-style: outset !important; background-color: buttonface !important; border-color: buttonface !important; position: absolute !important;";
                                 v.addEventListener('mousemove', cursorhide, true);
 
                                 function cursorhide() {
                                         if (!hide) {
-                                                b.style.cssText = "left: 0em !important; display: initial !important; visibility: initial !important; z-index: "+Number.MAX_SAFE_INTEGER+" !important;  webkit-text-fill-color: black !important; border-width: 2px !important; border-style: outset !important; background-color: buttonface !important; border-color: buttonface !important; position: absolute !important;";
+                                                b.style.cssText = "left: inherit !important; display: initial !important; visibility: initial !important; z-index: "+Number.MAX_SAFE_INTEGER+" !important;  webkit-text-fill-color: black !important; border-width: 2px !important; border-style: outset !important; background-color: buttonface !important; border-color: buttonface !important; position: absolute !important;";
                                                 clearTimeout(timer);
                                                 timer = setTimeout(function() {
                                                         b.style.cssText = "display: none !important; visibility: hidden !important;";
@@ -175,7 +175,7 @@ console.log(videoTags);
 							   video.style.setProperty("width", "inherit", "important");
 							   video.style.setProperty("height", "inherit", "important");
                                 butn[i] = document.createElement("button");
-                                butn[i].style.cssText = "left: 0em !important; display: initial !important; visibility: initial !important; z-index: "+Number.MAX_SAFE_INTEGER+" !important;  webkit-text-fill-color: black !important; border-width: 2px !important; border-style: outset !important; background-color: buttonface !important; border-color: buttonface !important; position: absolute !important;";
+                                butn[i].style.cssText = "left: inherit !important; display: initial !important; visibility: initial !important; z-index: "+Number.MAX_SAFE_INTEGER+" !important;  webkit-text-fill-color: black !important; border-width: 2px !important; border-style: outset !important; background-color: buttonface !important; border-color: buttonface !important; position: absolute !important;";
                                 butn[i].innerHTML = "Preview: " + video.nodeName + ", " + src+'<br> Duration: '+formatTime(video.duration);
                                 butn[i].className = "prv_butn";
                                 video.insertAdjacentElement('beforebegin', butn[i]);
