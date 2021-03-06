@@ -1,8 +1,12 @@
 var sk = 0;
 var captions=[];
+var progresses=[];
 var nowFlag=-1;
 var cap=-1;
+var cap_el;
 var curr_thumb=0;
+var perc_r;
+var perc;
 function removeEls(d, array) {
     var newArray = [];
     for (let i = 0; i < array.length; i++) {
@@ -12,6 +16,21 @@ function removeEls(d, array) {
     }
     return newArray;
 }
+
+function pgBar(myVdo,ix,ths,ev,attr,nxt){
+			if(ev.buttons>0){
+			ev.preventDefault();
+			ev.stopPropagation();
+			nowFlag=ix;
+			let cur=parseFloat(attr.timestamp.nodeValue);
+			let rct=ths.getBoundingClientRect();
+			let fct=parseFloat(ths.parentElement.parentElement.parentElement.style.zoom)*0.01;
+			 progresses[ix].value=(ev.offsetX / ((rct.right-rct.left)*fct));
+			 myVdo.currentTime=(progresses[ix].value)*(nxt-cur)+cur;
+			 curr_thumb=ix;
+			 }
+}
+		
 
 function simpleCopyArray(array){
 		var newArray = [];
@@ -233,70 +252,129 @@ var t_a=0;
 var t_b=0;
 var aseek=1;
 
- video.ontimeupdate= function() {
-
+ video.ontimeupdate= () => {
  if(aseek==0){
 	for(let i=0;i<captions.length;i++){
-	captions[i].innerText=captions[i].previousSibling.attributes.timestamp_fmt.nodeValue;
+	captions[i].style.display='inline-table';
+	captions[i].innerText=captions[i].parentElement.previousSibling.attributes.timestamp_fmt.nodeValue;
 	captions[i].style.backgroundColor="#00000099";
 	}
 	
+		for(let i=0;i<progresses.length;i++){
+		progresses[i].style.display='none';
+		}
+		
 	cap=(cap!=-1)?cap:video.currentTime*(t)/video.duration;
-	let cap_el=Math.floor(cap);
-	let perc=Math.min(100,Math.max(0,(cap-cap_el)*100)).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+	cap_el=Math.floor(cap);
+	perc_r=Math.min(1,Math.max(0,cap-cap_el));
+	perc=(perc_r*100).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1});
 
 	
 if(captions.length==t+1){
 
+
+
+
 if (cap_el<captions.length){
-var attr=captions[cap_el].previousSibling.attributes;
+var attr=captions[cap_el].parentElement.previousSibling.attributes;
 }else if (cap_el>=captions.length){
-var attr=captions[captions.length-1].previousSibling.attributes;
+var attr=captions[captions.length-1].parentElement.previousSibling.attributes;
 }
 
 if(nowFlag>-1){
-var attr_now=captions[nowFlag].previousSibling.attributes;
+var attr_now=captions[nowFlag].parentElement.previousSibling.attributes;
 }
 
 if (cap_el+1<captions.length){
-var attr_next=captions[cap_el+1].previousSibling.attributes;
+var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 	if(nowFlag>-1){
-			captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
+			//captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
+			captions[nowFlag].style.display="none";
+			progresses[nowFlag].style.display="";
+			progresses[nowFlag].title=perc+"%";
 			curr_thumb=nowFlag;
-			captions[nowFlag].style.backgroundColor="#0004ff99";
+			captions[nowFlag].style.backgroundColor="#0004ff99";;
+			
+			progresses[nowFlag].value=perc_r;
+			captions[nowFlag].parentElement.parentElement.onmousemove=function (e) {
+			pgBar(video,nowFlag,progresses[nowFlag],e,attr,attr_next.timestamp.nodeValue);
+			}
 			nowFlag=-1;
+			
 	}else if (cap==cap_el){
-			captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
+			//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
+			captions[cap_el].style.display="none";
+			progresses[cap_el].style.display="";
+			progresses[cap_el].title=perc+"%";
 			curr_thumb=cap_el;
 			captions[cap_el].style.backgroundColor="#0004ff99";
+			progresses[cap_el].value=perc_r;
+			captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
+			pgBar(video,cap_el,progresses[cap_el],e,attr,attr_next.timestamp.nodeValue);
+			}
 	}else{
 		var until=(cap_el<captions.length)?Math.max(0,attr_next.timestamp.nodeValue-video.currentTime):Math.max(0,video.duration-video.currentTime);
 		until=formatTime(until,1);
 			captions[cap_el+1].innerText=attr_next.timestamp_fmt.nodeValue+" (NEXT) ["+until+"]";
-			captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
+			//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
+			captions[cap_el].style.display="none";
+			progresses[cap_el].style.display="";
+			progresses[cap_el].title=perc+"%";
 			curr_thumb=cap_el;
 			captions[cap_el].style.backgroundColor="#006115c7";
+			progresses[cap_el].value=perc_r;
+			captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
+			pgBar(video,cap_el,progresses[cap_el],e,attr,attr_next.timestamp.nodeValue);
+			}
 	}
 }else{
 
 	if(nowFlag>-1){
-			captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
+			//captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
+			captions[nowFlag].style.display="none";
+			progresses[nowFlag].style.display="";
+			progresses[nowFlag].title=perc+"%";
 			curr_thumb=nowFlag;
 			captions[nowFlag].style.backgroundColor="#0004ff99";
+					progresses[nowFlag].value=perc_r;
+			captions[nowFlag].parentElement.parentElement.onmousemove=function (e) {
+			pgBar(video,nowFlag,progresses[nowFlag],e,attr,attr_next.timestamp.nodeValue);
+			}
 	}else if (cap==cap_el){
 		if(cap_el>=captions.length){
-			captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+100+".0%]";
+			//captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+100+".0%]";
+			captions[captions.length-1].style.display="none";
+			progresses[captions.length-1].style.display="";
+			progresses[captions.length-1].title=perc+"%";
 			curr_thumb=captions.length-1;
-			captions[captions.length-1].style.backgroundColor="#006115c7";
+			captions[captions.length-1].style.backgroundColor="#006115c7";	
+			progresses[captions.length-1].value=perc_r;
+			captions[captions.length-1].parentElement.parentElement.onmousemove=function (e) {
+			pgBar(video,captions.length-1,progresses[captions.length-1].value,e,attr,video.duration);
+			}
 		}else{
-		captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
+		//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
+		captions[cap_el].style.display="none";
+		progresses[cap_el].style.display="";
+		progresses[cap_el].title=perc+"%";
 		curr_thumb=cap_el;
 		captions[cap_el].style.backgroundColor="#0004ff99";
+		progresses[cap_el].value=perc_r;
+			captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
+			pgBar(video,cap_el,progresses[cap_el],e,attr,video.duration);
+			}
 		}
 	}else{
-			captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
+			//captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
+			captions[captions.length-1].style.display="none";
+			progresses[captions.length-1].style.display="";
+			progresses[captions.length-1].title=perc+"%";
 			curr_thumb=captions.length-1;
 			captions[captions.length-1].style.backgroundColor="#006115c7";
+			progresses[captions.length-1].value=perc_r;
+			captions[captions.length-1].parentElement.parentElement.onmousemove=function(e) {
+			pgBar(video,captions.length-1,progresses[captions.length-1],e,attr,video.duration);
+			}
 	}
 		
 }
@@ -304,11 +382,6 @@ var attr_next=captions[cap_el+1].previousSibling.attributes;
 cap=-1;
 }
  }
-
-
-
-
-
 
 var ttmp=0;
 
@@ -404,6 +477,15 @@ f.style.cssText="display: inline-grid !important; margin: 0px !important;  visib
 var ct=doci.createElement("figcaption");
 ct.style.cssText="color: white !important; font-size: 100% !important; display: inline-table !important; position: absolute !important; background-color: #00000099 !important;  visibility:initial !important; font-size: 169% !important; font-family: Microsoft JhengHei UI !important; transform-origin: top left !important;"
 
+var pgs=document.createElement("section");
+var pgb=document.createElement("progress");
+pgb.max=1;
+pgb.value=0;
+pgb.title='0.0%';
+pgb.style.cssText="display: none !important; width: inherit !important; position: absolute !important; border-radius: 0  !important; height: 0.9em !important;";
+pgs.style.cssText="display: contents !important; width: inherit !important; position: absolute !important;";
+
+
 
 var c = doci.createElement("canvas");
 var img = doci.createElement("img");
@@ -432,13 +514,15 @@ if (/^([\w]+\:)?\/\//.test(src) && src.indexOf(location.host) === -1) {
 ctx.drawImage(video, 0, 0, v_width, v_height);
 
   f.onclick= function(){
-    var index = captions.indexOf(this.lastElementChild);
+    var index = captions.indexOf(this.lastElementChild.lastElementChild);
+	if(window.getComputedStyle(progresses[index]).display==='none'){
 	nowFlag=index;
 	cap=index;
 	video.currentTime =c.attributes.timestamp.nodeValue;
 if(!document.pictureInPictureElement){
 		video.scrollIntoView();
 }
+  }
 };
 
 
@@ -453,9 +537,13 @@ skip(event,video,t);
 
 ifr.style.height=Math.ceil(thumbs.clientHeight*zm+15)+'px';
 
+f.appendChild(pgs);
 ct.innerHTML=format_time;
-f.appendChild(ct);
+pgs.appendChild(pgb);
+pgs.appendChild(ct);
+
 captions.push(ct);
+progresses.push(pgb);
 ct.style.cssText+="transform: scale("+(0.18*(f.clientWidth/ct.clientWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+");";
 
 try{
