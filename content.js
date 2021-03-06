@@ -270,7 +270,7 @@ var aseek=1;
 	perc=(perc_r*100).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1});
 
 	
-if(captions.length==t+1){
+if(captions.length==t){
 
 
 
@@ -390,7 +390,7 @@ var thumbs = tmbn;
 video.pause();
     video.currentTime = 0;
 video.pause();
-t=Math.max(Math.ceil(video.duration/30),7); // /(at least one thumbnail every 30 seconds, or 8 thumbnail)
+t=Math.max(Math.ceil(video.duration/30),8); // /(at least one thumbnail every 30 seconds, or 8 thumbnail)
 	thumbs.innerHTML = "";
 	
 //video.addEventListener('loadeddata', function() {
@@ -425,7 +425,7 @@ function thumbseek(){
 	time_track =ttmp*(video.duration/t);
 	generateThumbnail();
 	ttmp++;
-		if (ttmp<=t) {
+		if (ttmp<t) {
 			t_b=performance.now();
 			let tm=t_b-t_a;
 			mx=(tm>mx)?tm:mx;
