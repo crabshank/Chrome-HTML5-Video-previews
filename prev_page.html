@@ -1,25 +1,15 @@
-try {
-chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
-	if(window.location.href==request.message){
-	 handleBrowserActionClicked(request.message);
-	}
+<html> 
 
-	});
-function handleBrowserActionClicked(srcUrl) {
-
-let ht_a=`
 <head>
 </head> 
 
 <body>
 
 <style>
-iframe{
-	width: 80vw; 
-	height: 45vw; 
-	border-width: 0px;
-	margin: 0 0 0 0;
-    padding: 0 0 0 0;
+video{
+	width:90%; 
+	height:auto; 
+	background:#000;
 }
 video::-webkit-media-controls {
     zoom: 131%;
@@ -46,11 +36,17 @@ background-color: #333;
 
 span{
 color: #dfdfdf;
-font-size: 2.5ch;
 }
 
 input::-webkit-textfield-decoration-container {
     background: buttonface;
+}
+
+progress {
+    width: inherit;
+    position: absolute;
+	border-radius: 0;
+    height: 0.9em;
 }
 progress::-webkit-progress-value {
     background-color: #00ffff8f;
@@ -60,44 +56,29 @@ progress::-webkit-progress-bar {
 }
 </style>
 
-<style id="pgrB">
-progress {
-    position: absolute;
-	border-radius: 0;
-    height: 0.9em;
-}
-</style>
+<button onclick="setPlusFrames()" type="button">+ 3 thumbs</button>
+<button onclick="setMinusFrames()" type="button">- 3 thumbs</button>
+<button onclick="setEveryFrames()" type="button" id="every" style="display: none;"></button>
+<button onclick="clr()" type="button">Clear</button>
+<input type="text" style="width: 52.6%;" name="txtBx" id="txtBx">
 
-<button id="three_plus" type="button">+ 3 thumbs</button>
-<button id="three_neg" type="button">- 3 thumbs</button>
-<button type="button" id="every" style="display: none;"></button>
-<button id="clear_er" type="button">Clear</button>
-<select style="width: 52.6%; color: black; background-color: buttonface;" name="txt_Bx" id="txt_Bx"><option style="color: black"></option></select>
-
-<input id="scnB" type="button" Value="Scan for video">
-<input id="genB" type="button" Value="Generate Thumbs"><br>
+<input type="button" Value="Load Video" onClick="changeValue();">
+<input type="button" Value="Generate Thumbs" onClick="doThumbs();"><br>
 <span id="frames" title="Scroll here to change number of frames.">24</span>
-<span style="margin-inline-start: 4.4ch;" title="Maximum speed when speeding through; scroll to change.">Max speed: </span>
-<input title="Maximum speed when speeding through; scroll to change." type="number" id="mxs" min="1" max="16" step="0.5" value="6" style="width: 9ch; background-color: buttonface; border-width: 0px;"></input>
+<span style="margin-inline-start: 4.4ch;" title="Maximum speed when speeding through; scroll to change.">Max speed: </span><input title="Maximum speed when speeding through; scroll to change." type="number" id="mxs" min="1" max="16" step="0.5" value="6" style="width: 9ch; background-color: buttonface; border-width: 0px;"></input>
 
-<div style="width:90vw; text-align:center;">
-`;
-
-let ht_b='<iframe id="video" src="'+srcUrl+'"></iframe>';
+<div style="width:90%; text-align:center;">
 
 
-let ht_c=`
-<button id="scroll_curr" style="position: fixed; margin-left: 1px; visibility: hidden;">Scroll to current thumb</button>
-<button id="scroll_vid" style="position: fixed; margin-left: 1px;">Scroll to video</button>
-<button id="spdt" style="position: fixed; margin-left: 1px;">Speed through video</button>
-<button id="pnp" style="position: fixed; margin-left: 1px;">Toggle picture-in-picture</button>
+<video id="video" style="width:90%;" controls>
+    <source id="VdoSrc" src=""></source>
+</video><button id="scroll_curr" style="position: fixed; margin-left: 1px; visibility: hidden;">Scroll to current thumb</button><button id="scroll_vid" style="position: fixed; margin-left: 1px;">Scroll to video</button><button id="spdt" style="position: fixed; margin-left: 1px;">Speed through video</button><button id="pnp" style="position: fixed; margin-left: 1px;">Toggle picture-in-picture</button>
 
-<div id="currTime" style="position: fixed; bottom: 0.17%; right: 0.73%; color: white; background-color: black; font-size: 185%; font-weight: bold; transform: scale(1.98); transform-origin: bottom right;"></div>
+<div id="currTime" style="position: fixed; bottom: 0.17%; right: 0.73%; color: white; background-color: black; font-size: 185%; font-weight: bold;"></div>
 
-<div id="thumbs"style="margin-block-start: 0.1%;"></div></div>
-`;
+<div id="thumbs"style="margin-block-start: 0.1%;"></div>
 
-function pageScript(){
+<script>
 var clck_a=-1;
 var t_a=0;
 var clck_b=0;
@@ -119,62 +100,20 @@ var tTrkFlg=false;
 var ev_t=-1;
 var perc_r;
 var perc;
-var tbG=false;
-var frame_btn=[...document.querySelectorAll("span#frames")][0];
-var three_Plus=[...document.querySelectorAll("button#three_plus")][0];
-var three_Neg=[...document.querySelectorAll("button#three_neg")][0];
-var clrr=[...document.querySelectorAll("button#clear_er")][0];
-var mxsp=[...document.querySelectorAll("input#mxs")][0];
-var thumbs=[...document.querySelectorAll("div#thumbs")][0];
-var ifrm = [...document.querySelectorAll("iframe#video")][0];	
-var myVdo = [...document.querySelectorAll("iframe#video")][0];	
-var scrl= [...document.querySelectorAll("button#scroll_curr")][0];
-var scrv= [...document.querySelectorAll("button#scroll_vid")][0];
-var spb= [...document.querySelectorAll("button#spdt")][0];
-var pip= [...document.querySelectorAll("button#pnp")][0];
-var evry= [...document.querySelectorAll("button#every")][0];
-var scanB= [...document.querySelectorAll("input#scnB")][0];
-var gnrB= [...document.querySelectorAll("input#genB")][0];
+var frame_btn=document.getElementById("frames");
+var mxsp=document.getElementById("mxs");
+var thumbs=document.getElementById("thumbs");
+var myVdo = document.getElementById("video");	
+var scrl= document.getElementById("scroll_curr");
+var scrv= document.getElementById("scroll_vid");
+var spb= document.getElementById("spdt");
+var pip= document.getElementById("pnp");
+var evry= document.getElementById("every");
 var sp_swtch=0;
-var curr  =[...document.querySelectorAll("div#currTime")][0];
-var txtBx = [...document.querySelectorAll('select#txt_Bx')][0];
-var pgrCSS = [...document.querySelectorAll('style#pgrB')][0];
-var vids=[];
-var vhw={w:0,h:0};
+var curr  =document.getElementById("currTime");
+var txtBx = document.getElementById('txtBx');
+var vid = document.getElementById('VdoSrc');
 
-clrr.onclick=()=>{
-	clr();
-}
-
-evry.onclick=()=>{
-	setEveryFrames();
-}
-
-three_Plus.onclick=()=>{
-	setPlusFrames();
-}
-
-three_Neg.onclick=()=>{
-	setMinusFrames();
-}
-
-scanB.onclick=()=>{
-	ifrScan();
-}
-
-gnrB.onclick=()=>{
-	changeValue();
-}
-
-function vidSrc(vid){
-	if (vid.src !== "") {
-		return vid.src;
-	} else if (vid.currentSrc !== "") {
-		return vid.currentSrc;
-	}else{
-		return '';
-	}
-}
 
 function pgBar(ix,ths,ev,attr,nxt){
 			if(ev.buttons>0){
@@ -187,8 +126,9 @@ function pgBar(ix,ths,ev,attr,nxt){
 			 progresses[ix].value=(ev.offsetX / ((rct.right-rct.left)*fct));
 			 myVdo.currentTime=(progresses[ix].value)*(nxt-cur)+cur;
 			 curr_thumb=ix;
+			 }
 }
-}	
+			
 			
 			
 
@@ -254,7 +194,7 @@ if (event.deltaY<0){
 
 
 window.addEventListener('resize', function () {
-let factor= ((100/3)*(ifrm.clientWidth/vhw.w));
+let factor= ((100/3)*(myVdo.clientWidth/myVdo.videoWidth));
 thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
 shiftBtns(true);
 });
@@ -281,12 +221,27 @@ secs=(secs==10)?" "+(floorSecs+1)+".0s":" "+floorSecs+"."+Math.max(0,secs).toLoc
 	return minutes + secs;
   }
 
+$("#thumbs").ready(function() {
+  $("#thumbs").on("click", "figure", function() {
+    var index = $("figure").index(this);
+	if(window.getComputedStyle(progresses[index]).display==='none'){
+	nowFlag=index;
+	cap=index;
+	  //console.log($(('#thumbs > figure > canvas')[index]));
+
+myVdo.currentTime = $('#thumbs > figure')[index].querySelector('canvas').attributes.timestamp.nodeValue;
+if (!document.pictureInPictureElement) {
+		 window.scrollTo(0,0);
+		 }
+	}
+  });
+  
 scrl.onclick=function(){
-captions[curr_thumb].parentElement.parentElement.scrollIntoView();
+$('#thumbs > figure')[curr_thumb].scrollIntoView();
 };
 
 scrv.onclick=function(){
-myVdo.scrollIntoView();
+window.scrollTo(0,0);
 };
 
 mxsp.onwheel= (event) => {
@@ -365,6 +320,20 @@ sp_swtch=0;
 spb.innerText="Speed through video";
 }
 };
+
+pip.onclick=function(){
+if (document.pictureInPictureElement) {
+document.exitPictureInPicture();
+} else {
+if (document.pictureInPictureEnabled) {
+myVdo.requestPictureInPicture();
+}
+}
+};
+
+
+  
+});
 
 frame_btn.onwheel= (event) => {
 
@@ -454,8 +423,6 @@ var checkDur = function() {
 			ev_t=t;
 			}
 	}
-	
-	myVdo.pause();
 	myVdo.currentTime=0;
 
 	if(!tTrkFlg){
@@ -463,72 +430,25 @@ var checkDur = function() {
 	}
 }
 
-function ifrScan()
-{
-	let frms=window.frames;
-	vids=[];
-
-	for (let i=0; i<frms.length; i++){
-		let vids0=[...frms[i].document.getElementsByTagName('VIDEO')];
-		for (let k=0; k<vids0.length; k++){
-			vids.push(vids0[k]);
-		}
-	}
-	
-	txtBx.innerHTML='<option style="color: black"></option>';
-	  vids.forEach((vid,index) => {
-		  if(!!isFinite(vid.duration)){
-    let opt = document.createElement('option');
-	opt.setAttribute("index", index);
-	opt.style.cssText='color: black;';
-    opt.textContent = '('+formatTime(vid.duration)+') - '+vidSrc(vid);
-	    txtBx.appendChild(opt);	
-		   txtBx.selectedIndex = 1;
-		   gnrB.value='Select video';
-		  }
-
-  });
-}
 
 function changeValue()
 {
-	if(txtBx.length>1){
-		if(!tbG){
-		curr_thumb=0;
-		loadFlag=false;
-		ttmp=0;
-		ev_t=-1;
-		/*let txtVal=txtBx.value;
-		alert(txtVal);  
-		vid.src = txtVal;      
-		myVdo.load(); 
-		myVdo.pause();*/
-		myVdo=vids[parseInt(txtBx[txtBx.selectedIndex].getAttribute('index'))];
-		
-		pip.onclick=function(){
-		if (myVdo.ownerDocument.pictureInPictureElement) {
-		myVdo.ownerDocument.exitPictureInPicture();
-		} else {
-		if (myVdo.ownerDocument.pictureInPictureEnabled) {
-		myVdo.requestPictureInPicture();
-		}
-		}
-		};
-		
-		captions=[];
-		progresses=[];
-		curr_thumb=0;
-		thumbs.innerHTML="";
-		scrl.style.visibility='hidden';
-		shiftBtns(true);
-		checkDur();
-		tbG=true;
-		gnrB.value='Generate thumbs';
-		}else{
-		tbG=false;
-		doThumbs();
-		}
-	}
+	curr_thumb=0;
+	loadFlag=false;
+	ttmp=0;
+	ev_t=-1;
+	let txtVal=txtBx.value;
+    alert(txtVal);  
+    vid.src = txtVal;      
+    myVdo.load(); 
+	myVdo.pause();
+  	captions=[];
+	curr_thumb=0;
+	thumbs.innerHTML="";
+	scrl.style.visibility='hidden';
+	shiftBtns(true);
+	checkDur();
+
 }
 
 myVdo.ondurationchange= () => {
@@ -555,12 +475,9 @@ function doThumbs()
 if (loadFlag===true){
 	 done_t=t;
 captions=[];
-progresses=[];
+thumbs.innerHTML="";
 
-	ttmp=0;
-	thumbs.innerHTML = "";
-	myVdo.pause();
-	myVdo.currentTime = 0;
+myVdo.load(); 
 
 aseek=1;
 
@@ -575,7 +492,7 @@ curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleS
  if(aseek==0){
 	for(let i=0;i<captions.length;i++){
 	captions[i].style.display='inline-table';
-	captions[i].innerText=captions[i].parentElement.parentElement.firstChild.attributes.timestamp_fmt.nodeValue;
+	captions[i].innerText=captions[i].parentElement.previousSibling.attributes.timestamp_fmt.nodeValue;
 	captions[i].style.backgroundColor="#00000099";
 	}
 	
@@ -590,6 +507,9 @@ curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleS
 
 	
 if(captions.length==done_t){
+
+
+
 
 if (cap_el<captions.length){
 var attr=captions[cap_el].parentElement.previousSibling.attributes;
@@ -661,10 +581,10 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			//captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+100+".0%]";
 			captions[captions.length-1].style.display="none";
 			progresses[captions.length-1].style.display="";
-			progresses[captions.length-1].title="100.0%";
+			progresses[captions.length-1].title=perc+"%";
 			curr_thumb=captions.length-1;
 			captions[captions.length-1].style.backgroundColor="#006115c7";	
-			progresses[captions.length-1].value=1;
+			progresses[captions.length-1].value=perc_r;
 			captions[captions.length-1].parentElement.parentElement.onmousemove=function (e) {
 			pgBar(captions.length-1,progresses[captions.length-1].value,e,attr,myVdo.duration);
 			}
@@ -699,17 +619,18 @@ cap=-1;
 }
  }
 
-/*myVdo.onloadeddata= function() {
-
-}*/
+myVdo.onloadeddata= function() {
+	if (captions.length==0){
+	ttmp=0;
+	thumbs.innerHTML = "";
+	myVdo.currentTime = 0;
+	} 
+}
  
 function thumbseek(bool){
 	if(bool){
 		if(!((ttmp==0)&&(myVdo.readyState<2))){
 			time_track =ttmp*(myVdo.duration/t);
-			vhw.h=myVdo.videoHeight;
-			vhw.w=myVdo.videoWidth;
-			ifrm.style.height=(10000*(vhw.h/(vhw.w+vhw.h))/80).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"vw";
 			generateThumbnail();
 			ttmp++;
 			if (ttmp<done_t) {
@@ -783,15 +704,15 @@ pgs.style.position='absolute';
 var c = document.createElement("canvas");
 
 f.onwheel= (event) => {
-captions[curr_thumb].parentElement.parentElement.scrollIntoView();
+$('#thumbs > figure')[curr_thumb].scrollIntoView();
 skip(event);
 }
 
 
 var ctx = c.getContext("2d");
 
-let v_width = vhw.w;
-let v_height = vhw.h;
+let v_width = myVdo.videoWidth;
+let v_height = myVdo.videoHeight;
 
 c.width= v_width;
 c.height=v_height;   
@@ -804,33 +725,7 @@ let format_time=formatTime(myVdo.currentTime);
 c.setAttribute('timestamp_fmt', format_time);
 
 ctx.drawImage(myVdo, 0, 0, v_width, v_height);
-
-  f.onclick= function(){
-    var index = captions.indexOf(this.lastElementChild.lastElementChild);
-	  if(window.getComputedStyle(progresses[index]).display==='none'){
-	nowFlag=index;
-	cap=index;
-	myVdo.currentTime =c.attributes.timestamp.nodeValue;
-if(!document.pictureInPictureElement){
-		myVdo.scrollIntoView();
-}
-	  }
-} 
-
- f.ondblclick=  function(e){
-    var index = captions.indexOf(this.lastElementChild.lastElementChild);
-	  if(window.getComputedStyle(progresses[index]).display!=='none'){
-	nowFlag=index;
-	cap=index;
-	myVdo.currentTime =c.attributes.timestamp.nodeValue;
-if(!document.pictureInPictureElement){
-		myVdo.scrollIntoView();
-}
-	  }
-	  window.getSelection().removeAllRanges();
-} 
-
-let factor=((100/3)*(ifrm.clientWidth/v_width));
+let factor=((100/3)*(myVdo.clientWidth/v_width));
 thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
 shiftBtns(true);
 thumbs.appendChild(f);
@@ -843,7 +738,6 @@ pgs.appendChild(ct);
 captions.push(ct);
 progresses.push(pgb);
 ct.style.cssText+="transform: scale("+(0.18*(f.clientWidth/ct.clientWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+");";
-pgrCSS.innerText="progress{ width:"+window.getComputedStyle(f).width+"; position: absolute; border-radius: 0; height: 0.9em;";
 }
   
 }else{
@@ -852,15 +746,8 @@ alert('Video not loaded!');
 
 }
 
-}
+</script>
 
+</body> 
 
-document.body.parentElement.innerHTML=ht_a+ht_b+ht_c+'</body>';
-pageScript();
-
-}
-
-
-} catch (e) {	
-  console.error(e);
-}
+</html>
