@@ -521,6 +521,7 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 	
 	
 	txtBx.innerHTML='<option style="color: black"></option>';
+	let pxs=0;
 	  vids.forEach((vid,index) => {
 		  if(!!isFinite(vid.duration)){
     let opt = document.createElement('option');
@@ -528,7 +529,7 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 	opt.style.cssText='color: black;';
     opt.textContent = '('+formatTime(vid.duration)+') - '+vidSrc(vid);
 	    txtBx.appendChild(opt);	
-		   txtBx.selectedIndex = 1;
+		   txtBx.selectedIndex = (vid.videoWidth*vid.videoHeight>pxs)?txtBx.length-1:txtBx.selectedIndex;
 		   tbG=false;
 		   gnrB.value='Select video';
 		  }
