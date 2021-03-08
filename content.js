@@ -46,7 +46,7 @@ background-color: #333;
 
 span{
 color: #dfdfdf;
-font-size: 2.5ch;
+font-size: 1.83ch;
 }
 
 input::-webkit-textfield-decoration-container {
