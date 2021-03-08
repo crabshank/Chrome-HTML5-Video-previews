@@ -477,13 +477,13 @@ function ifrScan()
 	
 		vids=[];
 		allFrames=[];
-		let vids0=[...ifrm.getElementsByTagName('VIDEO')]; 
+		let vids0=[...ifrm.contentDocument.getElementsByTagName('VIDEO')]; 
 		for (let k=0; k<vids0.length; k++){
 			vids.push(vids0[k]);
 		}
 
 
-	let frms=getContainedFrames(ifrm); 
+	let frms=ifrm.contentWindow.window.frames; 
 	
 		if(!!frms && frms.length>0){
 		for (let k=0; k<frms.length; k++){
@@ -492,6 +492,7 @@ function ifrScan()
 		}
 	//let afr=frms.length-1; #last ix added
 
+if(allFrames.length>0){
 while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b})>0){
 	for (let j=0; j<allFrames.length; j++){
 		if(allFrames[j][1]==1){
@@ -502,6 +503,7 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 			allFrames.push([frms1[k],1]);
 		}
 	}
+}
 }
 }
 }
