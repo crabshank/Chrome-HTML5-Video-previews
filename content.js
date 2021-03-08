@@ -879,7 +879,7 @@ ctx.drawImage(myVdo, 0, 0, v_width, v_height);
 	nowFlag=index;
 	cap=index;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
-if(!document.pictureInPictureElement){
+if(!myVdo.ownerDocument.pictureInPictureElement){
 		myVdo.scrollIntoView();
 }
 	  }
@@ -891,7 +891,7 @@ if(!document.pictureInPictureElement){
 	nowFlag=index;
 	cap=index;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
-if(!document.pictureInPictureElement){
+if(!myVdo.ownerDocument.pictureInPictureElement){
 		myVdo.scrollIntoView();
 }
 	  }
