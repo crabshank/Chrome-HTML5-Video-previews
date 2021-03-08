@@ -141,6 +141,7 @@ var txtBx = [...document.querySelectorAll('select#txt_Bx')][0];
 var pgrCSS = [...document.querySelectorAll('style#pgrB')][0];
 var vids=[];
 var vhw={w:0,h:0};
+var allFrames=[];
 
 clrr.onclick=()=>{
 	clr();
@@ -464,16 +465,57 @@ var checkDur = function() {
 }
 
 function ifrScan()
-{
-	let frms=window.frames;
-	vids=[];
+{	
 
-	for (let i=0; i<frms.length; i++){
-		let vids0=[...frms[i].document.getElementsByTagName('VIDEO')];
+	function getContainedFrames(f){
+		if(typeof f.contentWindow !=='undefined'){
+			return f.contentWindow.frames
+		}else{
+			return null;
+		}
+	}
+	
+		vids=[];
+		allFrames=[];
+		let vids0=[...ifrm.getElementsByTagName('VIDEO')]; 
 		for (let k=0; k<vids0.length; k++){
 			vids.push(vids0[k]);
 		}
+
+
+	let frms=getContainedFrames(ifrm); 
+	
+		if(!!frms && frms.length>0){
+		for (let k=0; k<frms.length; k++){
+			allFrames.push([frms[k],1]);
+		}
+		}
+	//let afr=frms.length-1; #last ix added
+
+while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b})>0){
+	for (let j=0; j<allFrames.length; j++){
+		if(allFrames[j][1]==1){
+	let frms1=getContainedFrames(allFrames[j][0]); 
+	allFrames[j][1]=0;
+	if(!!frms1 && frms1.length>0){
+	for (let k=0; k<frms1.length; k++){
+			allFrames.push([frms1[k],1]);
+		}
 	}
+}
+}
+}
+	for (let j=0; j<allFrames.length; j++){
+		let vids1=[...allFrames[j][0].document.getElementsByTagName('VIDEO')]; 
+		for (let k=0; k<vids1.length; k++){
+			vids.push(vids1[k]);
+		}
+	}
+	
+	
+	
+
+	
 	
 	txtBx.innerHTML='<option style="color: black"></option>';
 	  vids.forEach((vid,index) => {
