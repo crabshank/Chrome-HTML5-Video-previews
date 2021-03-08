@@ -609,7 +609,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			progresses[nowFlag].style.display="";
 			progresses[nowFlag].title=perc+"%";
 			curr_thumb=nowFlag;
-			captions[nowFlag].style.backgroundColor="#0004ff99";;
+			captions[nowFlag].style.backgroundColor="#0004ff99";
 			
 			progresses[nowFlag].value=perc_r;
 			captions[nowFlag].parentElement.parentElement.onmousemove=function (e) {
