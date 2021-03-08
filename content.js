@@ -92,7 +92,7 @@ let ht_c=`
 <button id="spdt" style="position: fixed; margin-left: 1px;">Speed through video</button>
 <button id="pnp" style="position: fixed; margin-left: 1px;">Toggle picture-in-picture</button>
 
-<div id="currTime" style="position: fixed; bottom: 0.17%; right: 0.73%; color: white; background-color: black; font-size: 185%; font-weight: bold; transform: scale(1.98); transform-origin: bottom right;"></div>
+<div id="currTime" style="position: fixed; bottom: 0.17%; right: 0.73%; color: white; background-color: black; font-size: 185%; font-weight: bold; transform: scale(1.2); transform-origin: bottom right;"></div>
 
 <div id="thumbs"style="margin-block-start: 0.1%;"></div></div>
 `;
