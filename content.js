@@ -515,11 +515,7 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 		}
 	}
 	
-	
-	
 
-	
-	
 	txtBx.innerHTML='<option style="color: black"></option>';
 	let pxs=0;
 	  vids.forEach((vid,index) => {
