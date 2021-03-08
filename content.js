@@ -469,7 +469,7 @@ function ifrScan()
 
 	function getContainedFrames(f){
 		if(typeof f.contentWindow !=='undefined'){
-			return f.contentWindow.frames
+			return f.contentWindow.window.frames;
 		}else{
 			return null;
 		}
@@ -483,14 +483,13 @@ function ifrScan()
 		}
 
 
-	let frms=ifrm.contentWindow.window.frames; 
+	let frms=getContainedFrames(ifrm); 
 	
 		if(!!frms && frms.length>0){
 		for (let k=0; k<frms.length; k++){
 			allFrames.push([frms[k],1]);
 		}
 		}
-	//let afr=frms.length-1; #last ix added
 
 if(allFrames.length>0){
 while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b})>0){
