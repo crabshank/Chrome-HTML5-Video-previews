@@ -100,6 +100,7 @@ let ht_c=`
 function pageScript(){
 var clck_a=-1;
 var t_a=0;
+var t_b=0;
 var clck_b=0;
 var m_c=0;
 var m_l=0;
@@ -117,6 +118,7 @@ var cap_el;
 var time_track=-1;
 var tTrkFlg=false;
 var ev_t=-1;
+var mx=-3000;
 var perc_r;
 var perc;
 var tbG=false;
@@ -746,10 +748,31 @@ cap=-1;
 /*myVdo.onloadeddata= function() {
 
 }*/
+
+	let gtmv = setInterval(getMoving, (Math.abs(mx)+1));
+	
+	function getMoving(){
+		let p_n=performance.now();
+		let df=p_n-t_b;
+		if(df>mx){
+			myVdo.play();
+			t_a=p_n;
+			t_b=p_n;
+			mx=df;
+		}
+	}
+	
+function endGtMv() {
+  clearInterval(gtmv);
+}
  
 function thumbseek(bool){
 	if(bool){
 		if(!((ttmp==0)&&(myVdo.readyState<2))){
+			t_a=performance.now();
+			if(!myVdo.paused){
+			myVdo.pause();
+			}
 			time_track =ttmp*(myVdo.duration/t);
 			vhw.h=myVdo.videoHeight;
 			vhw.w=myVdo.videoWidth;
@@ -757,10 +780,14 @@ function thumbseek(bool){
 			generateThumbnail();
 			ttmp++;
 			if (ttmp<done_t) {
+			t_b=performance.now();
+			let tm=t_b-t_a;
+			mx=(tm>mx)?tm:mx;
 			tTrkFlg=true;
 			curr.innerText= formatTime(myVdo.currentTime)+"\n"+ttmp+"/"+done_t;
 			myVdo.currentTime = ttmp*(myVdo.duration/t);
 			}else {
+				endGtMv();
 				aseek=0;
 				tTrkFlg=false;
 				time_track=-1;
