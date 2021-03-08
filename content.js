@@ -72,7 +72,7 @@ progress {
 <button id="three_neg" type="button">- 3 thumbs</button>
 <button type="button" id="every" style="display: none;"></button>
 <button id="clear_er" type="button">Clear</button>
-<select style="width: 52.6%; color: black; background-color: buttonface;" name="txt_Bx" id="txt_Bx"><option style="color: black"></option></select>
+<select style="width: 50.1vw; color: black; background-color: buttonface;" name="txt_Bx" id="txt_Bx"><option style="color: black"></option></select>
 
 <input id="scnB" type="button" Value="Scan for video">
 <input id="genB" type="button" Value="Generate Thumbs"><br>
