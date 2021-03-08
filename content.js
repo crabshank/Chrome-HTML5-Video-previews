@@ -484,6 +484,7 @@ function ifrScan()
     opt.textContent = '('+formatTime(vid.duration)+') - '+vidSrc(vid);
 	    txtBx.appendChild(opt);	
 		   txtBx.selectedIndex = 1;
+		   tbG=false;
 		   gnrB.value='Select video';
 		  }
 
