@@ -1,57 +1,105 @@
 try {
+	let init=true;
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 	if(window.location.href==request.message){
+		if(init){
 	 handleBrowserActionClicked(request.message);
+		init=false;
+		}
 	}
 
 	});
 function handleBrowserActionClicked(srcUrl) {
+let ifrm=document.createElement('iframe');
+ifrm.style.setProperty( 'position', 'relative', 'important' );
+ifrm.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
+ifrm.style.setProperty( 'width', '-webkit-fill-available', 'important' );
+ifrm.style.setProperty( 'height', '-webkit-fill-available', 'important' );
+ifrm.style.setProperty( 'margin', 0, 'important' );
+ifrm.style.setProperty( 'border', 0, 'important' );
+ifrm.style.setProperty( 'padding', 0, 'important' );
+
+
+let ifrm2=document.createElement('iframe');
+ifrm2.style.setProperty( 'position', 'relative', 'important' );
+ifrm2.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
+ifrm2.style.setProperty( 'width', '-webkit-fill-available', 'important' );
+ifrm2.style.setProperty( 'height', '-webkit-fill-available', 'important' );
+ifrm2.style.setProperty( 'margin', 0, 'important' );
+ifrm2.style.setProperty( 'border', 0, 'important' );
+ifrm2.style.setProperty( 'padding', 0, 'important' );
+ifrm2.style.setProperty( 'min-height', '100vh', 'important' );
+
+let embeds=[];
+
+
+document.querySelectorAll('*').forEach(function(node) {
+	
+	if(node.nodeName!=='IFRAME' && node.nodeName!=='EMBED' && node.nodeName!=='VIDEO'){
+		if((node.getElementsByTagName('IFRAME').length===0 && node.getElementsByTagName('EMBED').length===0 && node.getElementsByTagName('VIDEO').length===0)){
+			node.style.setProperty( 'display', 'none', 'important' );
+		}else{
+			node.style.setProperty( 'background', 'transparent', 'important' );
+			node.style.setProperty( 'background-color', 'transparent', 'important' );
+		}
+	}
+	if (node.nodeName==='VIDEO'){
+		node.controls=true;
+	}	
+	if (node.nodeName==='EMBED'){
+		embeds.push(node);
+	}	
+});
+
+document.head.style.setProperty( 'visibility', 'visible', 'important' );
+document.head.style.setProperty( 'display', 'block', 'important' );
+document.body.style.setProperty( 'overflow-y', 'overlay', 'important' );
+//document.body.style.setProperty( 'white-space', 'pre-wrap', 'important' );
+//document.head.style.setProperty( 'pointer-events', '', 'important' );
+//document.documentElement.style.setProperty( 'pointer-events', '', 'important' );
+//hides all but vids in top level
+
+//convert all embeds in top level, ~embeds~, and iframes -> iframes.
+
+function emb_to_ifr(embeds){
+embeds.forEach(function(node) {
+	try{
+		let rgx=new RegExp('<embed ', '');
+		node.outerHTML=node.outerHTML.split(rgx).join('<iframe ');
+	}catch(e){
+		node.outerHTML='<iframe src="'+node.src+'"></iframe>';
+	}
+});
+//return embeds;
+}
+
+emb_to_ifr(embeds);
 
 let ht_a=`
-<head>
-</head> 
-
-<body>
-
 <style>
-iframe{
-	width: 80vw; 
-	height: 45vw; 
-	border-width: 0px;
-	margin: 0 0 0 0;
-    padding: 0 0 0 0;
-}
-video::-webkit-media-controls {
-    zoom: 131%;
-}
-figcaption {
-color: white;
-    font-size: 169%;
-    display: inline-table;
-    position: absolute;
-    transform-origin: top left;
-    font-family: Microsoft JhengHei UI;
-}
-div#thumbs>figure {
-    display: inline-grid;
-		margin: 0 0 0 0;
-}
-button, input[type="button"]{
-	background-color: buttonface;
-}
-
-body{
-background-color: #333;
-}
-
-span{
-color: #dfdfdf;
-font-size: 1.83ch;
-}
-
 input::-webkit-textfield-decoration-container {
     background: buttonface;
 }
+</style>
+
+<button style="background-color: buttonface !important; visibility: initial !important;" id="three_plus" type="button">+ 3 thumbs</button>
+<button style="background-color: buttonface !important; visibility: initial !important;" id="three_neg" type="button">- 3 thumbs</button>
+<button style="background-color: buttonface !important; display: none; visibility: initial !important;" type="button" id="every"></button>
+<button style="background-color: buttonface !important; visibility: initial !important;" id="clear_er" type="button">Clear</button>
+<select style="width: 48.3vw; color: black; background-color: buttonface; visibility: initial !important;" name="txt_Bx" id="txt_Bx">
+<option style="color: black !important visibility: initial !important;"></option>
+</select>
+
+<input style="background-color: buttonface !important; visibility: initial !important;" id="scnB" type="button" Value="Scan for video">
+<input style="background-color: buttonface !important; visibility: initial !important;" id="genB" type="button" Value="Generate Thumbs"><br>
+<span style="color: #dfdfdf !important; font-size: 1.83ch !important; visibility: initial !important;" id="frames" title="Scroll here to change number of frames.">24</span>
+<span style="color: #dfdfdf !important; font-size: 1.83ch !important; margin-inline-start: 4.4ch !important; visibility: initial !important;" title="Maximum speed when speeding through; scroll to change.">Max speed: </span>
+<input title="Maximum speed when speeding through; scroll to change." type="number" id="mxs" min="1" max="16" step="0.5" value="6" style="width: 9ch !important; background-color: buttonface !important; border-width: 0px !important; visibility: initial !important;"></input>
+`;
+
+
+let ht_c=`
+<style>
 progress::-webkit-progress-value {
     background-color: #00ffff8f;
 }
@@ -68,33 +116,17 @@ progress {
 }
 </style>
 
-<button id="three_plus" type="button">+ 3 thumbs</button>
-<button id="three_neg" type="button">- 3 thumbs</button>
-<button type="button" id="every" style="display: none;"></button>
-<button id="clear_er" type="button">Clear</button>
-<select style="width: 50.1vw; color: black; background-color: buttonface;" name="txt_Bx" id="txt_Bx"><option style="color: black"></option></select>
+<section style="display: inline-flex !important;">
+<div id="thumbs" style="margin-block-start: 0.1% !important;"></div>
+<section id="bSec" style="display: block !important; position: relative !important; visibility:hidden !important; min-width: 10ch !important; width: 10ch !important;">	
+<button id="scroll_curr" style="background-color: buttonface !important;">Scroll to current thumb</button>
+<button id="scroll_vid" style="background-color: buttonface !important;">Scroll to video</button>
+<button id="spdt" style="background-color: buttonface !important;">Speed through video</button>
+<button id="pnp" style="background-color: buttonface !important;">Toggle picture-in-picture</button>
 
-<input id="scnB" type="button" Value="Scan for video">
-<input id="genB" type="button" Value="Generate Thumbs"><br>
-<span id="frames" title="Scroll here to change number of frames.">24</span>
-<span style="margin-inline-start: 4.4ch;" title="Maximum speed when speeding through; scroll to change.">Max speed: </span>
-<input title="Maximum speed when speeding through; scroll to change." type="number" id="mxs" min="1" max="16" step="0.5" value="6" style="width: 9ch; background-color: buttonface; border-width: 0px;"></input>
-
-<div style="width:90vw; text-align:center;">
-`;
-
-let ht_b='<iframe id="video" src="'+srcUrl+'"></iframe>';
-
-
-let ht_c=`
-<button id="scroll_curr" style="position: fixed; margin-left: 1px; visibility: hidden;">Scroll to current thumb</button>
-<button id="scroll_vid" style="position: fixed; margin-left: 1px;">Scroll to video</button>
-<button id="spdt" style="position: fixed; margin-left: 1px;">Speed through video</button>
-<button id="pnp" style="position: fixed; margin-left: 1px;">Toggle picture-in-picture</button>
-
-<div id="currTime" style="position: fixed; bottom: 0.17%; right: 0.73%; color: white; background-color: black; font-size: 185%; font-weight: bold; transform: scale(1.2); transform-origin: bottom right;"></div>
-
-<div id="thumbs"style="margin-block-start: 0.1%;"></div></div>
+<div id="currTime" style="color: white !important;background-color: black !important;font-size: 185% !important;font-weight: bold !important;text-align: center !important;"></div>
+</section>
+</section>
 `;
 
 function pageScript(){
@@ -122,25 +154,41 @@ var mx=-3000;
 var perc_r;
 var perc;
 var tbG=false;
-var frame_btn=[...document.querySelectorAll("span#frames")][0];
-var three_Plus=[...document.querySelectorAll("button#three_plus")][0];
-var three_Neg=[...document.querySelectorAll("button#three_neg")][0];
-var clrr=[...document.querySelectorAll("button#clear_er")][0];
-var mxsp=[...document.querySelectorAll("input#mxs")][0];
-var thumbs=[...document.querySelectorAll("div#thumbs")][0];
-var ifrm = [...document.querySelectorAll("iframe#video")][0];	
-var myVdo = [...document.querySelectorAll("iframe#video")][0];	
-var scrl= [...document.querySelectorAll("button#scroll_curr")][0];
-var scrv= [...document.querySelectorAll("button#scroll_vid")][0];
-var spb= [...document.querySelectorAll("button#spdt")][0];
-var pip= [...document.querySelectorAll("button#pnp")][0];
-var evry= [...document.querySelectorAll("button#every")][0];
-var scanB= [...document.querySelectorAll("input#scnB")][0];
-var gnrB= [...document.querySelectorAll("input#genB")][0];
+var frame_btn=[...ifrm.contentWindow.document.querySelectorAll("span#frames")][0];
+var three_Plus=[...ifrm.contentWindow.document.querySelectorAll("button#three_plus")][0];
+var three_Neg=[...ifrm.contentWindow.document.querySelectorAll("button#three_neg")][0];
+var clrr=[...ifrm.contentWindow.document.querySelectorAll("button#clear_er")][0];
+var mxsp=[...ifrm.contentWindow.document.querySelectorAll("input#mxs")][0];
+var myVdo;
+/*var thumbsA=[...document.body.querySelectorAll("div#thumbs")];
+var scrlA= [...document.body.querySelectorAll("button#scroll_curr")];
+var scrvA= [...document.body.querySelectorAll("button#scroll_vid")];
+var spbA= [...document.body.querySelectorAll("button#spdt")];
+var pipA= [...document.body.querySelectorAll("button#pnp")];
+var currA  =[...document.body.querySelectorAll("div#currTime")];
+
+var thumbs= thumbsA[thumbsA.length-1];
+var scrl= scrlA[scrlA.length-1];
+var scrv= scrvA[scrvA.length-1];
+var spb= spbA[spbA.length-1];
+var pip= pipA[pipA.length-1];
+var curr= currA[currA.length-1];*/
+
+var bSect=[...ifrm2.contentWindow.document.querySelectorAll("section#bSec")][0];
+var thumbs=[...ifrm2.contentWindow.document.querySelectorAll("div#thumbs")][0];
+var scrl= [...ifrm2.contentWindow.document.querySelectorAll("button#scroll_curr")][0];
+var scrv= [...ifrm2.contentWindow.document.querySelectorAll("button#scroll_vid")][0];
+var spb= [...ifrm2.contentWindow.document.querySelectorAll("button#spdt")][0];
+var pip= [...ifrm2.contentWindow.document.querySelectorAll("button#pnp")][0];
+var curr  =[...ifrm2.contentWindow.document.querySelectorAll("div#currTime")][0];
+
+var evry= [...ifrm.contentWindow.document.querySelectorAll("button#every")][0];
+var scanB= [...ifrm.contentWindow.document.querySelectorAll("input#scnB")][0];
+var gnrB= [...ifrm.contentWindow.document.querySelectorAll("input#genB")][0];
 var sp_swtch=0;
-var curr  =[...document.querySelectorAll("div#currTime")][0];
-var txtBx = [...document.querySelectorAll('select#txt_Bx')][0];
-var pgrCSS = [...document.querySelectorAll('style#pgrB')][0];
+
+var txtBx = [...ifrm.contentWindow.document.querySelectorAll('select#txt_Bx')][0];
+var pgrCSS = [...ifrm2.contentWindow.document.querySelectorAll('style#pgrB')][0];
 var vids=[];
 var vhw={w:0,h:0};
 var allFrames=[];
@@ -194,9 +242,41 @@ function pgBar(ix,ths,ev,attr,nxt){
 }	
 			
 			
+var checkDur = function() {
+	if(!!isFinite(myVdo.duration)){
+	loadFlag=true;
+	nowFlag=-1;	
+	shiftBtns(true);
+			if(ev_t==-1){
+			if(myVdo.duration>=270){
+			t=Math.round(Math.ceil(myVdo.duration/90)*3);
+			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+			evry.innerText='At least every 30 secs';
+			}else if(myVdo.duration<4.5){
+				t=Math.round(Math.Max(1,Math.floor((myVdo.duration*2)/3))*3);
+				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+				evry.innerText='At most every 0.5 secs';
+			}else{
+			t=9;
+			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+			evry.innerText='9 frames';
+			}
+			ev_t=t;
+			}
+	}
+	
+	myVdo.pause();
+	myVdo.currentTime=0;
+
+	if(!tTrkFlg){
+	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+	}
+}
+
 
 function shiftBtns(bool){
 	pip.style.top=Math.min(curr.getBoundingClientRect().top-23,myVdo.clientHeight)+'px';
+	//curr.style.top=(parseFloat(pip.style.top)+4)+'px';
 	if(bool){
 	spb.style.top=(pip.getBoundingClientRect().top-pip.getBoundingClientRect().height-2)+'px';
 	scrv.style.top=(spb.getBoundingClientRect().top-spb.getBoundingClientRect().height-2)+'px';
@@ -204,7 +284,7 @@ function shiftBtns(bool){
 	}
 }
 
-shiftBtns(true);
+//shiftBtns(true);
 function calcSp(){
 if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1 && !myVdo.paused){ 
 if(clck_a==-1){
@@ -257,8 +337,13 @@ if (event.deltaY<0){
 
 
 window.addEventListener('resize', function () {
-let factor= ((100/3)*(ifrm.clientWidth/vhw.w));
+let factor= 100*((thumbs.getBoundingClientRect().width)/(vhw.w*9));
 thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
+let inv=1/(factor*0.01);
+for(let i=0; i<captions.length; i++){
+	captions[i].style.setProperty( 'transform', 'scale('+(inv*0.7).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+')', 'important' );
+}
+ifrm2.style.minHeight=thumbs.clientHeight+'px';
 shiftBtns(true);
 });
 
@@ -318,44 +403,6 @@ mxsp.onwheel= (event) => {
 	mxsp.onkeydown= (event) => {
 		adjRate();
 	}
-
-myVdo.onwheel= (event) => {
-skip(event);
-}
-
-
-myVdo.onprogress= () => {
-if(myVdo.readyState>2){
-calcSp();
-}else{
-myVdo.playbackRate=1;
-}
-}
-
-
-myVdo.onplay= () => {
-if(myVdo.readyState>2){
-calcSp();
-}else{
-myVdo.playbackRate=1;
-}
-}
-
-
-myVdo.onseeked= () => {
-t_a=myVdo.currentTime;
-if(myVdo.readyState>2){
-calcSp();
-}else{
-myVdo.playbackRate=1;
-}
-}
-
- myVdo.ontimeupdate= () => {
-	if(!tTrkFlg){
- 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
-	}
-}
 
 spb.onclick=function(){
 if(sp_swtch==0){
@@ -433,39 +480,6 @@ function clr(){
 document.getElementById('txtBx').value="";
 }
 
-
-	
-var checkDur = function() {
-	if(!!isFinite(myVdo.duration)){
-	loadFlag=true;
-	nowFlag=-1;	
-	shiftBtns(true);
-			if(ev_t==-1){
-			if(myVdo.duration>=270){
-			t=Math.round(Math.ceil(myVdo.duration/90)*3);
-			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
-			evry.innerText='At least every 30 secs';
-			}else if(myVdo.duration<4.5){
-				t=Math.round(Math.Max(1,Math.floor((myVdo.duration*2)/3))*3);
-				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
-				evry.innerText='At most every 0.5 secs';
-			}else{
-			t=9;
-			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
-			evry.innerText='9 frames';
-			}
-			ev_t=t;
-			}
-	}
-	
-	myVdo.pause();
-	myVdo.currentTime=0;
-
-	if(!tTrkFlg){
-	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
-	}
-}
-
 function ifrScan()
 {	
 
@@ -479,17 +493,19 @@ function ifrScan()
 	
 		vids=[];
 		allFrames=[];
-		let vids0=[...ifrm.contentDocument.getElementsByTagName('VIDEO')]; 
+		let gene=0;
+		let vids0=[...document.documentElement.getElementsByTagName('VIDEO')]; 
 		for (let k=0; k<vids0.length; k++){
-			vids.push(vids0[k]);
+			vids.push([vids0[k],'']);
 		}
 
 
-	let frms=getContainedFrames(ifrm); 
+	let frms=[...document.documentElement.getElementsByTagName('IFRAME')]; 
 	
 		if(!!frms && frms.length>0){
 		for (let k=0; k<frms.length; k++){
-			allFrames.push([frms[k],1]);
+			allFrames.push([frms[k],1,',f'+gene+',']);
+			gene++;
 		}
 		}
 
@@ -501,7 +517,8 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 	allFrames[j][1]=0;
 	if(!!frms1 && frms1.length>0){
 	for (let k=0; k<frms1.length; k++){
-			allFrames.push([frms1[k],1]);
+			allFrames.push([frms1[k],1,allFrames[j][2]+',f'+gene+',']);
+			gene++;
 		}
 	}
 }
@@ -509,27 +526,52 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 }
 }
 	for (let j=0; j<allFrames.length; j++){
-		let vids1=[...allFrames[j][0].document.getElementsByTagName('VIDEO')]; 
+		let vids1=[];
+		if(!!allFrames[j][0].document && typeof allFrames[j][0].document!=='undefined'){
+		vids1=[...allFrames[j][0].document.documentElement.getElementsByTagName('VIDEO')]; 
+		}else if(!!allFrames[j][0].contentDocument && typeof allFrames[j][0].contentDocument!=='undefined'){
+			vids1=[...allFrames[j][0].contentDocument.documentElement.getElementsByTagName('VIDEO')]; 
+		}
 		for (let k=0; k<vids1.length; k++){
-			vids.push(vids1[k]);
+			vids.push([vids1[k],allFrames[j][2]]);
 		}
 	}
 	
+		let filt_vid=[];
+		for (let k=0; k<vids.length; k++){
+			if(!!isFinite(vids[k][0].duration)){
+				filt_vid.push([vids[k][0],vids[k][1]]);
+			}
+		}	
+		
+		vids=[];
+		for (let k=0; k<filt_vid.length; k++){
+			vids.push(filt_vid[k]);
+		}
 
-	txtBx.innerHTML='<option style="color: black"></option>';
+	txtBx.innerHTML='<option style="color: black !important"></option>';
 	let pxs=0;
+	let drt=0;
 	  vids.forEach((vid,index) => {
-		  if(!!isFinite(vid.duration)){
     let opt = document.createElement('option');
 	opt.setAttribute("index", index);
-	opt.style.cssText='color: black;';
-    opt.textContent = '('+formatTime(vid.duration)+') - '+vidSrc(vid);
+	opt.style.cssText='color: black !important;';
+    opt.textContent = '('+formatTime(vid[0].duration)+') - '+vidSrc(vid[0]);
 	    txtBx.appendChild(opt);	
-		   txtBx.selectedIndex = (vid.videoWidth*vid.videoHeight>pxs)?txtBx.length-1:txtBx.selectedIndex;
+		let pixs=vid[0].videoWidth*vid[0].videoHeight;
+		if(pixs>pxs)
+		{
+			pxs=pixs;
+			txtBx.selectedIndex =txtBx.length-1;
+		}else if(pixs==pxs){
+			if(vid[0].duration>drt){
+			drt=vid[0].duration;
+			txtBx.selectedIndex =txtBx.length-1;
+			}
+		}
+		   
 		   tbG=false;
 		   gnrB.value='Select video';
-		  }
-
   });
 }
 
@@ -546,7 +588,81 @@ function changeValue()
 		vid.src = txtVal;      
 		myVdo.load(); 
 		myVdo.pause();*/
-		myVdo=vids[parseInt(txtBx[txtBx.selectedIndex].getAttribute('index'))];
+		let myVdo_el=vids[parseInt(txtBx[txtBx.selectedIndex].getAttribute('index'))];
+		myVdo=myVdo_el[0];
+		shiftBtns(true);
+		bSect.style.visibility='visible';
+		/*pip.style.visibility='visible';
+		spb.style.visibility='visible';
+		scrv.style.visibility='visible';
+		scrl.style.visibility='visible';
+		curr.style.visibility='visible';*/
+		thumbs.style.visibility='visible';
+		ifrm2.style.setProperty( 'top', myVdo.getBoundingClientRect().bottom+'px', 'important' );
+		
+		myVdo.onwheel= (event) => {
+		skip(event);
+		}
+
+myVdo.onprogress= () => {
+if(myVdo.readyState>2){
+calcSp();
+}else{
+myVdo.playbackRate=1;
+}
+}
+
+
+myVdo.onplay= () => {
+if(myVdo.readyState>2){
+calcSp();
+}else{
+myVdo.playbackRate=1;
+}
+}
+
+
+myVdo.onseeked= () => {
+t_a=myVdo.currentTime;
+if(myVdo.readyState>2){
+calcSp();
+}else{
+myVdo.playbackRate=1;
+}
+}
+
+ myVdo.ontimeupdate= () => {
+	if(!tTrkFlg){
+ 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+	}
+}
+			
+
+myVdo.ondurationchange= () => {
+  checkDur();
+}
+
+myVdo.onloadedmetadata= () => {
+  checkDur();
+}
+  
+   myVdo.onratechange =function() {
+	if(!tTrkFlg){
+ 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+	}
+	if(myVdo.readyState>2){
+	calcSp();
+	}
+ }			
+		
+		 allFrames.forEach((frame,index) => {
+			if(!myVdo_el[1].includes(frame[2]) && myVdo_el[1]!='' && frame[0]!==ifrm && frame[0]!==ifrm2){
+			frame[0].style.setProperty( 'display', 'none', 'important' );
+			}else{
+				//node.style.setProperty( 'pointer-events', '', 'important' );
+			}
+		 });
+		
 		
 		pip.onclick=function(){
 		if (myVdo.ownerDocument.pictureInPictureElement) {
@@ -574,22 +690,7 @@ function changeValue()
 	}
 }
 
-myVdo.ondurationchange= () => {
-  checkDur();
-}
 
-myVdo.onloadedmetadata= () => {
-  checkDur();
-}
-  
-   myVdo.onratechange =function() {
-	if(!tTrkFlg){
- 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
-	}
-	if(myVdo.readyState>2){
-	calcSp();
-	}
- }
 
 
 function doThumbs()
@@ -773,7 +874,7 @@ function thumbseek(bool){
 			time_track =ttmp*(myVdo.duration/t);
 			vhw.h=myVdo.videoHeight;
 			vhw.w=myVdo.videoWidth;
-			ifrm.style.height=(10000*(vhw.h/(vhw.w+vhw.h))/80).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"vw";
+			//myVdo.style.height=(10000*(vhw.h/(vhw.w+vhw.h))/80).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"vw";
 			generateThumbnail();
 			ttmp++;
 			if (ttmp<done_t) {
@@ -793,6 +894,15 @@ function thumbseek(bool){
 				shiftBtns(false);
 				scrl.style.visibility='';
 				window.scrollTo(0,0);
+				
+				window.onscroll=()=>{
+				let a= window.scrollY-ifrm2.offsetTop;
+				
+				if(a>=0){
+					bSect.style.top=(a+3)+'px';
+				}
+					
+				}
 			}
 		}
 		 
@@ -898,8 +1008,13 @@ if(!myVdo.ownerDocument.pictureInPictureElement){
 	  window.getSelection().removeAllRanges();
 } 
 
-let factor=((100/3)*(ifrm.clientWidth/v_width));
+let factor=100*((thumbs.getBoundingClientRect().width)/(vhw.w*9));
 thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
+let inv=1/(factor*0.01);
+for(let i=0; i<captions.length; i++){
+		captions[i].style.setProperty( 'transform', 'scale('+(inv*0.7).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+')', 'important' );
+}
+ifrm2.style.minHeight=thumbs.clientHeight+'px';
 shiftBtns(true);
 thumbs.appendChild(f);
 
@@ -910,8 +1025,13 @@ pgs.appendChild(pgb);
 pgs.appendChild(ct);
 captions.push(ct);
 progresses.push(pgb);
-ct.style.cssText+="transform: scale("+(0.18*(f.clientWidth/ct.clientWidth)).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+");";
+f.style.cssText="display: inline-grid !important; margin: 0 0 0 0 !important;";
+ct.style.cssText+="color: white  !important; font-size: 169%  !important; display: inline-table !important; position: absolute !important; transform-origin: top left !important; font-family: Microsoft JhengHei UI !important";
+
+ct.style.setProperty( 'transform', 'scale('+(inv*0.7).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+')', 'important' );
+
 pgrCSS.innerText="progress{ width:"+window.getComputedStyle(f).width+"; position: absolute; border-radius: 0; height: 0.9em;";
+ifrm2.style.minHeight=thumbs.clientHeight+'px';
 }
   
 }else{
@@ -922,8 +1042,20 @@ alert('Video not loaded!');
 
 }
 
+document.head.insertAdjacentElement('afterbegin',ifrm);
+ifrm.src = "about:blank";
 
-document.body.parentElement.innerHTML=ht_a+ht_b+ht_c+'</body>';
+ifrm.contentWindow.document.open();
+ifrm.contentWindow.document.write(ht_a);
+ifrm.contentWindow.document.close();
+
+document.body.insertAdjacentElement('beforeend',ifrm2);
+ifrm2.src = "about:blank";
+
+ifrm2.contentWindow.document.open();
+ifrm2.contentWindow.document.write(ht_c);
+ifrm2.contentWindow.document.close();
+
 pageScript();
 
 }
