@@ -484,7 +484,7 @@ function ifrScan()
 {	
 
 	function getContainedFrames(f){
-		if(typeof f.contentWindow !=='undefined'){
+		if(!!f.contentWindow && typeof f.contentWindow !=='undefined'){
 			return f.contentWindow.window.frames;
 		}else{
 			return null;
