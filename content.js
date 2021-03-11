@@ -50,10 +50,10 @@ if(bool){
 	allNodes.forEach(function(node) {
 			if(node.nodeName!=='IFRAME' && node.nodeName!=='EMBED' && node.nodeName!=='VIDEO'){
 			if((node.getElementsByTagName('IFRAME').length===0 && node.getElementsByTagName('EMBED').length===0 && node.getElementsByTagName('VIDEO').length===0) && !vieChild.includes(node)){
-				node.style.setProperty( 'display', 'initial', 'important' );
+				node.style.setProperty( 'display', 'initial' );
 			}else{
-				node.style.setProperty( 'background', 'initial', 'important' );
-				node.style.setProperty( 'background-color', 'initial', 'important' );
+				node.style.setProperty( 'background', 'initial' );
+				node.style.setProperty( 'background-color', 'initial' );
 			}
 		}
 	});
