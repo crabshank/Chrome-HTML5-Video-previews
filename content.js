@@ -14,11 +14,12 @@ let ifrm=document.createElement('iframe');
 ifrm.style.setProperty( 'position', 'relative', 'important' );
 ifrm.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
 ifrm.style.setProperty( 'width', '-webkit-fill-available', 'important' );
-ifrm.style.setProperty( 'height', '-webkit-fill-available', 'important' );
 ifrm.style.setProperty( 'margin', 0, 'important' );
 ifrm.style.setProperty( 'border', 0, 'important' );
 ifrm.style.setProperty( 'padding', 0, 'important' );
 
+ifrm.style.setProperty( 'top', '0.37ch', 'important' );
+ifrm.style.setProperty( 'left', '0.66ch', 'important' );
 
 let ifrm2=document.createElement('iframe');
 ifrm2.style.setProperty( 'position', 'relative', 'important' );
@@ -81,7 +82,7 @@ input::-webkit-textfield-decoration-container {
     background: buttonface;
 }
 </style>
-
+<main>
 <button style="background-color: buttonface !important; visibility: initial !important;" id="three_plus" type="button">+ 3 thumbs</button>
 <button style="background-color: buttonface !important; visibility: initial !important;" id="three_neg" type="button">- 3 thumbs</button>
 <button style="background-color: buttonface !important; display: none; visibility: initial !important;" type="button" id="every"></button>
@@ -95,6 +96,7 @@ input::-webkit-textfield-decoration-container {
 <span style="color: #dfdfdf !important; font-size: 1.83ch !important; visibility: initial !important;" id="frames" title="Scroll here to change number of frames.">24</span>
 <span style="color: #dfdfdf !important; font-size: 1.83ch !important; margin-inline-start: 4.4ch !important; visibility: initial !important;" title="Maximum speed when speeding through; scroll to change.">Max speed: </span>
 <input title="Maximum speed when speeding through; scroll to change." type="number" id="mxs" min="1" max="16" step="0.5" value="6" style="width: 9ch !important; background-color: buttonface !important; border-width: 0px !important; visibility: initial !important;"></input>
+</main>
 `;
 
 
@@ -106,9 +108,6 @@ progress::-webkit-progress-value {
 progress::-webkit-progress-bar {
     background-color: #8080808f;
 }
-</style>
-
-<style id="pgrB">
 progress {
     position: absolute;
 	border-radius: 0;
@@ -116,12 +115,12 @@ progress {
 }
 </style>
 
-<section style="display: inline-flex !important;">
-<div id="thumbs" style="margin-block-start: 0.1% !important;"></div>
-<section id="bSec" style="display: block !important; position: relative !important; visibility:hidden !important; min-width: 10ch !important; width: 10ch !important;">	
+<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;">
+<div id="thumbs"><section style="display: inline-flex !important;"></section></div>
+<section id="bSec" style="display: block !important; position: fixed !important; visibility:hidden !important; min-width: 10ch !important; width: 10ch !important; right: 2% !important;">	
 <button id="scroll_curr" style="background-color: buttonface !important;">Scroll to current thumb</button>
 <button id="scroll_vid" style="background-color: buttonface !important;">Scroll to video</button>
-<button id="spdt" style="background-color: buttonface !important;">Speed through video</button>
+<button id="spdt" style="background-color: buttonface !important; min-height: 7ch; width: inherit;">Speed through video</button>
 <button id="pnp" style="background-color: buttonface !important;">Toggle picture-in-picture</button>
 
 <div id="currTime" style="color: white !important;background-color: black !important;font-size: 185% !important;font-weight: bold !important;text-align: center !important;"></div>
@@ -154,6 +153,24 @@ var mx=-3000;
 var perc_r;
 var perc;
 var tbG=false;
+var mgLft=4;
+ifrm.contentWindow.document.body.style.setProperty( 'margin', 0, 'important' );
+ifrm.contentWindow.document.body.style.setProperty( 'border', 0, 'important' );
+ifrm.contentWindow.document.body.style.setProperty( 'padding', 0, 'important' );
+
+ifrm2.contentWindow.document.body.style.setProperty( 'margin', 0, 'important' );
+ifrm2.contentWindow.document.body.style.setProperty( 'border', 0, 'important' );
+ifrm2.contentWindow.document.body.style.setProperty( 'padding', 0, 'important' );
+
+var main=[...ifrm.contentWindow.document.getElementsByTagName("main")][0];
+var sc1=[...ifrm2.contentWindow.document.getElementsByTagName("section")][0];main.style.setProperty( 'border', 0, 'important' );
+main.style.setProperty( 'padding', 0, 'important' );
+
+
+
+ 
+ifrm.height=main.clientHeight;
+
 var frame_btn=[...ifrm.contentWindow.document.querySelectorAll("span#frames")][0];
 var three_Plus=[...ifrm.contentWindow.document.querySelectorAll("button#three_plus")][0];
 var three_Neg=[...ifrm.contentWindow.document.querySelectorAll("button#three_neg")][0];
@@ -175,7 +192,19 @@ var pip= pipA[pipA.length-1];
 var curr= currA[currA.length-1];*/
 
 var bSect=[...ifrm2.contentWindow.document.querySelectorAll("section#bSec")][0];
+
+let sc1w=(bSect.getBoundingClientRect().left-mgLft).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+
+ sc1.style.minWidth=sc1w+'px';
+ sc1.style.width=sc1w+'px';
+ sc1.style.maxWidth=sc1w+'px';
+
 var thumbs=[...ifrm2.contentWindow.document.querySelectorAll("div#thumbs")][0];
+var threeSct=thumbs.firstChild;
+thumbs.style.setProperty( 'margin', 0, 'important' );
+thumbs.style.setProperty( 'border', 0, 'important' );
+thumbs.style.setProperty( 'padding', 0, 'important' );
+
 var scrl= [...ifrm2.contentWindow.document.querySelectorAll("button#scroll_curr")][0];
 var scrv= [...ifrm2.contentWindow.document.querySelectorAll("button#scroll_vid")][0];
 var spb= [...ifrm2.contentWindow.document.querySelectorAll("button#spdt")][0];
@@ -188,10 +217,51 @@ var gnrB= [...ifrm.contentWindow.document.querySelectorAll("input#genB")][0];
 var sp_swtch=0;
 
 var txtBx = [...ifrm.contentWindow.document.querySelectorAll('select#txt_Bx')][0];
-var pgrCSS = [...ifrm2.contentWindow.document.querySelectorAll('style#pgrB')][0];
+//var pgrCSS = [...ifrm2.contentWindow.document.querySelectorAll('style#pgrB')][0];
 var vids=[];
 var vhw={w:0,h:0};
 var allFrames=[];
+
+var rsz= ()=>{
+	let tmbw=bSect.getBoundingClientRect().left-mgLft;
+tmbw_f=tmbw.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+
+ ifrm2.style.minWidth=Math.min(document.body.clientWidth,window.innerWidth)+'px';
+ ifrm2.style.width=Math.min(document.body.clientWidth,window.innerWidth)+'px';
+ ifrm2.style.maxWidth=Math.min(document.body.clientWidth,window.innerWidth)+'px';
+
+ sc1.style.minWidth=tmbw_f+'px';
+ sc1.style.width=tmbw_f+'px';
+ sc1.style.maxWidth=tmbw_f+'px';
+
+ thumbs.style.minWidth=tmbw_f+'px';
+ thumbs.style.width=tmbw_f+'px';
+ thumbs.style.maxWidth=tmbw_f+'px';
+ 
+
+let scts=[...thumbs.children];
+
+
+for(let j = 0; j < scts.length; j++){
+
+let figs=[...scts[j].children];
+
+sctPrp=(figs.length==0)?tmbw:tmbw/figs.length;
+sctPrp_f=sctPrp.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+
+let sctW=0;
+for (let i = 0; i < figs.length; i++) {
+	sctW+=figs[i].scrollWidth;
+}
+fPrp=(sctW==0)?1:(tmbw/(sctW/figs.length))*(1/3);
+fPrp_f=fPrp.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+scts[j].style.zoom=fPrp_f;
+
+
+}
+	
+}
+
 
 clrr.onclick=()=>{
 	clr();
@@ -234,7 +304,7 @@ function pgBar(ix,ths,ev,attr,nxt){
 			nowFlag=ix;
 			let cur=parseFloat(attr.timestamp.nodeValue);
 			let rct=ths.getBoundingClientRect();
-			let fct=parseFloat(ths.parentElement.parentElement.parentElement.style.zoom)*0.01;
+			let fct=parseFloat(captions[ix].parentElement.parentElement.parentElement.style.zoom);
 			 progresses[ix].value=(ev.offsetX / ((rct.right-rct.left)*fct));
 			 myVdo.currentTime=(progresses[ix].value)*(nxt-cur)+cur;
 			 curr_thumb=ix;
@@ -269,7 +339,7 @@ var checkDur = function() {
 	myVdo.currentTime=0;
 
 	if(!tTrkFlg){
-	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
 	}
 }
 
@@ -337,13 +407,9 @@ if (event.deltaY<0){
 
 
 window.addEventListener('resize', function () {
-let factor= 100*((thumbs.getBoundingClientRect().width)/(vhw.w*9));
-thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
-let inv=1/(factor*0.01);
-for(let i=0; i<captions.length; i++){
-	captions[i].style.setProperty( 'transform', 'scale('+(inv*0.7).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+')', 'important' );
-}
-ifrm2.style.minHeight=thumbs.clientHeight+'px';
+
+rsz();
+
 shiftBtns(true);
 });
 
@@ -382,11 +448,11 @@ mxsp.onwheel= (event) => {
 	event.stopPropagation();
 	
 	if(event.deltaY>0){
-		mxsp.value=(Math.max(1,mxsp.valueAsNumber-parseFloat(mxsp.step))).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7});
+		mxsp.value=(Math.max(1,mxsp.valueAsNumber-parseFloat(mxsp.step))).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 		adjRate();
 	}
 	if (event.deltaY<0){
-		mxsp.value=(Math.min(16,mxsp.valueAsNumber+parseFloat(mxsp.step))).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7});
+		mxsp.value=(Math.min(16,mxsp.valueAsNumber+parseFloat(mxsp.step))).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 		adjRate();
 		}
 	}
@@ -598,7 +664,7 @@ function changeValue()
 		scrl.style.visibility='visible';
 		curr.style.visibility='visible';*/
 		thumbs.style.visibility='visible';
-		ifrm2.style.setProperty( 'top', myVdo.getBoundingClientRect().bottom+'px', 'important' );
+		ifrm2.style.setProperty( 'top',  myVdo.getBoundingClientRect().bottom+'px', 'important' );
 		
 		myVdo.onwheel= (event) => {
 		skip(event);
@@ -633,7 +699,7 @@ myVdo.playbackRate=1;
 
  myVdo.ontimeupdate= () => {
 	if(!tTrkFlg){
- 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+ 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
 	}
 }
 			
@@ -648,7 +714,7 @@ myVdo.onloadedmetadata= () => {
   
    myVdo.onratechange =function() {
 	if(!tTrkFlg){
- 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+ 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
 	}
 	if(myVdo.readyState>2){
 	calcSp();
@@ -677,7 +743,8 @@ myVdo.onloadedmetadata= () => {
 		captions=[];
 		progresses=[];
 		curr_thumb=0;
-		thumbs.innerHTML="";
+		thumbs.innerHTML = '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;"></section>';
+		threeSct=thumbs.firstChild;
 		scrl.style.visibility='hidden';
 		shiftBtns(true);
 		checkDur();
@@ -702,19 +769,20 @@ captions=[];
 progresses=[];
 
 	ttmp=0;
-	thumbs.innerHTML = "";
+	thumbs.innerHTML =  '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;"></section>';
+	threeSct=thumbs.firstChild;
 	myVdo.pause();
 	myVdo.currentTime = 0;
 
 aseek=1;
 
 if(!tTrkFlg){
-curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
 }
 
  myVdo.ontimeupdate= () => {
 	if(!tTrkFlg){
- 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"x)";
+ 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
 	}
  if(aseek==0){
 	for(let i=0;i<captions.length;i++){
@@ -874,7 +942,7 @@ function thumbseek(bool){
 			time_track =ttmp*(myVdo.duration/t);
 			vhw.h=myVdo.videoHeight;
 			vhw.w=myVdo.videoWidth;
-			//myVdo.style.height=(10000*(vhw.h/(vhw.w+vhw.h))/80).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"vw";
+			//myVdo.style.height=(10000*(vhw.h/(vhw.w+vhw.h))/80).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"vw";
 			generateThumbnail();
 			ttmp++;
 			if (ttmp<done_t) {
@@ -893,6 +961,7 @@ function thumbseek(bool){
 				myVdo.currentTime=0;
 				shiftBtns(false);
 				scrl.style.visibility='';
+				rsz();
 				window.scrollTo(0,0);
 				
 				window.onscroll=()=>{
@@ -947,10 +1016,10 @@ myVdo.playbackRate=1;
  
 function generateThumbnail() {
 
-var f = document.createElement("figure");
-var ct=document.createElement("figcaption");
-var pgs=document.createElement("section");
-var pgb=document.createElement("progress");
+var f = ifrm2.contentWindow.document.createElement("figure");
+var ct=ifrm2.contentWindow.document.createElement("figcaption");
+var pgs=ifrm2.contentWindow.document.createElement("section");
+var pgb=ifrm2.contentWindow.document.createElement("progress");
 pgb.max=1;
 pgb.value=0;
 pgb.title='0.0%';
@@ -958,13 +1027,7 @@ pgb.style.display='none';
 pgs.style.display='contents';
 pgs.style.width='inherit';
 pgs.style.position='absolute';
-var c = document.createElement("canvas");
-
-f.onwheel= (event) => {
-captions[curr_thumb].parentElement.parentElement.scrollIntoView();
-skip(event);
-}
-
+var c = ifrm2.contentWindow.document.createElement("canvas");
 
 var ctx = c.getContext("2d");
 
@@ -982,6 +1045,85 @@ let format_time=formatTime(myVdo.currentTime);
 c.setAttribute('timestamp_fmt', format_time);
 
 ctx.drawImage(myVdo, 0, 0, v_width, v_height);
+
+
+
+let ifw=Math.min(document.body.clientWidth,window.innerWidth);
+ifrm2.style.setProperty=('min-width',ifw+'px','important');
+ifrm2.style.setProperty=('width',ifw+'px','important');
+ifrm2.style.setProperty=('max-width',ifw+'px','important');
+
+
+
+shiftBtns(true);
+
+if (threeSct.children.length==3){
+	threeSct=ifrm2.contentWindow.document.createElement("section");
+	thumbs.appendChild(threeSct);
+	threeSct.style.cssText="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;";
+	
+}
+threeSct.appendChild(f);
+
+f.style.setProperty( 'margin', 0, 'important' );
+f.style.setProperty( 'border', 0, 'important' );
+f.style.setProperty( 'padding', 0, 'important' );
+
+f.appendChild(c);
+
+
+
+f.appendChild(pgs);
+ct.innerHTML=format_time;
+pgs.appendChild(pgb);
+pgs.appendChild(ct);
+captions.push(ct);
+progresses.push(pgb);
+f.style.cssText="display: inline-grid !important; margin: 0 0 0 0 !important;";
+ct.style.cssText+="color: white  !important; font-size: 169%  !important; display: inline-table !important; position: absolute !important; transform-origin: top left !important; font-family: Microsoft JhengHei UI !important";
+
+
+
+
+//ct.style.setProperty( 'transform', 'scale('+().toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+')', 'important' );
+
+ct.style.setProperty( 'transform', 'scale('+(2.34)+')', 'important' );
+
+
+pgb.style.width=window.getComputedStyle(f).width;
+ ifrm2.style.minWidth=Math.min(document.body.clientWidth,window.innerWidth)+'px';
+ ifrm2.style.width=Math.min(document.body.clientWidth,window.innerWidth)+'px';
+ ifrm2.style.maxWidth=Math.min(document.body.clientWidth,window.innerWidth)+'px';
+
+let tmbw=bSect.getBoundingClientRect().left-mgLft;
+tmbw_f=tmbw.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+
+
+ sc1.style.minWidth=tmbw_f+'px';
+ sc1.style.width=tmbw_f+'px';
+ sc1.style.maxWidth=tmbw_f+'px';
+
+ thumbs.style.minWidth=tmbw_f+'px';
+ thumbs.style.width=tmbw_f+'px';
+ thumbs.style.maxWidth=tmbw_f+'px';
+ 
+ 
+let figs=[...threeSct.children];
+
+ let sctW=0;
+ for (let i = 0; i < figs.length; i++) {
+	sctW+=figs[i].scrollWidth;
+}
+ fPrp=(sctW==0)?1:(tmbw/(sctW/figs.length))*(1/3);
+fPrp_f=fPrp.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+threeSct.style.zoom=fPrp_f;
+
+
+
+f.onwheel= (event) => {
+captions[curr_thumb].parentElement.parentElement.scrollIntoView();
+skip(event);
+}
 
   f.onclick= function(){
     var index = captions.indexOf(this.lastElementChild.lastElementChild);
@@ -1008,30 +1150,8 @@ if(!myVdo.ownerDocument.pictureInPictureElement){
 	  window.getSelection().removeAllRanges();
 } 
 
-let factor=100*((thumbs.getBoundingClientRect().width)/(vhw.w*9));
-thumbs.style.zoom=factor.toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+"%";
-let inv=1/(factor*0.01);
-for(let i=0; i<captions.length; i++){
-		captions[i].style.setProperty( 'transform', 'scale('+(inv*0.7).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+')', 'important' );
-}
-ifrm2.style.minHeight=thumbs.clientHeight+'px';
-shiftBtns(true);
-thumbs.appendChild(f);
 
-f.appendChild(c);
-f.appendChild(pgs);
-ct.innerHTML=format_time;
-pgs.appendChild(pgb);
-pgs.appendChild(ct);
-captions.push(ct);
-progresses.push(pgb);
-f.style.cssText="display: inline-grid !important; margin: 0 0 0 0 !important;";
-ct.style.cssText+="color: white  !important; font-size: 169%  !important; display: inline-table !important; position: absolute !important; transform-origin: top left !important; font-family: Microsoft JhengHei UI !important";
 
-ct.style.setProperty( 'transform', 'scale('+(inv*0.7).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7})+')', 'important' );
-
-pgrCSS.innerText="progress{ width:"+window.getComputedStyle(f).width+"; position: absolute; border-radius: 0; height: 0.9em;";
-ifrm2.style.minHeight=thumbs.clientHeight+'px';
 }
   
 }else{
