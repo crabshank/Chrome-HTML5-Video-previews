@@ -599,6 +599,7 @@ document.getElementById('txtBx').value="";
 function ifrScan()
 {	
 
+	txtBx.innerHTML="";
 	function getContainedFrames(f){
 		try{
 			return f[0].contentWindow.window.frames;

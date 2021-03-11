@@ -37,6 +37,18 @@ chrome.action.onClicked.addListener((tab) => {
   send(getUrl(tab));
 });
 
+function handleMessage(request, sender, sendResponse) {
+  				chrome.tabs.create({
+				"url": request.msg,
+				"windowId": sender.tab.windowId,
+				"index": (sender.tab.index+1),
+				"active": false
+				}, function(tab) {});
+  sendResponse({msg: 'Inaccessible frame opened in new tab!'});
+}
+
+chrome.runtime.onMessage.addListener(handleMessage);
+
 
 } catch (e) {	
   console.error(e);
