@@ -138,9 +138,7 @@ input::-webkit-textfield-decoration-container {
 <button style="background-color: buttonface !important; visibility: initial !important;" id="three_neg" type="button">- 3 thumbs</button>
 <button style="background-color: buttonface !important; display: none; visibility: initial !important;" type="button" id="every"></button>
 <button style="background-color: buttonface !important; visibility: initial !important;" id="clear_er" type="button">Clear</button>
-<select style="width: 48.3vw; color: black; background-color: buttonface; visibility: initial !important;" name="txt_Bx" id="txt_Bx">
-<option style="color: black !important visibility: initial !important;"></option>
-</select>
+<select style="width: 48.3vw; color: black; background-color: buttonface; visibility: initial !important;" name="txt_Bx" id="txt_Bx"></select>
 
 <input style="background-color: buttonface !important; visibility: initial !important;" id="scnB" type="button" Value="Scan for video">
 <input style="background-color: buttonface !important; visibility: initial !important;" id="genB" type="button" Value="Generate Thumbs"><br>
@@ -602,11 +600,9 @@ function ifrScan()
 {	
 
 	function getContainedFrames(f){
-		if(!!f.contentWindow && typeof f.contentWindow !=='undefined'){
-			return f.contentWindow.window.frames;
-		}else{
-			return null;
-		}
+		try{
+			return f[0].contentWindow.window.frames;
+		}catch(e){;}
 	}
 	
 		vids=[];
@@ -631,7 +627,7 @@ if(allFrames.length>0){
 while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b})>0){
 	for (let j=0; j<allFrames.length; j++){
 		if(allFrames[j][1]==1){
-	let frms1=getContainedFrames(allFrames[j][0]); 
+	let frms1=getContainedFrames(allFrames[j]); 
 	allFrames[j][1]=0;
 	if(!!frms1 && frms1.length>0){
 	for (let k=0; k<frms1.length; k++){
@@ -645,16 +641,20 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 }
 	for (let j=0; j<allFrames.length; j++){
 		let vids1=[];
-		if(!!allFrames[j][0].document && typeof allFrames[j][0].document!=='undefined'){
-		vids1=[...allFrames[j][0].document.documentElement.getElementsByTagName('VIDEO')]; 
-		}else if(!!allFrames[j][0].contentDocument && typeof allFrames[j][0].contentDocument!=='undefined'){
-			vids1=[...allFrames[j][0].contentDocument.documentElement.getElementsByTagName('VIDEO')]; 
-		}
+		
+		try{
+					vids1=[...allFrames[j][0].document.documentElement.getElementsByTagName('VIDEO')]; 
+		}catch(e){
+			try{
+				vids1=[...allFrames[j][0].contentDocument.documentElement.getElementsByTagName('VIDEO')]; 
+			}catch(e){;}
+		}	
+		
 		for (let k=0; k<vids1.length; k++){
 			vids.push([vids1[k],allFrames[j][2]]);
 		}
 	}
-	
+
 		let filt_vid=[];
 		for (let k=0; k<vids.length; k++){
 			if(!!isFinite(vids[k][0].duration)){
@@ -666,8 +666,33 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 		for (let k=0; k<filt_vid.length; k++){
 			vids.push(filt_vid[k]);
 		}
+		
+		
+				
+		 allFrames.forEach((frame,index) => {
+			 let vwg=false;
+			 for(let i=0; i<vids.length; i++){
+				 if(vids[i][1].includes(frame[2]) && vids[i][1]!=''){
+					 vwg=true;
+					 i=vids.length-1;
+				 }
+			 }
+				 
+				 if(!vwg && frame[0].src!='' && frame[0].src!='about:blank' && frame[0]!==ifrm && frame[0]!=ifrm2){
+					 chrome.runtime.sendMessage({msg: frame[0].src}, function(response){
+					console.log(response.msg);
+					    let opt = document.createElement('option');
+						opt.textContent='('+frame[0].src+') opened in new tab!';
+						opt.setAttribute("index", -1);
+						opt.style.cssText='color: black !important;';
+						txtBx.appendChild(opt);	
+					
+				 });
+			 }
 
-	txtBx.innerHTML='<option style="color: black !important"></option>';
+			});
+			
+
 	let pxs=0;
 	let drt=0;
 	  vids.forEach((vid,index) => {
@@ -696,7 +721,8 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 function changeValue()
 {
 	if(txtBx.length>1){
-		if(!tbG){
+		let selIx=txtBx[txtBx.selectedIndex].getAttribute('index');
+		if(!tbG && selIx!='-1'){
 		curr_thumb=0;
 		loadFlag=false;
 		ttmp=0;
@@ -706,7 +732,7 @@ function changeValue()
 		vid.src = txtVal;      
 		myVdo.load(); 
 		myVdo.pause();*/
-		let myVdo_el=vids[parseInt(txtBx[txtBx.selectedIndex].getAttribute('index'))];
+		let myVdo_el=vids[parseInt(selIx)];
 		myVdo=myVdo_el[0];
 		ifrm2.style.setProperty( 'pointer-events', '', 'important' );
 		shiftBtns(true);
@@ -779,7 +805,7 @@ myVdo.onloadedmetadata= () => {
 	calcSp();
 	}
  }			
-		
+
 		 allFrames.forEach((frame,index) => {
 			if(!myVdo_el[1].includes(frame[2]) && myVdo_el[1]!='' && frame[0]!==ifrm && frame[0]!==ifrm2){
 			frame[0].style.setProperty( 'display', 'none', 'important' );
@@ -788,6 +814,8 @@ myVdo.onloadedmetadata= () => {
 			}
 		 });
 		
+		
+
 		
 		pip.onclick=function(){
 		if (myVdo.ownerDocument.pictureInPictureElement) {
