@@ -141,7 +141,7 @@ input::-webkit-textfield-decoration-container {
 <select style="width: 48.3vw; color: black; background-color: buttonface; visibility: initial !important;" name="txt_Bx" id="txt_Bx"></select>
 
 <input style="background-color: buttonface !important; visibility: initial !important;" id="scnB" type="button" Value="Scan for video">
-<input style="background-color: buttonface !important; visibility: initial !important;" id="genB" type="button" Value="Generate Thumbs"><br>
+<input style="background-color: buttonface !important; visibility: initial !important;" id="genB" type="button" Value="Select video"><br>
 <span style="color: #dfdfdf !important; font-size: 1.83ch !important; visibility: initial !important;" id="frames" title="Scroll here to change number of frames.">24</span>
 <span style="color: #dfdfdf !important; font-size: 1.83ch !important; margin-inline-start: 4.4ch !important; visibility: initial !important;" title="Maximum speed when speeding through; scroll to change.">Max speed: </span>
 <input title="Maximum speed when speeding through; scroll to change." type="number" id="mxs" min="1" max="16" step="0.5" value="6" style="width: 9ch !important; background-color: buttonface !important; border-width: 0px !important; visibility: initial !important;"></input>
@@ -599,7 +599,9 @@ document.getElementById('txtBx').value="";
 function ifrScan()
 {	
 
-	txtBx.innerHTML="";
+txtBx.innerHTML="";
+gnrB.value='Select video';
+
 	function getContainedFrames(f){
 		try{
 			return f[0].contentWindow.window.frames;
@@ -680,16 +682,14 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 			 }
 				 
 				 if(!vwg && frame[0].src!='' && frame[0].src!='about:blank' && frame[0]!==ifrm && frame[0]!=ifrm2){
-					 chrome.runtime.sendMessage({msg: frame[0].src}, function(response){
-					console.log(response.msg);
-					    let opt = document.createElement('option');
-						opt.textContent='('+frame[0].src+') opened in new tab!';
+						let opt = document.createElement('option');
+						opt.textContent=frame[0].src;
 						opt.setAttribute("index", -1);
 						opt.style.cssText='color: black !important;';
 						txtBx.appendChild(opt);	
-					
-				 });
-			 }
+			tbG=false;
+		   gnrB.value='Select video';
+				}
 
 			});
 			
@@ -702,6 +702,8 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 	opt.style.cssText='color: black !important;';
     opt.textContent = '('+formatTime(vid[0].duration)+') - '+vidSrc(vid[0]);
 	    txtBx.appendChild(opt);	
+		tbG=false;
+		   gnrB.value='Select video';
 		let pixs=vid[0].videoWidth*vid[0].videoHeight;
 		if(pixs>pxs)
 		{
@@ -713,17 +715,21 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 			txtBx.selectedIndex =txtBx.length-1;
 			}
 		}
-		   
-		   tbG=false;
-		   gnrB.value='Select video';
   });
+  
 }
 
 function changeValue()
 {
-	if(txtBx.length>1){
+	if(txtBx.children.length>0){
 		let selIx=txtBx[txtBx.selectedIndex].getAttribute('index');
-		if(!tbG && selIx!='-1'){
+		
+		if(selIx=='-1'){
+			chrome.runtime.sendMessage({msg: txtBx[txtBx.selectedIndex].textContent}, function(response){
+			 gnrB.value='iFrame opened!';
+			console.log(response.msg);
+			});
+		}else if(!tbG){
 		curr_thumb=0;
 		loadFlag=false;
 		ttmp=0;
