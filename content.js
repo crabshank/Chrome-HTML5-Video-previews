@@ -30,6 +30,17 @@ ifrm2.style.setProperty( 'margin', 0, 'important' );
 ifrm2.style.setProperty( 'border', 0, 'important' );
 ifrm2.style.setProperty( 'padding', 0, 'important' );
 ifrm2.style.setProperty( 'min-height', '100vh', 'important' );
+ifrm2.style.setProperty( 'pointer-events', 'none', 'important' );
+
+function removeEls(d, array) {
+    var newArray = [];
+    for (let i = 0; i < array.length; i++) {
+        if (array[i] != d) {
+            newArray.push(array[i]);
+        }
+    }
+    return newArray;
+}
 
 	let embeds=[];
 	
@@ -37,19 +48,20 @@ function un_hider(bool){
 
 let allNodes=[...document.querySelectorAll('*')];
 
-	let vieChild=[];
+	let vChild=[];
+	
 allNodes.forEach(function(node) {
-if(node.nodeName=='IFRAME' || node.nodeName=='EMBED' || node.nodeName=='VIDEO'){
-		vieChild.push([...node.querySelectorAll('*')]);
+if(node.nodeName=='VIDEO'){
+		vChild.push([...node.querySelectorAll('*')]);
 	}
 });
-		vieChild=Array.from(new Set(vieChild));
+		vChild=Array.from(new Set(vChild));
 
 if(bool){
 
 	allNodes.forEach(function(node) {
 			if(node.nodeName!=='IFRAME' && node.nodeName!=='EMBED' && node.nodeName!=='VIDEO'){
-			if((node.getElementsByTagName('IFRAME').length===0 && node.getElementsByTagName('EMBED').length===0 && node.getElementsByTagName('VIDEO').length===0) && !vieChild.includes(node)){
+			if((node.getElementsByTagName('IFRAME').length===0 && node.getElementsByTagName('EMBED').length===0 && node.getElementsByTagName('VIDEO').length===0) && !vChild.includes(node)){
 				node.style.setProperty( 'display', 'initial' );
 			}else{
 				node.style.setProperty( 'background', 'initial' );
@@ -63,7 +75,7 @@ if(bool){
 allNodes.forEach(function(node) {
 	
 	if(node.nodeName!=='IFRAME' && node.nodeName!=='EMBED' && node.nodeName!=='VIDEO'){
-			if((node.getElementsByTagName('IFRAME').length===0 && node.getElementsByTagName('EMBED').length===0 && node.getElementsByTagName('VIDEO').length===0) && !vieChild.includes(node)){
+			if((node.getElementsByTagName('IFRAME').length===0 && node.getElementsByTagName('EMBED').length===0 && node.getElementsByTagName('VIDEO').length===0) && !vChild.includes(node)){
 				node.style.setProperty( 'display', 'none', 'important' );
 			}else{
 				node.style.setProperty( 'background', 'transparent', 'important' );
@@ -73,6 +85,13 @@ allNodes.forEach(function(node) {
 	
 	if (node.nodeName==='VIDEO'){
 		node.controls=true;
+			node.onmouseenter= (event) => {
+			node.controls=true;
+			}			
+			
+			node.onmousemove= (event) => {
+			node.controls=true;
+			}
 	}	
 	if (node.nodeName==='EMBED'){
 		embeds.push(node);
@@ -689,6 +708,7 @@ function changeValue()
 		myVdo.pause();*/
 		let myVdo_el=vids[parseInt(txtBx[txtBx.selectedIndex].getAttribute('index'))];
 		myVdo=myVdo_el[0];
+		ifrm2.style.setProperty( 'pointer-events', '', 'important' );
 		shiftBtns(true);
 		bSect.style.visibility='visible';
 		/*pip.style.visibility='visible';
@@ -703,14 +723,6 @@ function changeValue()
 		if(ifr2c.top>vrc.bottom){
 			ifrm2.style.setProperty( 'top', (parseFloat(ifrm2.style.top)-(ifr2c.top-vrc.bottom)+gapVid)+'px', 'important' );
 		}
-		
-		myVdo.onmouseenter= (event) => {
-		myVdo.controls=true;
-		}			
-		
-		myVdo.onmousemove= (event) => {
-		myVdo.controls=true;
-		}	
 
 		myVdo.onwheel= (event) => {
 		skip(event);
