@@ -25,7 +25,6 @@ let ifrm2=document.createElement('iframe');
 ifrm2.style.setProperty( 'position', 'relative', 'important' );
 ifrm2.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
 ifrm2.style.setProperty( 'width', '-webkit-fill-available', 'important' );
-ifrm2.style.setProperty( 'height', '-webkit-fill-available', 'important' );
 ifrm2.style.setProperty( 'margin', 0, 'important' );
 ifrm2.style.setProperty( 'border', 0, 'important' );
 ifrm2.style.setProperty( 'padding', 0, 'important' );
@@ -62,10 +61,10 @@ if(bool){
 	allNodes.forEach(function(node) {
 			if(node.nodeName!=='IFRAME' && node.nodeName!=='EMBED' && node.nodeName!=='VIDEO'){
 			if((node.getElementsByTagName('IFRAME').length===0 && node.getElementsByTagName('EMBED').length===0 && node.getElementsByTagName('VIDEO').length===0) && !vChild.includes(node)){
-				node.style.setProperty( 'display', 'initial' );
+				node.style.setProperty( 'display', '' );
 			}else{
-				node.style.setProperty( 'background', 'initial' );
-				node.style.setProperty( 'background-color', 'initial' );
+				node.style.setProperty( 'background', '' );
+				node.style.setProperty( 'background-color', '' );
 			}
 		}
 	});
@@ -105,7 +104,8 @@ un_hider(false);
 
 document.head.style.setProperty( 'visibility', 'visible', 'important' );
 document.head.style.setProperty( 'display', 'block', 'important' );
-document.body.style.setProperty( 'overflow-y', 'overlay', 'important' );
+document.body.style.setProperty( 'overflow-x', 'scroll', 'important' );
+document.body.style.setProperty( 'overflow-y', 'scroll', 'important' );
 //document.body.style.setProperty( 'white-space', 'pre-wrap', 'important' );
 //document.head.style.setProperty( 'pointer-events', '', 'important' );
 //document.documentElement.style.setProperty( 'pointer-events', '', 'important' );
@@ -273,13 +273,19 @@ var vhw={w:0,h:0};
 var allFrames=[];
 
 var rsz= ()=>{
+	
+	 let scR=sc1.getBoundingClientRect();
+ ifrm2.style.minHeight=scR.height+'px';
+ ifrm2.style.height=scR.height+'px';
+ ifrm2.style.maxHeight=scR.height+'px';
+	
 	let tmbw=bSect.getBoundingClientRect().left-mgLft;
 tmbw_f=tmbw.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 
  ifrm2.style.minWidth=Math.min(document.body.clientWidth,window.innerWidth)+'px';
  ifrm2.style.width=Math.min(document.body.clientWidth,window.innerWidth)+'px';
- ifrm2.style.maxWidth=Math.min(document.body.clientWidth,window.innerWidth)+'px';
-
+ ifrm2.style.maxWidth=Math.min(document.body.clientWidth,window.innerWidth)+'px'; 
+ 
  sc1.style.minWidth=tmbw_f+'px';
  sc1.style.width=tmbw_f+'px';
  sc1.style.maxWidth=tmbw_f+'px';
