@@ -154,6 +154,7 @@ var perc_r;
 var perc;
 var tbG=false;
 var mgLft=4;
+var gapVid=9;
 ifrm.contentWindow.document.body.style.setProperty( 'margin', 0, 'important' );
 ifrm.contentWindow.document.body.style.setProperty( 'border', 0, 'important' );
 ifrm.contentWindow.document.body.style.setProperty( 'padding', 0, 'important' );
@@ -664,7 +665,12 @@ function changeValue()
 		scrl.style.visibility='visible';
 		curr.style.visibility='visible';*/
 		thumbs.style.visibility='visible';
-		ifrm2.style.setProperty( 'top',  myVdo.getBoundingClientRect().bottom+'px', 'important' );
+		let vrc= myVdo.getBoundingClientRect();
+		ifrm2.style.setProperty( 'top', (vrc.bottom+gapVid)+'px', 'important' );
+		let ifr2c=ifrm2.getBoundingClientRect();
+		if(ifr2c.top>vrc.bottom){
+			ifrm2.style.setProperty( 'top', (parseFloat(ifrm2.style.top)-(ifr2c.top-vrc.bottom)+gapVid)+'px', 'important' );
+		}
 		
 		myVdo.onwheel= (event) => {
 		skip(event);
