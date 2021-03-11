@@ -704,6 +704,14 @@ function changeValue()
 			ifrm2.style.setProperty( 'top', (parseFloat(ifrm2.style.top)-(ifr2c.top-vrc.bottom)+gapVid)+'px', 'important' );
 		}
 		
+		myVdo.onmouseenter= (event) => {
+		myVdo.controls=true;
+		}			
+		
+		myVdo.onmousemove= (event) => {
+		myVdo.controls=true;
+		}	
+
 		myVdo.onwheel= (event) => {
 		skip(event);
 		}
