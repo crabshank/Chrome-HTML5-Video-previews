@@ -686,6 +686,8 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 					 i=vids.length-1;
 				 }
 			 }
+			 
+			 try{
 				 
 				 if(!vwg && frame[0].src!='' && frame[0].src!='about:blank' && frame[0]!==ifrm && frame[0]!=ifrm2){
 						let opt = document.createElement('option');
@@ -695,7 +697,8 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 						txtBx.appendChild(opt);	
 			tbG=false;
 		   gnrB.value='Select video';
-				}
+				 }
+				}catch(e){;}
 
 			});
 			
