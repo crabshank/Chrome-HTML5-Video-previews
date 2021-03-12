@@ -168,10 +168,10 @@ progress {
 <div id="thumbs">
 <section style="display: inline-flex !important;"></section>
 </div>
-<section id="bSec" style="display: block !important; position: fixed !important; visibility:hidden !important; min-width: 10ch !important; width: min-content !important; right: 2% !important;">	
+<section id="bSec" style="display: inline-flex !important;position: fixed !important; visibility: hidden; width: min-content !important;right: 2% !important;flex-direction: column !important;">	
 <button id="scroll_curr" style="background-color: buttonface !important;">Scroll to current thumb</button>
 <button id="scroll_vid" style="background-color: buttonface !important;">Scroll to video</button>
-<button id="spdt" style="background-color: buttonface !important; min-height: 7ch;">Speed through video</button>
+<button id="spdt" style="background-color: buttonface !important;">Speed through video</button>
 <button id="pnp" style="background-color: buttonface !important;">Toggle picture-in-picture</button>
 
 <div id="currTime" style="color: white !important;background-color: black !important;font-size: 185% !important;font-weight: bold !important;text-align: center !important;"></div>
