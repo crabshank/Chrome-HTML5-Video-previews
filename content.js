@@ -164,12 +164,14 @@ progress {
 }
 </style>
 
-<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;">
-<div id="thumbs"><section style="display: inline-flex !important;"></section></div>
-<section id="bSec" style="display: block !important; position: fixed !important; visibility:hidden !important; min-width: 10ch !important; width: 10ch !important; right: 2% !important;">	
+<section style="display: inline-flex !important;display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;">
+<div id="thumbs">
+<section style="display: inline-flex !important;"></section>
+</div>
+<section id="bSec" style="display: block !important; position: fixed !important; visibility:hidden !important; min-width: 10ch !important; width: min-content !important; right: 2% !important;">	
 <button id="scroll_curr" style="background-color: buttonface !important;">Scroll to current thumb</button>
 <button id="scroll_vid" style="background-color: buttonface !important;">Scroll to video</button>
-<button id="spdt" style="background-color: buttonface !important; min-height: 7ch; width: inherit;">Speed through video</button>
+<button id="spdt" style="background-color: buttonface !important; min-height: 7ch;">Speed through video</button>
 <button id="pnp" style="background-color: buttonface !important;">Toggle picture-in-picture</button>
 
 <div id="currTime" style="color: white !important;background-color: black !important;font-size: 185% !important;font-weight: bold !important;text-align: center !important;"></div>
