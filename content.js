@@ -1,15 +1,160 @@
 try {
-	let init=true;
-chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
-	if(window.location.href==request.message){
-		if(init){
-	 handleBrowserActionClicked(request.message);
-		init=false;
+	//console.log(window.location.href);
+	let expnd=[];
+//let init=true;
+
+function removeEls(d, array) {
+    var newArray = [];
+    for (let i = 0; i < array.length; i++) {
+        if (array[i] != d) {
+            newArray.push(array[i]);
+        }
+    }
+    return newArray;
+}
+
+function messageHdl(request, sender, sendResponse) {
+	console.log(request);
+	if(typeof request.type !=='undefined'){
+		 if(request.type ==='close'){
+		if(document.URL!=request.message){
+			
+					let xfr=null;
+		for(let i=0; i<expnd.length; i++){
+			if (expnd[i].src===request.message){
+				xfr=expnd[i];
+				break;
+			}
+		}
+		
+		if(!xfr){
+			
+					let ifrs=[...document.documentElement.getElementsByTagName('IFRAME')];
+		let fr=null;
+		for(let i=0; i<ifrs.length; i++){
+			if (ifrs[i].src===request.message){
+				fr=ifrs[i];
+				expnd.push(fr);
+				break;
+			}
+		}
+			
+			if(!!fr){
+						fr.style.setProperty( 'max-height', '-webkit-fill-available', 'important' );
+			fr.style.setProperty( 'max-width', '-webkit-fill-available', 'important' );	
+			fr.style.setProperty( 'min-height','-webkit-fill-available', 'important' );
+			fr.style.setProperty( 'min-width', '-webkit-fill-available', 'important' );
+			fr.style.setProperty( 'height','-webkit-fill-available', 'important' );
+			fr.style.setProperty( 'width', '-webkit-fill-available', 'important' );	
+
+			fr.style.setProperty( 'top', '', 'important' );
+			fr.style.setProperty( 'left', '', 'important' );
+			}
+		}else{
+			
+			
+		let ifrs=[...document.documentElement.getElementsByTagName('IFRAME')];
+		let fr=null;
+		for(let i=0; i<ifrs.length; i++){
+			if (ifrs[i].src===request.message){
+				fr=ifrs[i];
+				expnd=removeEls(fr, expnd);
+				break;
+			}
+		}
+		
+		if(!!fr){
+		let hg=Math.abs(request.bottom-request.top);
+		let wd=Math.abs(request.right-request.left);
+			fr.style.setProperty( 'max-height', hg+'px', 'important' );
+			fr.style.setProperty( 'max-width', wd+'px', 'important' );	
+			fr.style.setProperty( 'min-height', hg+'px', 'important' );
+			fr.style.setProperty( 'min-width', wd+'px', 'important' );
+			fr.style.setProperty( 'height', hg+'px', 'important' );
+			fr.style.setProperty( 'width', wd+'px', 'important' );	
+
+			fr.style.setProperty( 'top', request.top+'px', 'important' );
+			 fr.style.setProperty( 'left', request.left+'px', 'important' );
+			
+					let frct=fr.getBoundingClientRect();
+		if(frct.top!=request.top){
+			fr.style.setProperty( 'top', (parseFloat(fr.style.top)-(frct.top-request.top))+'px', 'important' );
+		}		
+		
+		if(frct.left!=request.left){
+			fr.style.setProperty( 'left', (parseFloat(fr.style.left)-(frct.left-request.left))+'px', 'important' );
+		}
+	}
+	
+		}
+	}
+	
+	
+	}else if(request.type ==='expand'){
+		if(document.URL==request.message){
+		handleBrowserActionClicked(request);
 		}
 	}
 
+	}else{
+	
+	if(window.location.href==request.message){
+	//	if(init){
+	 handleBrowserActionClicked(request);
+		//}
+	}else{
+		//if(init){
+			 convertEmbeds();
+			//console.log(window.location.href);
+			//}
+	}
+		// init=false;
+		
+}
+}
+	
+chrome.extension.onMessage.addListener(messageHdl);
+chrome.runtime.onMessage.addListener(messageHdl);
+
+
+
+
+/*function procNonIterable(array){
+	    var newArray = [];
+    for (let i = 0; i < array.length; i++) {
+            newArray.push(array[i]);
+    }
+    return newArray;
+}*/
+
+
+
+function convertEmbeds(){
+	
+	function emb_to_ifr(embeds){
+	embeds.forEach(function(node) {
+		try{
+			let rgx=new RegExp('<embed ', '');
+			node.outerHTML=node.outerHTML.split(rgx).join('<iframe ');
+			node.outerHTML=node.outerHTML.split('</embed>').join('</iframe>');
+		}catch(e){
+			node.outerHTML='<iframe src="'+node.src+'"></iframe>';
+		}
 	});
-function handleBrowserActionClicked(srcUrl) {
+	//return embeds;
+	}
+	
+	
+	let embeds=[...document.documentElement.getElementsByTagName('EMBED')];
+	
+	
+
+emb_to_ifr(embeds);
+
+}
+
+
+function handleBrowserActionClicked(bgMsg) {
 let ifrm=document.createElement('iframe');
 ifrm.style.setProperty( 'position', 'relative', 'important' );
 ifrm.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
@@ -17,6 +162,7 @@ ifrm.style.setProperty( 'width', '-webkit-fill-available', 'important' );
 ifrm.style.setProperty( 'margin', 0, 'important' );
 ifrm.style.setProperty( 'border', 0, 'important' );
 ifrm.style.setProperty( 'padding', 0, 'important' );
+ifrm.style.setProperty( 'display', 'flex', 'important' );
 
 ifrm.style.setProperty( 'top', '0.37ch', 'important' );
 ifrm.style.setProperty( 'left', '0.66ch', 'important' );
@@ -30,19 +176,9 @@ ifrm2.style.setProperty( 'border', 0, 'important' );
 ifrm2.style.setProperty( 'padding', 0, 'important' );
 ifrm2.style.setProperty( 'min-height', '100vh', 'important' );
 ifrm2.style.setProperty( 'pointer-events', 'none', 'important' );
+ifrm2.style.setProperty( 'display', 'flex', 'important' );
 
-function removeEls(d, array) {
-    var newArray = [];
-    for (let i = 0; i < array.length; i++) {
-        if (array[i] != d) {
-            newArray.push(array[i]);
-        }
-    }
-    return newArray;
-}
 
-	let embeds=[];
-	
 function un_hider(bool){
 
 let allNodes=[...document.querySelectorAll('*')];
@@ -63,7 +199,7 @@ if(bool){
 			if((node.getElementsByTagName('IFRAME').length===0 && node.getElementsByTagName('EMBED').length===0 && node.getElementsByTagName('VIDEO').length===0) && !vChild.includes(node)){
 				node.style.setProperty( 'display', '' );
 			}else{
-				node.style.setProperty( 'background', '' );
+				node.style.setProperty( 'background', '' );	
 				node.style.setProperty( 'background-color', '' );
 			}
 		}
@@ -103,29 +239,19 @@ allNodes.forEach(function(node) {
 un_hider(false);
 
 document.head.style.setProperty( 'visibility', 'visible', 'important' );
-document.head.style.setProperty( 'display', 'block', 'important' );
+document.head.style.setProperty( 'display', 'flex', 'important' );
 document.body.style.setProperty( 'overflow-x', 'scroll', 'important' );
 document.body.style.setProperty( 'overflow-y', 'scroll', 'important' );
-//document.body.style.setProperty( 'white-space', 'pre-wrap', 'important' );
+document.head.style.setProperty( 'position', 'absolute', 'important' );
+document.head.style.setProperty( 'width', '-webkit-fill-available', 'important' );
+document.documentElement.style.setProperty( 'white-space', 'pre-wrap', 'important' );
 //document.head.style.setProperty( 'pointer-events', '', 'important' );
 //document.documentElement.style.setProperty( 'pointer-events', '', 'important' );
 //hides all but vids in top level
 
 //convert all embeds in top level, ~embeds~, and iframes -> iframes.
 
-function emb_to_ifr(embeds){
-embeds.forEach(function(node) {
-	try{
-		let rgx=new RegExp('<embed ', '');
-		node.outerHTML=node.outerHTML.split(rgx).join('<iframe ');
-	}catch(e){
-		node.outerHTML='<iframe src="'+node.src+'"></iframe>';
-	}
-});
-//return embeds;
-}
 
-emb_to_ifr(embeds);
 
 let ht_a=`
 <style>
@@ -133,7 +259,7 @@ input::-webkit-textfield-decoration-container {
     background: buttonface;
 }
 </style>
-<main>
+<main style="margin: 0px !important; border: 0px !important; padding: 0px !important;">
 <button style="background-color: buttonface !important; visibility: initial !important;" id="three_plus" type="button">+ 3 thumbs</button>
 <button style="background-color: buttonface !important; visibility: initial !important;" id="three_neg" type="button">- 3 thumbs</button>
 <button style="background-color: buttonface !important; display: none; visibility: initial !important;" type="button" id="every"></button>
@@ -141,12 +267,20 @@ input::-webkit-textfield-decoration-container {
 <select style="width: 48.3vw; color: black; background-color: buttonface; visibility: initial !important;" name="txt_Bx" id="txt_Bx"></select>
 
 <input style="background-color: buttonface !important; visibility: initial !important;" id="scnB" type="button" Value="Scan for video">
-<input style="background-color: buttonface !important; visibility: initial !important;" id="genB" type="button" Value="Select video"><br>
+<input style="background-color: buttonface !important; visibility: initial !important;" id="genB" type="button" Value="Select video">
+`;
+
+if(typeof bgMsg.top !=='undefined'){
+	ht_a+= '<input lft="'+bgMsg.left+'" rgt="'+bgMsg.right+'" tp="'+bgMsg.top+'" btm="'+bgMsg.bottom+'" style="background-color: buttonface !important; visibility: initial !important;" id="rstD" type="button" Value="Toggle maximise">'
+}
+
+ht_a+=`
+<br>
 <span style="color: #dfdfdf !important; font-size: 1.83ch !important; visibility: initial !important;" id="frames" title="Scroll here to change number of frames.">24</span>
 <span style="color: #dfdfdf !important; font-size: 1.83ch !important; margin-inline-start: 4.4ch !important; visibility: initial !important;" title="Maximum speed when speeding through; scroll to change.">Max speed: </span>
 <input title="Maximum speed when speeding through; scroll to change." type="number" id="mxs" min="1" max="16" step="0.5" value="6" style="width: 9ch !important; background-color: buttonface !important; border-width: 0px !important; visibility: initial !important;"></input>
 </main>
-`;
+`
 
 
 let ht_c=`
@@ -221,7 +355,7 @@ main.style.setProperty( 'padding', 0, 'important' );
 
 
  
-ifrm.height=main.clientHeight;
+ifrm.height=main.getBoundingClientRect().height;
 
 var frame_btn=[...ifrm.contentWindow.document.querySelectorAll("span#frames")][0];
 var three_Plus=[...ifrm.contentWindow.document.querySelectorAll("button#three_plus")][0];
@@ -229,19 +363,6 @@ var three_Neg=[...ifrm.contentWindow.document.querySelectorAll("button#three_neg
 var clrr=[...ifrm.contentWindow.document.querySelectorAll("button#clear_er")][0];
 var mxsp=[...ifrm.contentWindow.document.querySelectorAll("input#mxs")][0];
 var myVdo;
-/*var thumbsA=[...document.body.querySelectorAll("div#thumbs")];
-var scrlA= [...document.body.querySelectorAll("button#scroll_curr")];
-var scrvA= [...document.body.querySelectorAll("button#scroll_vid")];
-var spbA= [...document.body.querySelectorAll("button#spdt")];
-var pipA= [...document.body.querySelectorAll("button#pnp")];
-var currA  =[...document.body.querySelectorAll("div#currTime")];
-
-var thumbs= thumbsA[thumbsA.length-1];
-var scrl= scrlA[scrlA.length-1];
-var scrv= scrvA[scrvA.length-1];
-var spb= spbA[spbA.length-1];
-var pip= pipA[pipA.length-1];
-var curr= currA[currA.length-1];*/
 
 var bSect=[...ifrm2.contentWindow.document.querySelectorAll("section#bSec")][0];
 
@@ -266,6 +387,17 @@ var curr  =[...ifrm2.contentWindow.document.querySelectorAll("div#currTime")][0]
 var evry= [...ifrm.contentWindow.document.querySelectorAll("button#every")][0];
 var scanB= [...ifrm.contentWindow.document.querySelectorAll("input#scnB")][0];
 var gnrB= [...ifrm.contentWindow.document.querySelectorAll("input#genB")][0];
+
+var clse;
+
+try{
+	clse=[...ifrm.contentWindow.document.querySelectorAll("input#rstD")][0];
+	clse.onclick=()=>{
+					chrome.runtime.sendMessage({msg: clse.ownerDocument.URL, left: parseFloat(clse.attributes.lft.value), right: parseFloat(clse.attributes.rgt.value), top: parseFloat(clse.attributes.tp.value), bottom: parseFloat(clse.attributes.btm.value), type:'close'}, function(response){
+					});
+	}
+}catch(e){;}
+
 var sp_swtch=0;
 
 var txtBx = [...ifrm.contentWindow.document.querySelectorAll('select#txt_Bx')][0];
@@ -694,7 +826,7 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 				 if(!vwg && frame[0].src!='' && frame[0].src!='about:blank' && frame[0]!==ifrm && frame[0]!=ifrm2){
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].src;
-						opt.setAttribute("index", -1);
+						opt.setAttribute("index", '-'+index);
 						opt.style.cssText='color: black !important;';
 						txtBx.appendChild(opt);	
 			tbG=false;
@@ -734,12 +866,50 @@ function changeValue()
 {
 	if(txtBx.children.length>0){
 		let selIx=txtBx[txtBx.selectedIndex].getAttribute('index');
+		let tIx=parseInt(selIx);
+		let tIx_el=Math.abs(selIx);
+			let frEl=allFrames[tIx_el][0];
+		if(tIx<0){
+			if(!expnd.includes(frEl)){
+			let frct=frEl.getBoundingClientRect();
+			chrome.runtime.sendMessage({msg: txtBx[txtBx.selectedIndex].textContent, left: frct.left, right: frct.right, top: frct.top, bottom: frct.bottom, type: 'expand'}, function(response){
+			 gnrB.value='iFrame expanded!';
+
+			 
 		
-		if(selIx=='-1'){
-			chrome.runtime.sendMessage({msg: txtBx[txtBx.selectedIndex].textContent}, function(response){
-			 gnrB.value='iFrame opened!';
-			console.log(response.msg);
+			 
+			 frEl.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
+			 
+			 //frEl.style.zIndex=Number.MAX_SAFE_INTEGER;
+			 
+			frEl.style.setProperty( 'margin', 0, 'important' );
+			frEl.style.setProperty( 'border', 0, 'important' );
+			frEl.style.setProperty( 'padding', 0, 'important' );
+			 
+			 frEl.style.setProperty( 'position', 'relative', 'important' );
+			 frEl.style.setProperty( 'top', '0px', 'important' );
+			 frEl.style.setProperty( 'left', '0px', 'important' );
+			 frEl.style.setProperty( 'min-height', '-webkit-fill-available', 'important' );
+			 frEl.style.setProperty( 'min-width', '-webkit-fill-available', 'important' );
+			 //frEl.style.position='fixed';
+			 //frEl.style.top='0px';
+			 //frEl.style.left='0px';
+			 
+			/* let wdt=Math.min(window.innerWidth,document.body.innerWidth);
+			 let hgt=Math.min(window.innerHeight,document.body.innerHeight);*/
+			 
+		//	frEl.style.minHeight='-webkit-fill-available';
+			//frEl.style.minWidth='-webkit-fill-available';
+			
+			/*frEl.style.maxHeight='-webkit-fill-available';
+			 frEl.style.height=hgt;
+			 frEl.style.maxWidth=wdt;
+			 frEl.style.width=wdt;*/
+			 
+			//console.log('Expanded: '+response.message);
+			expnd.push(frEl);
 			});
+		}
 		}else if(!tbG){
 		curr_thumb=0;
 		loadFlag=false;
@@ -750,7 +920,7 @@ function changeValue()
 		vid.src = txtVal;      
 		myVdo.load(); 
 		myVdo.pause();*/
-		let myVdo_el=vids[parseInt(selIx)];
+		let myVdo_el=vids[tIx_el];
 		myVdo=myVdo_el[0];
 		ifrm2.style.setProperty( 'pointer-events', '', 'important' );
 		shiftBtns(true);
@@ -764,7 +934,7 @@ function changeValue()
 		let vrc= myVdo.getBoundingClientRect();
 		ifrm2.style.setProperty( 'top', (vrc.bottom+gapVid)+'px', 'important' );
 		let ifr2c=ifrm2.getBoundingClientRect();
-		if(ifr2c.top>vrc.bottom){
+		if(ifr2c.top!=vrc.bottom){
 			ifrm2.style.setProperty( 'top', (parseFloat(ifrm2.style.top)-(ifr2c.top-vrc.bottom)+gapVid)+'px', 'important' );
 		}
 
@@ -1192,11 +1362,13 @@ ct.style.cssText+="color: white  !important; font-size: 169%  !important; displa
 
 //ct.style.setProperty( 'transform', 'scale('+().toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+')', 'important' );
 
-ct.style.setProperty( 'transform', 'scale('+(2.34)+')', 'important' );
+
 
 pgb.style.width=window.getComputedStyle(f).width;
 
 rsz();
+
+ct.style.setProperty( 'transform', 'scale('+((f.scrollWidth/ct.clientWidth)*0.2).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+')', 'important' );
 
 f.onwheel= (event) => {
 captions[curr_thumb].parentElement.parentElement.scrollIntoView();

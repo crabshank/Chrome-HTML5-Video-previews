@@ -12,39 +12,41 @@ function getUrl(tab){
 	
 	}
 }
-function send(message) {
+function send(message,dims,tabId) {
+var msg={};
 
-    let params = {
-      active: true,
-      currentWindow: true
-    }
-    chrome.tabs.query(params, gotTabs);
-
-    function gotTabs(tabs) {
-      console.log("got tabs");
-      console.log(tabs);
-      // send a message to the content script
-     // let message = userinput.value();
-      let msg = {
+    if(dims){
+	 msg = {
+        message: message.msg,
+		left: message.left,
+		right: message.right,
+		top: message.top,
+		bottom: message.bottom,
+		type: message.type
+      };
+	}else{
+		 msg = {
         message: message
       };
-      chrome.tabs.sendMessage(tabs[0].id, msg);
+		
+	}
+      chrome.tabs.sendMessage(tabId, msg);
     }
 
-  }
 
 chrome.action.onClicked.addListener((tab) => {
-  send(getUrl(tab));
+  send(getUrl(tab),false,tab.id);
 });
 
 function handleMessage(request, sender, sendResponse) {
-  				chrome.tabs.create({
+  				/*chrome.tabs.create({
 				"url": request.msg,
 				"windowId": sender.tab.windowId,
 				"index": (sender.tab.index+1),
 				"active": false
-				}, function(tab) {});
-  sendResponse({msg: 'Inaccessible frame opened in new tab!'});
+				}, function(tab) {});*/
+				send(request,true,sender.tab.id);
+ // sendResponse({msg: 'Inaccessible frame expanded!'});
 }
 
 chrome.runtime.onMessage.addListener(handleMessage);
