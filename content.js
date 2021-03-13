@@ -535,6 +535,7 @@ var checkDur = function() {
 
 
 function shiftBtns(bool){
+	try{
 	pip.style.top=Math.min(curr.getBoundingClientRect().top-23,myVdo.clientHeight)+'px';
 	//curr.style.top=(parseFloat(pip.style.top)+4)+'px';
 	if(bool){
@@ -542,6 +543,7 @@ function shiftBtns(bool){
 	scrv.style.top=(spb.getBoundingClientRect().top-spb.getBoundingClientRect().height-2)+'px';
 	scrl.style.top=(scrv.getBoundingClientRect().top-scrv.getBoundingClientRect().height-2)+'px';
 	}
+	}catch(e){;}
 }
 
 //shiftBtns(true);
@@ -556,6 +558,12 @@ clck_b = performance.now();
 for (let i=myVdo.buffered.length-1; i>=0; i--){	
 let t_i=myVdo.buffered.end(i);
 let s_i=myVdo.buffered.start(i);
+
+if(t_i==myVdo.duration && c_i>=s_i){
+				myVdo.playbackRate=mxsp.value;
+				break;
+}else{
+
 if(c_i<=t_i && c_i>=s_i){
 	if(t_i>t_a){
 		lst=Math.floor((100000*((t_i-t_a)/(clck_b-clck_a))))*0.01;
@@ -569,6 +577,9 @@ if(c_i<=t_i && c_i>=s_i){
 }else if(c_i>t_i){
 	break;
 }
+
+}
+
 
 }
 }
