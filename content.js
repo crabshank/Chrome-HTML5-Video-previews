@@ -996,7 +996,7 @@ function LnkOp()
 
 					
 					myVdo.style.setProperty( 'width', 'inherit', 'important' );
-					myVdo.style.setProperty( 'height', 'auto', 'important' );
+					myVdo.style.setProperty( 'height', 'inherit', 'important' );
 					myVdo.style.setProperty( 'position', 'absolute', 'important' );
 
 
