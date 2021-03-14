@@ -1525,6 +1525,7 @@ let scrBr=`
 }
 video::-webkit-media-controls {
     display: flex !important;
+    visibility: visible !important;
 }
 </style>
 `
