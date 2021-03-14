@@ -1,6 +1,7 @@
 try {
 	//console.log(window.location.href);
 	let expnd=[];
+	//let ordr=0;
 //let init=true;
 
 function removeEls(d, array) {
@@ -240,11 +241,14 @@ un_hider(false);
 
 document.head.style.setProperty( 'visibility', 'visible', 'important' );
 document.head.style.setProperty( 'display', 'flex', 'important' );
+document.body.style.setProperty( 'display', 'contents', 'important' );
 document.body.style.setProperty( 'overflow-x', 'scroll', 'important' );
 document.body.style.setProperty( 'overflow-y', 'scroll', 'important' );
 document.head.style.setProperty( 'position', 'absolute', 'important' );
 document.head.style.setProperty( 'width', '-webkit-fill-available', 'important' );
 document.documentElement.style.setProperty( 'white-space', 'pre-wrap', 'important' );
+document.documentElement.style.setProperty( 'overflow-x', 'overlay', 'important' );
+document.documentElement.style.setProperty( 'overflow-y', 'ovarlay', 'important' );
 //document.head.style.setProperty( 'pointer-events', '', 'important' );
 //document.documentElement.style.setProperty( 'pointer-events', '', 'important' );
 //hides all but vids in top level
@@ -276,8 +280,8 @@ if(typeof bgMsg.top !=='undefined'){
 
 ht_a+=`
 <br>
-<span style="color: #dfdfdf !important; font-size: 1.83ch !important; visibility: initial !important;" id="frames" title="Scroll here to change number of frames.">24</span>
-<span style="color: #dfdfdf !important; font-size: 1.83ch !important; margin-inline-start: 4.4ch !important; visibility: initial !important;" title="Maximum speed when speeding through; scroll to change.">Max speed: </span>
+<span style="color: #dfdfdf !important;font-size: 1.83ch !important;visibility: initial !important;background-color: #000000b5 !important;" id="frames" title="Scroll here to change number of frames.">24</span>
+<span style="color: #dfdfdf !important; font-size: 1.83ch !important; margin-inline-start: 4.4ch !important; visibility: initial !important;background-color: #000000b5 !important;" title="Maximum speed when speeding through; scroll to change.">Max speed: </span>
 <input title="Maximum speed when speeding through; scroll to change." type="number" id="mxs" min="1" max="16" step="0.5" value="6" style="width: 9ch !important; background-color: buttonface !important; border-width: 0px !important; visibility: initial !important;"></input>
 </main>
 `
@@ -416,9 +420,11 @@ var rsz= ()=>{
 	let tmbw=bSect.getBoundingClientRect().left-mgLft;
 tmbw_f=tmbw.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 
- ifrm2.style.minWidth=Math.min(document.body.clientWidth,window.innerWidth)+'px';
- ifrm2.style.width=Math.min(document.body.clientWidth,window.innerWidth)+'px';
- ifrm2.style.maxWidth=Math.min(document.body.clientWidth,window.innerWidth)+'px'; 
+let wd=Math.min(window.availWidth,document.documentElement.scrollWidth);
+
+ ifrm2.style.minWidth=wd+'px';
+ ifrm2.style.width=wd+'px';
+ ifrm2.style.maxWidth=wd+'px'; 
  
  sc1.style.minWidth=tmbw_f+'px';
  sc1.style.width=tmbw_f+'px';
@@ -834,7 +840,7 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 			 
 			 try{
 				 
-				 if(!vwg && frame[0].src!='' && frame[0].src!='about:blank' && frame[0]!==ifrm && frame[0]!=ifrm2){
+				 if(!vwg && frame[0].src!='' && frame[0].src!='about:blank' && frame[0].src!='javascript:false'&& frame[0].src!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2){
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].src;
 						opt.setAttribute("index", '-'+index);
@@ -900,8 +906,8 @@ function changeValue()
 			 frEl.style.setProperty( 'position', 'relative', 'important' );
 			 frEl.style.setProperty( 'top', '0px', 'important' );
 			 frEl.style.setProperty( 'left', '0px', 'important' );
-			 frEl.style.setProperty( 'min-height', '-webkit-fill-available', 'important' );
-			 frEl.style.setProperty( 'min-width', '-webkit-fill-available', 'important' );
+			 //frEl.style.setProperty( 'min-height', '-webkit-fill-available', 'important' );
+			// frEl.style.setProperty( 'min-width', '-webkit-fill-available', 'important' );
 			 //frEl.style.position='fixed';
 			 //frEl.style.top='0px';
 			 //frEl.style.left='0px';
@@ -918,6 +924,19 @@ function changeValue()
 			 frEl.style.width=wdt;*/
 			 
 			//console.log('Expanded: '+response.message);
+			
+			let wd=Math.min(window.availWidth,document.documentElement.scrollWidth);
+			let hg=Math.min(window.availHeight,document.documentElement.scrollHeight);
+
+			frEl.style.setProperty( 'max-height', hg+'px', 'important' );
+			frEl.style.setProperty( 'max-width', wd+'px', 'important' );	
+			frEl.style.setProperty( 'min-height', hg+'px', 'important' );
+			frEl.style.setProperty( 'min-width', wd+'px', 'important' );
+			frEl.style.setProperty( 'height', hg+'px', 'important' );
+			frEl.style.setProperty( 'width', wd+'px', 'important' );	
+				
+			frEl.scrolling="yes";
+			
 			expnd.push(frEl);
 			});
 		}
@@ -933,15 +952,27 @@ function changeValue()
 		myVdo.pause();*/
 		let myVdo_el=vids[tIx_el];
 		myVdo=myVdo_el[0];
+		
+
+					let ifRct=ifrm.getBoundingClientRect();
+					myVdo.style.setProperty( 'position', 'absolute', 'important' );
+
+			myVdo.style.setProperty( 'top', (ifRct.bottom)+'px', 'important' );
+		
+			myVdo.style.setProperty( 'left', (ifRct.left)+'px', 'important' );
+			
+		
 		ifrm2.style.setProperty( 'pointer-events', '', 'important' );
 		shiftBtns(true);
-		bSect.style.visibility='visible';
+		//bSect.style.visibility='visible';
+		bSect.style.setProperty( 'visibility', 'visible', 'important' );
 		/*pip.style.visibility='visible';
 		spb.style.visibility='visible';
 		scrv.style.visibility='visible';
 		scrl.style.visibility='visible';
 		curr.style.visibility='visible';*/
-		thumbs.style.visibility='visible';
+		//thumbs.style.visibility='visible';
+		thumbs.style.setProperty( 'visibility', 'visible', 'important' );
 		let vrc= myVdo.getBoundingClientRect();
 		ifrm2.style.setProperty( 'top', (vrc.bottom+gapVid)+'px', 'important' );
 		let ifr2c=ifrm2.getBoundingClientRect();
@@ -1334,7 +1365,8 @@ ctx.drawImage(myVdo, 0, 0, v_width, v_height);
 
 
 
-let ifw=Math.min(document.body.clientWidth,window.innerWidth);
+
+let ifw=Math.min(window.availWidth,document.documentElement.scrollWidth);
 ifrm2.style.setProperty=('min-width',ifw+'px','important');
 ifrm2.style.setProperty=('width',ifw+'px','important');
 ifrm2.style.setProperty=('max-width',ifw+'px','important');
@@ -1429,6 +1461,9 @@ ifrm.src = "about:blank";
 ifrm.contentWindow.document.open();
 ifrm.contentWindow.document.write(ht_a);
 ifrm.contentWindow.document.close();
+
+
+
 
 document.body.insertAdjacentElement('beforeend',ifrm2);
 ifrm2.src = "about:blank";
