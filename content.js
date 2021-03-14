@@ -1016,6 +1016,7 @@ function LnkOp()
 		}
 			*/
 			
+			myVdo.scrollIntoView();
 		
 		ifrm2.style.setProperty( 'pointer-events', '', 'important' );
 		shiftBtns(true);
