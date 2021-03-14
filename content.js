@@ -253,7 +253,7 @@ document.head.style.setProperty( 'position', 'absolute', 'important' );
 document.head.style.setProperty( 'width', '-webkit-fill-available', 'important' );
 document.documentElement.style.setProperty( 'white-space', 'pre-wrap', 'important' );
 document.documentElement.style.setProperty( 'position', 'sticky', 'important' );
-document.documentElement.style.setProperty( 'overflow', 'auto	', 'important' );
+document.documentElement.style.setProperty( 'overflow', 'auto', 'important' );
 //document.head.style.setProperty( 'pointer-events', '', 'important' );
 //document.documentElement.style.setProperty( 'pointer-events', '', 'important' );
 //hides all but vids in top level
