@@ -77,14 +77,14 @@ function messageHdl(request, sender, sendResponse) {
 			fr.style.setProperty( 'top', request.top+'px', 'important' );
 			 fr.style.setProperty( 'left', request.left+'px', 'important' );
 			
-					let frct=fr.getBoundingClientRect();
+				/*	let frct=fr.getBoundingClientRect();
 		if(frct.top!=request.top){
 			fr.style.setProperty( 'top', (parseFloat(fr.style.top)-(frct.top-request.top))+'px', 'important' );
 		}		
 		
 		if(frct.left!=request.left){
 			fr.style.setProperty( 'left', (parseFloat(fr.style.left)-(frct.left-request.left))+'px', 'important' );
-		}
+		}*/
 	}
 	
 		}
@@ -160,10 +160,12 @@ let ifrm=document.createElement('iframe');
 ifrm.style.setProperty( 'position', 'relative', 'important' );
 ifrm.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
 ifrm.style.setProperty( 'width', '-webkit-fill-available', 'important' );
+ifrm.style.setProperty( 'height', '-webkit-fill-available', 'important' );
 ifrm.style.setProperty( 'margin', 0, 'important' );
 ifrm.style.setProperty( 'border', 0, 'important' );
 ifrm.style.setProperty( 'padding', 0, 'important' );
 ifrm.style.setProperty( 'display', 'flex', 'important' );
+ifrm.style.setProperty( 'visibility', 'visible', 'important' );
 
 ifrm.style.setProperty( 'top', '0.37ch', 'important' );
 ifrm.style.setProperty( 'left', '0.66ch', 'important' );
@@ -178,7 +180,7 @@ ifrm2.style.setProperty( 'padding', 0, 'important' );
 ifrm2.style.setProperty( 'min-height', '100vh', 'important' );
 ifrm2.style.setProperty( 'pointer-events', 'none', 'important' );
 ifrm2.style.setProperty( 'display', 'flex', 'important' );
-
+ifrm2.style.setProperty( 'visibility', 'visible', 'important' );
 
 function un_hider(bool){
 
@@ -241,14 +243,14 @@ un_hider(false);
 
 document.head.style.setProperty( 'visibility', 'visible', 'important' );
 document.head.style.setProperty( 'display', 'flex', 'important' );
-document.body.style.setProperty( 'display', 'contents', 'important' );
+document.body.style.setProperty( 'display', 'block', 'important' );
 document.body.style.setProperty( 'overflow-x', 'scroll', 'important' );
 document.body.style.setProperty( 'overflow-y', 'scroll', 'important' );
 document.head.style.setProperty( 'position', 'absolute', 'important' );
 document.head.style.setProperty( 'width', '-webkit-fill-available', 'important' );
 document.documentElement.style.setProperty( 'white-space', 'pre-wrap', 'important' );
-document.documentElement.style.setProperty( 'overflow-x', 'overlay', 'important' );
-document.documentElement.style.setProperty( 'overflow-y', 'ovarlay', 'important' );
+document.documentElement.style.setProperty( 'position', 'sticky', 'important' );
+document.documentElement.style.setProperty( 'overflow', 'auto	', 'important' );
 //document.head.style.setProperty( 'pointer-events', '', 'important' );
 //document.documentElement.style.setProperty( 'pointer-events', '', 'important' );
 //hides all but vids in top level
@@ -359,8 +361,8 @@ main.style.setProperty( 'padding', 0, 'important' );
 
 
  
-ifrm.height=main.getBoundingClientRect().height;
-
+//ifrm.style.minHeight=main.getBoundingClientRect().height;
+ifrm.style.setProperty( 'min-height', main.getBoundingClientRect().height+'px', 'important' );
 var frame_btn=[...ifrm.contentWindow.document.querySelectorAll("span#frames")][0];
 var three_Plus=[...ifrm.contentWindow.document.querySelectorAll("button#three_plus")][0];
 var three_Neg=[...ifrm.contentWindow.document.querySelectorAll("button#three_neg")][0];
@@ -841,6 +843,7 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 			 try{
 				 
 				 if(!vwg && frame[0].src!='' && frame[0].src!='about:blank' && frame[0].src!='javascript:false'&& frame[0].src!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2){
+					 	frame[0].style.setProperty( 'visibility', 'visible', 'important' );
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].src;
 						opt.setAttribute("index", '-'+index);
@@ -954,12 +957,23 @@ function changeValue()
 		myVdo=myVdo_el[0];
 		
 
-					let ifRct=ifrm.getBoundingClientRect();
+					
 					myVdo.style.setProperty( 'position', 'absolute', 'important' );
 
-			myVdo.style.setProperty( 'top', (ifRct.bottom)+'px', 'important' );
-		
-			myVdo.style.setProperty( 'left', (ifRct.left)+'px', 'important' );
+
+					let ifrc=ifrm.getBoundingClientRect();
+
+				
+					myVdo.style.setProperty( 'top', (ifrc.bottom)+'px', 'important' );
+			myVdo.style.setProperty( 'left', (ifrc.left)+'px', 'important' );
+let vrc= myVdo.getBoundingClientRect();
+		if(vrc.top!=ifrc.bottom){
+			myVdo.style.setProperty( 'top', (vrc.top+ifrc.bottom-parseFloat(myVdo.style.top))+'px', 'important' );
+		}		
+		if(vrc.left!=ifrc.left){
+			myVdo.style.setProperty( 'left',(vrc.left+ifrc.left-parseFloat(myVdo.style.left))+'px', 'important' );
+		}
+			
 			
 		
 		ifrm2.style.setProperty( 'pointer-events', '', 'important' );
@@ -973,12 +987,13 @@ function changeValue()
 		curr.style.visibility='visible';*/
 		//thumbs.style.visibility='visible';
 		thumbs.style.setProperty( 'visibility', 'visible', 'important' );
-		let vrc= myVdo.getBoundingClientRect();
+		vrc= myVdo.getBoundingClientRect();
 		ifrm2.style.setProperty( 'top', (vrc.bottom+gapVid)+'px', 'important' );
-		let ifr2c=ifrm2.getBoundingClientRect();
+		
+		/*let ifr2c=ifrm2.getBoundingClientRect();
 		if(ifr2c.top!=vrc.bottom){
 			ifrm2.style.setProperty( 'top', (parseFloat(ifrm2.style.top)-(ifr2c.top-vrc.bottom)+gapVid)+'px', 'important' );
-		}
+		}*/
 
 		myVdo.onwheel= (event) => {
 		skip(event);
