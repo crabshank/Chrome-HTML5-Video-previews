@@ -1315,6 +1315,7 @@ function thumbseek(bool){
 			vhw.h=myVdo.videoHeight;
 			vhw.w=myVdo.videoWidth;
 			//myVdo.style.height=(10000*(vhw.h/(vhw.w+vhw.h))/80).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"vw";
+			gnrB.value='Generating thumbs';
 			generateThumbnail();
 			ttmp++;
 			if (ttmp<done_t) {
@@ -1327,6 +1328,7 @@ function thumbseek(bool){
 			}else {
 				endGtMv();
 				aseek=0;
+				gnrB.value='Generate thumbs';
 				tTrkFlg=false;
 				time_track=-1;
 				ttmp=0;
