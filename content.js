@@ -1510,10 +1510,10 @@ alert('Video not loaded!');
 
 let scrBr=`
 <style>
-::-webkit-scrollbar {
+::-webkit-scrollbar, ::-webkit-scrollbar-corner{
     opacity: 0 !important;
 }
-*:hover::-webkit-scrollbar {
+*:hover::-webkit-scrollbar, *:hover::-webkit-scrollbar-corner{
     background-color: buttonface !important;
     opacity: 1 !important;
 }
