@@ -996,7 +996,8 @@ function LnkOp()
 				
 					myVdo.style.setProperty( 'top', (ifrc.bottom)+'px', 'important' );
 			myVdo.style.setProperty( 'left', (ifrc.left)+'px', 'important' );
-let vrc= myVdo.getBoundingClientRect();
+			
+/*let vrc= myVdo.getBoundingClientRect();
 		if(vrc.top!=ifrc.bottom){
 			myVdo.style.setProperty( 'top', (vrc.top+ifrc.bottom-parseFloat(myVdo.style.top))+'px', 'important' );
 		}		
@@ -1004,7 +1005,7 @@ let vrc= myVdo.getBoundingClientRect();
 			//myVdo.style.setProperty( 'left',(vrc.left+ifrc.left-parseFloat(myVdo.style.left))+'px', 'important' );
 			myVdo.style.setProperty( 'left','0px', 'important' );
 		}
-			
+			*/
 			
 		
 		ifrm2.style.setProperty( 'pointer-events', '', 'important' );
