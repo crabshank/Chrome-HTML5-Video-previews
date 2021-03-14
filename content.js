@@ -2,7 +2,7 @@ try {
 	//console.log(window.location.href);
 	let expnd=[];
 	//let ordr=0;
-//let init=true;
+let init=true;
 
 function removeEls(d, array) {
     var newArray = [];
@@ -92,17 +92,19 @@ function messageHdl(request, sender, sendResponse) {
 	
 	
 	}else if(request.type ==='expand'){
-		if(document.URL==request.message){
+		if(document.URL==request.message && init){
 		handleBrowserActionClicked(request);
+		init=false;
 		}
 	}
 
 	}else{
 	
 	if(window.location.href==request.message){
-	//	if(init){
+	if(init){
 	 handleBrowserActionClicked(request);
-		//}
+		init=false;
+		}
 	}else{
 		//if(init){
 			 convertEmbeds();
@@ -494,9 +496,13 @@ gnrB.onclick=()=>{
 	changeValue();
 }
 
-	opnr.onclick=()=>{
-		LnkOp();
-	}
+opnr.onclick=()=>{
+	LnkOp();
+}
+
+txtBx.onchange=()=>{
+	 gnrB.value='Select video';
+}
 
 
 function vidSrc(vid){
