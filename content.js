@@ -203,7 +203,8 @@ if(bool){
 				node.style.setProperty( 'display', '' );
 			}else{
 				node.style.setProperty( 'background', '' );	
-				node.style.setProperty( 'background-color', '' );
+			node.style.setProperty( 'color', '' );
+			node.style.setProperty( 'overflow', '' );
 			}
 		}
 	});
@@ -217,7 +218,9 @@ allNodes.forEach(function(node) {
 				node.style.setProperty( 'display', 'none', 'important' );
 			}else{
 				node.style.setProperty( 'background', 'transparent', 'important' );
-				node.style.setProperty( 'background-color', 'transparent', 'important' );
+			node.style.setProperty( 'color', 'transparent', 'important' );
+			node.style.setProperty( 'overflow', 'scroll', 'important' );
+				
 			}
 		}
 	
@@ -971,7 +974,8 @@ let vrc= myVdo.getBoundingClientRect();
 			myVdo.style.setProperty( 'top', (vrc.top+ifrc.bottom-parseFloat(myVdo.style.top))+'px', 'important' );
 		}		
 		if(vrc.left!=ifrc.left){
-			myVdo.style.setProperty( 'left',(vrc.left+ifrc.left-parseFloat(myVdo.style.left))+'px', 'important' );
+			//myVdo.style.setProperty( 'left',(vrc.left+ifrc.left-parseFloat(myVdo.style.left))+'px', 'important' );
+			myVdo.style.setProperty( 'left','0px', 'important' );
 		}
 			
 			
