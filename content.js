@@ -857,6 +857,7 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].src;
 						opt.setAttribute("index", '-'+index);
+						opt.setAttribute("link", frame[0].src);
 						opt.style.cssText='color: black !important;';
 						txtBx.appendChild(opt);	
 			tbG=false;
@@ -872,8 +873,10 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 	  vids.forEach((vid,index) => {
     let opt = document.createElement('option');
 	opt.setAttribute("index", index);
+	let lk=vidSrc(vid[0]);
+	opt.setAttribute("link", lk);
 	opt.style.cssText='color: black !important;';
-    opt.textContent = '('+formatTime(vid[0].duration)+') - '+vidSrc(vid[0]);
+    opt.textContent = '('+formatTime(vid[0].duration)+') - '+lk;
 	    txtBx.appendChild(opt);	
 		tbG=false;
 		   gnrB.value='Select video';
@@ -900,7 +903,7 @@ function LnkOp()
 		let tIx=parseInt(selIx);
 		let tIx_el=Math.abs(selIx);
 			let frEl=allFrames[tIx_el][0];
-			chrome.runtime.sendMessage({msg: txtBx[txtBx.selectedIndex].textContent, type: 'open'}, function(response){});
+			chrome.runtime.sendMessage({msg: txtBx[txtBx.selectedIndex].attributes.link.value, type: 'open'}, function(response){});
 			
 			}
 	
@@ -915,7 +918,7 @@ function LnkOp()
 		if(tIx<0){
 			if(!expnd.includes(frEl)){
 			let frct=frEl.getBoundingClientRect();
-			chrome.runtime.sendMessage({msg: txtBx[txtBx.selectedIndex].textContent, left: frct.left, right: frct.right, top: frct.top, bottom: frct.bottom, type: 'expand'}, function(response){
+			chrome.runtime.sendMessage({msg: txtBx[txtBx.selectedIndex].attributes.link.value, left: frct.left, right: frct.right, top: frct.top, bottom: frct.bottom, type: 'expand'}, function(response){
 			 gnrB.value='iFrame expanded!';
 
 			 
@@ -1500,7 +1503,7 @@ let scrBr=`
     opacity: 0 !important;
 }
 *:hover::-webkit-scrollbar {
-    background: buttonface !important;
+    background-color: buttonface !important;
     opacity: 1 !important;
 }
 </style>
