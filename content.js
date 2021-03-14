@@ -994,6 +994,8 @@ function LnkOp()
 		
 
 					
+					myVdo.style.setProperty( 'width', '-webkit-fill-available', 'important' );
+					myVdo.style.setProperty( 'height', 'auto', 'important' );
 					myVdo.style.setProperty( 'position', 'absolute', 'important' );
 
 
