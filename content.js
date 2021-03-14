@@ -219,7 +219,9 @@ allNodes.forEach(function(node) {
 	
 	if(node.nodeName!=='IFRAME' && node.nodeName!=='EMBED' && node.nodeName!=='VIDEO'){
 			if((node.getElementsByTagName('IFRAME').length===0 && node.getElementsByTagName('EMBED').length===0 && node.getElementsByTagName('VIDEO').length===0) && !vChild.includes(node)){
+				if(!vChild.includes(node)){
 				node.style.setProperty( 'display', 'none', 'important' );
+				}
 			}else{
 				node.style.setProperty( 'width', '-webkit-fill-available', 'important' );
 				node.style.setProperty( 'height', '-webkit-fill-available', 'important' );
@@ -1519,6 +1521,9 @@ let scrBr=`
 *:hover::-webkit-scrollbar, *:hover::-webkit-scrollbar-corner{
     background-color: buttonface !important;
     opacity: 1 !important;
+}
+video::-webkit-media-controls {
+    display: flex !important;
 }
 </style>
 `
