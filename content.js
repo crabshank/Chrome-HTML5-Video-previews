@@ -203,6 +203,8 @@ if(bool){
 				node.style.setProperty( 'display', '' );
 			}else{
 				node.style.setProperty( 'background', '' );	
+								node.style.setProperty( 'width', '', 'important' );
+				node.style.setProperty( 'height', '', 'important' );
 		node.style.setProperty( 'color', '' );
 			node.style.setProperty( 'overflow', '' );
 			}
@@ -217,10 +219,12 @@ allNodes.forEach(function(node) {
 			if((node.getElementsByTagName('IFRAME').length===0 && node.getElementsByTagName('EMBED').length===0 && node.getElementsByTagName('VIDEO').length===0) && !vChild.includes(node)){
 				node.style.setProperty( 'display', 'none', 'important' );
 			}else{
+				node.style.setProperty( 'width', '-webkit-fill-available', 'important' );
+				node.style.setProperty( 'height', '-webkit-fill-available', 'important' );
 				node.style.setProperty( 'background', 'transparent', 'important' );
 			node.style.setProperty( 'color', 'transparent', 'important' );
-			node.style.setProperty( 'overflow', 'visible', 'important' );
-				
+			node.style.setProperty( 'overflow', 'scroll', 'important' );
+			
 			}
 		}
 	
@@ -249,11 +253,11 @@ document.head.style.setProperty( 'display', 'flex', 'important' );
 document.body.style.setProperty( 'display', 'block', 'important' );
 document.head.style.setProperty( 'position', 'absolute', 'important' );
 document.head.style.setProperty( 'width', '-webkit-fill-available', 'important' );
-document.body.style.setProperty( 'overflow', 'visible', 'important' );
+document.body.style.setProperty( 'overflow', 'scroll', 'important' );
 
 //document.documentElement.style.setProperty( 'white-space', 'pre-wrap', 'important' );
 document.documentElement.style.setProperty( 'position', 'sticky', 'important' );
-document.documentElement.style.setProperty( 'overflow', 'auto', 'important' );
+document.documentElement.style.setProperty( 'overflow', 'scroll', 'important' );
 //document.head.style.setProperty( 'pointer-events', '', 'important' );
 //document.documentElement.style.setProperty( 'pointer-events', '', 'important' );
 //hides all but vids in top level
