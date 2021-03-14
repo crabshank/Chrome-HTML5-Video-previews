@@ -277,6 +277,7 @@ input::-webkit-textfield-decoration-container {
 
 <input style="background-color: buttonface !important; visibility: initial !important;" id="scnB" type="button" Value="Scan for video">
 <input style="background-color: buttonface !important; visibility: initial !important;" id="genB" type="button" Value="Select video">
+<input style="background-color: buttonface !important; visibility: initial !important;" id="opnVd" type="button" Value="Open link">
 `;
 
 if(typeof bgMsg.top !=='undefined'){
@@ -397,6 +398,7 @@ var evry= [...ifrm.contentWindow.document.querySelectorAll("button#every")][0];
 var scanB= [...ifrm.contentWindow.document.querySelectorAll("input#scnB")][0];
 var gnrB= [...ifrm.contentWindow.document.querySelectorAll("input#genB")][0];
 
+var opnr= [...ifrm.contentWindow.document.querySelectorAll("input#opnVd")][0];
 var clse;
 
 try{
@@ -487,6 +489,11 @@ scanB.onclick=()=>{
 gnrB.onclick=()=>{
 	changeValue();
 }
+
+	opnr.onclick=()=>{
+		LnkOp();
+	}
+
 
 function vidSrc(vid){
 	if (vid.src !== "") {
@@ -885,7 +892,20 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
   
 }
 
-function changeValue()
+function LnkOp()
+{
+	
+		if(txtBx.children.length>0){
+		let selIx=txtBx[txtBx.selectedIndex].getAttribute('index');
+		let tIx=parseInt(selIx);
+		let tIx_el=Math.abs(selIx);
+			let frEl=allFrames[tIx_el][0];
+			chrome.runtime.sendMessage({msg: txtBx[txtBx.selectedIndex].textContent, type: 'open'}, function(response){});
+			
+			}
+	
+}
+	function changeValue()
 {
 	if(txtBx.children.length>0){
 		let selIx=txtBx[txtBx.selectedIndex].getAttribute('index');
@@ -1474,12 +1494,27 @@ alert('Video not loaded!');
 
 }
 
+let scrBr=`
+<style>
+::-webkit-scrollbar {
+    opacity: 0 !important;
+}
+*:hover::-webkit-scrollbar {
+    background: buttonface !important;
+    opacity: 1 !important;
+}
+</style>
+`
+document.head.insertAdjacentHTML('afterbegin',scrBr);
+
 document.head.insertAdjacentElement('afterbegin',ifrm);
 ifrm.src = "about:blank";
 
 ifrm.contentWindow.document.open();
 ifrm.contentWindow.document.write(ht_a);
 ifrm.contentWindow.document.close();
+
+
 
 
 

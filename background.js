@@ -39,13 +39,16 @@ chrome.action.onClicked.addListener((tab) => {
 });
 
 function handleMessage(request, sender, sendResponse) {
-  				/*chrome.tabs.create({
+  				if (request.type=='open'){
+				chrome.tabs.create({
 				"url": request.msg,
 				"windowId": sender.tab.windowId,
 				"index": (sender.tab.index+1),
 				"active": false
-				}, function(tab) {});*/
+				}, function(tab) {});
+				}else{
 				send(request,true,sender.tab.id);
+				}
  // sendResponse({msg: 'Inaccessible frame expanded!'});
 }
 
