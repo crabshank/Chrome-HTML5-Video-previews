@@ -203,7 +203,7 @@ if(bool){
 				node.style.setProperty( 'display', '' );
 			}else{
 				node.style.setProperty( 'background', '' );	
-			node.style.setProperty( 'color', '' );
+		node.style.setProperty( 'color', '' );
 			node.style.setProperty( 'overflow', '' );
 			}
 		}
@@ -219,7 +219,7 @@ allNodes.forEach(function(node) {
 			}else{
 				node.style.setProperty( 'background', 'transparent', 'important' );
 			node.style.setProperty( 'color', 'transparent', 'important' );
-			node.style.setProperty( 'overflow', 'scroll', 'important' );
+			node.style.setProperty( 'overflow', 'visible', 'important' );
 				
 			}
 		}
@@ -247,11 +247,11 @@ un_hider(false);
 document.head.style.setProperty( 'visibility', 'visible', 'important' );
 document.head.style.setProperty( 'display', 'flex', 'important' );
 document.body.style.setProperty( 'display', 'block', 'important' );
-document.body.style.setProperty( 'overflow-x', 'scroll', 'important' );
-document.body.style.setProperty( 'overflow-y', 'scroll', 'important' );
 document.head.style.setProperty( 'position', 'absolute', 'important' );
 document.head.style.setProperty( 'width', '-webkit-fill-available', 'important' );
-document.documentElement.style.setProperty( 'white-space', 'pre-wrap', 'important' );
+document.body.style.setProperty( 'overflow', 'visible', 'important' );
+
+//document.documentElement.style.setProperty( 'white-space', 'pre-wrap', 'important' );
 document.documentElement.style.setProperty( 'position', 'sticky', 'important' );
 document.documentElement.style.setProperty( 'overflow', 'auto', 'important' );
 //document.head.style.setProperty( 'pointer-events', '', 'important' );
