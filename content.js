@@ -1,7 +1,7 @@
 try {
-	//console.log(window.location.href);
+	console.log(window.location.href+"- 'HTML5 Video previews page' has access");
 	let expnd=[];
-	//let ordr=0;
+
 let init=true;
 
 function removeEls(d, array) {
@@ -24,9 +24,10 @@ function expandFrame(fr){
 	
 			fr.style.setProperty( 'max-height','-webkit-fill-available', 'important' );
 			fr.style.setProperty( 'max-width','-webkit-fill-available', 'important' );
-			fr.style.setProperty( 'min-height','-webkit-fill-available', 'important' );
-			fr.style.setProperty( 'min-width','-webkit-fill-available', 'important' );
+			fr.style.setProperty( 'min-height','100vh', 'important' );
+			fr.style.setProperty( 'min-width','100vw', 'important' );
 			fr.style.setProperty( 'height','-webkit-fill-available', 'important' );
+			fr.style.setProperty( 'position','fixed', 'important' );
 			fr.style.setProperty( 'width','-webkit-fill-available', 'important' );
 
 			fr.style.setProperty( 'position', 'fixed', 'important' );
@@ -51,7 +52,7 @@ function messageHdl(request, sender, sendResponse) {
 		
 		if(!xfr){
 			
-					let ifrs=[...document.documentElement.getElementsByTagName('IFRAME')];
+					let ifrs=[...document.getElementsByTagName('IFRAME')];
 		let fr=null;
 		for(let i=0; i<ifrs.length; i++){
 			if (ifrs[i].src===request.message){
@@ -67,7 +68,7 @@ function messageHdl(request, sender, sendResponse) {
 		}else{
 			
 			
-		let ifrs=[...document.documentElement.getElementsByTagName('IFRAME')];
+		let ifrs=[...document.getElementsByTagName('IFRAME')];
 		let fr=null;
 		for(let i=0; i<ifrs.length; i++){
 			if (ifrs[i].src===request.message){
@@ -90,14 +91,6 @@ function messageHdl(request, sender, sendResponse) {
 			fr.style.setProperty( 'top', request.top+'px', 'important' );
 			 fr.style.setProperty( 'left', request.left+'px', 'important' );
 			
-				/*	let frct=fr.getBoundingClientRect();
-		if(frct.top!=request.top){
-			fr.style.setProperty( 'top', (parseFloat(fr.style.top)-(frct.top-request.top))+'px', 'important' );
-		}		
-		
-		if(frct.left!=request.left){
-			fr.style.setProperty( 'left', (parseFloat(fr.style.left)-(frct.left-request.left))+'px', 'important' );
-		}*/
 	}
 	
 		}
@@ -161,7 +154,7 @@ function convertEmbeds(){
 	}
 	
 	
-	let embeds=[...document.documentElement.getElementsByTagName('EMBED')];
+	let embeds=[...document.getElementsByTagName('EMBED')];
 	
 	
 
@@ -171,22 +164,26 @@ emb_to_ifr(embeds);
 
 
 function handleBrowserActionClicked(bgMsg) {
+
 let ifrm=document.createElement('iframe');
 //ifrm.style.setProperty( 'position', 'relative', 'important' );
 ifrm.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
 ifrm.style.setProperty( 'width', '-webkit-fill-available', 'important' );
-ifrm.style.setProperty( 'height', '-webkit-fill-available', 'important' );
+ifrm.style.setProperty( 'height','min-content', 'important' );
 ifrm.style.setProperty( 'margin', 0, 'important' );
 ifrm.style.setProperty( 'border', 0, 'important' );
 ifrm.style.setProperty( 'padding', 0, 'important' );
 ifrm.style.setProperty( 'display', 'flex', 'important' );
 ifrm.style.setProperty( 'visibility', 'visible', 'important' );
+ifrm.style.setProperty( 'position', 'absolute', 'important' );
+//ifrm.style.setProperty( 'transform', 'scale(0.4) translateX(40%)', 'important' );
+
 
 ifrm.style.setProperty( 'top', '0.37ch', 'important' );
 ifrm.style.setProperty( 'left', '0.66ch', 'important' );
 
 let ifrm2=document.createElement('iframe');
-ifrm2.style.setProperty( 'position', 'sticky', 'important' );
+ifrm2.style.setProperty( 'position', 'absolute', 'important' );
 ifrm2.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
 ifrm2.style.setProperty( 'width', '-webkit-fill-available', 'important' );
 ifrm2.style.setProperty( 'margin', 0, 'important' );
@@ -197,10 +194,13 @@ ifrm2.style.setProperty( 'pointer-events', 'none', 'important' );
 ifrm2.style.setProperty( 'display', 'flex', 'important' );
 ifrm2.style.setProperty( 'visibility', 'visible', 'important' );
 ifrm2.style.setProperty( 'background', '#121212', 'important' );
+//ifrm.style.setProperty( 'transform', 'scale(0.4) translateX(40%)', 'important' );
 
-function un_hider(bool){
+/*function un_hider(bool){
+	
 
 let allNodes=[...document.querySelectorAll('*')];
+
 
 	let vChild=[];
 	
@@ -214,17 +214,18 @@ if(node.nodeName=='VIDEO'){
 if(bool){
 
 	allNodes.forEach(function(node) {
-			if(node.nodeName!=='IFRAME' && node.nodeName!=='EMBED' && node.nodeName!=='VIDEO'){
+	
+	if(node.nodeName!=='IFRAME' && node.nodeName!=='EMBED' && node.nodeName!=='VIDEO'){
 			if((node.getElementsByTagName('IFRAME').length===0 && node.getElementsByTagName('EMBED').length===0 && node.getElementsByTagName('VIDEO').length===0) && !vChild.includes(node)){
-				node.style.setProperty( 'display', '' );
-			}else{
-				node.style.setProperty( 'background', '' );	
+			node.style.setProperty( 'display', '', 'important' );
+
+		}else{
 								node.style.setProperty( 'width', '', 'important' );
-				node.style.setProperty( 'height', '', 'important' );
-		node.style.setProperty( 'color', '' );
-			node.style.setProperty( 'overflow', '' );
-			}
-		}
+								node.style.setProperty( 'height', '', 'important' );
+	
+}
+}
+	
 	});
 
 }else{
@@ -233,21 +234,22 @@ allNodes.forEach(function(node) {
 	
 	if(node.nodeName!=='IFRAME' && node.nodeName!=='EMBED' && node.nodeName!=='VIDEO'){
 			if((node.getElementsByTagName('IFRAME').length===0 && node.getElementsByTagName('EMBED').length===0 && node.getElementsByTagName('VIDEO').length===0) && !vChild.includes(node)){
-				if(!vChild.includes(node)){
-				node.style.setProperty( 'display', 'none', 'important' );
-				}
-			}else{
-				node.style.setProperty( 'width', '-webkit-fill-available', 'important' );
-				node.style.setProperty( 'height', '-webkit-fill-available', 'important' );
-				node.style.setProperty( 'background', 'transparent', 'important' );
-			node.style.setProperty( 'color', 'transparent', 'important' );
-			node.style.setProperty( 'overflow', 'scroll', 'important' );
-			}
-		}
+
+			node.style.setProperty( 'display', 'none', 'important' );
+
+		}else{
+								node.style.setProperty( 'width', '-webkit-fill-available', 'important' );
+								node.style.setProperty( 'height', '-webkit-fill-available', 'important' );
+								node.style.setProperty( 'background', 'transparent', 'important' );
+								node.style.setProperty( 'color', 'transparent', 'important' );
+	
+}
+}
 	
 	if (node.nodeName==='VIDEO'){
 				//node.style.setProperty( 'width', 'inherit', 'important' );
 				//node.style.setProperty( 'height', 'inherit', 'important' );
+				
 		node.controls=true;
 			node.onmouseenter= (event) => {
 			node.controls=true;
@@ -266,22 +268,12 @@ allNodes.forEach(function(node) {
 }
 
 un_hider(false);
+*/
 
-document.head.style.setProperty( 'visibility', 'visible', 'important' );
-document.head.style.setProperty( 'display', 'flex', 'important' );
-document.body.style.setProperty( 'display', 'block', 'important' );
-document.head.style.setProperty( 'position', 'fixed', 'important' );
-document.head.style.setProperty( 'width', '-webkit-fill-available', 'important' );
-document.body.style.setProperty( 'overflow', 'scroll', 'important' );
 
-document.documentElement.style.setProperty( 'white-space', 'pre-wrap', 'important' );
-document.documentElement.style.setProperty( 'position', 'sticky', 'important' );
-document.documentElement.style.setProperty( 'overflow', 'scroll', 'important' );
-//document.head.style.setProperty( 'pointer-events', '', 'important' );
-//document.documentElement.style.setProperty( 'pointer-events', '', 'important' );
-//hides all but vids in top level
 
-//convert all embeds in top level, ~embeds~, and iframes -> iframes.
+
+
 
 
 
@@ -393,14 +385,14 @@ main.style.setProperty( 'padding', 0, 'important' );
  
 
 ifrm.style.setProperty( 'min-height', main.getBoundingClientRect().height+'px', 'important' );
-document.body.style.setProperty( 'position', 'absolute', 'important' );
-document.body.style.setProperty( 'top', main.getBoundingClientRect().bottom+'px', 'important' );
+
 var frame_btn=[...ifrm.contentWindow.document.querySelectorAll("span#frames")][0];
 var three_Plus=[...ifrm.contentWindow.document.querySelectorAll("button#three_plus")][0];
 var three_Neg=[...ifrm.contentWindow.document.querySelectorAll("button#three_neg")][0];
 var clrr=[...ifrm.contentWindow.document.querySelectorAll("button#clear_er")][0];
 var mxsp=[...ifrm.contentWindow.document.querySelectorAll("input#mxs")][0];
 var myVdo;
+var firstParent;
 
 var bSect=[...ifrm2.contentWindow.document.querySelectorAll("section#bSec")][0];
 
@@ -812,13 +804,13 @@ gnrB.value='Select video';
 		vids=[];
 		allFrames=[];
 		let gene=0;
-		let vids0=[...document.documentElement.getElementsByTagName('VIDEO')]; 
+		let vids0=[...document.getElementsByTagName('VIDEO')]; 
 		for (let k=0; k<vids0.length; k++){
 			vids.push([vids0[k],'']);
 		}
 
 
-	let frms=[...document.documentElement.getElementsByTagName('IFRAME')]; 
+	let frms=[...document.getElementsByTagName('IFRAME')]; 
 	
 		if(!!frms && frms.length>0){
 		for (let k=0; k<frms.length; k++){
@@ -847,10 +839,10 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 		let vids1=[];
 		
 		try{
-					vids1=[...allFrames[j][0].document.documentElement.getElementsByTagName('VIDEO')]; 
+					vids1=[...allFrames[j][0].document.getElementsByTagName('VIDEO')]; 
 		}catch(e){
 			try{
-				vids1=[...allFrames[j][0].contentDocument.documentElement.getElementsByTagName('VIDEO')]; 
+				vids1=[...allFrames[j][0].contentDocument.getElementsByTagName('VIDEO')]; 
 			}catch(e){;}
 		}	
 		
@@ -955,7 +947,10 @@ function LnkOp()
 
 			 expandFrame(frEl);
 				
-			frEl.scrolling="yes";
+			/*frEl.scrolling="yes";
+			frEl.allowfullscreen="true"; 
+			frEl.webkitallowfullscreen="true"; 
+			frEl.mozallowfullscreen="true";*/
 			
 			expnd.push(frEl);
 			});
@@ -975,16 +970,41 @@ function LnkOp()
 		
 
 					
-					myVdo.style.setProperty( 'width', 'fit-content', 'important' );
-					myVdo.style.setProperty( 'height', 'fit-content', 'important' );
-					myVdo.style.setProperty( 'position', 'sticky', 'important' );
+				//	myVdo.style.setProperty( 'width', 'fit-content', 'important' );
+				//	myVdo.style.setProperty( 'height', 'fit-content', 'important' );
+				
+				firstParent=myVdo;
+				let ancestors=[myVdo];
+				while(firstParent.parentElement!=document.body && firstParent.parentElement!=document.head && firstParent.parentElement!=document.documentElement){
+					 firstParent=firstParent.parentElement;
+					 ancestors.push(firstParent);
+				}
+				
+				for (let i=0; i<ancestors.length; i++){
+				ancestors[i].style.setProperty( 'min-width', myVdo.videoWidth+'px', 'important' );
+					ancestors[i].style.setProperty( 'min-height', myVdo.videoHeight+'px', 'important' );
+					ancestors[i].style.setProperty( 'width', 'max-content', 'important' );
+					ancestors[i].style.setProperty( 'height', 'max-content', 'important' );
+				}
+				
+					console.log(firstParent);
+				
+					firstParent.style.setProperty( 'position', 'absolute', 'important' );
+				let ifrc=ifrm.getBoundingClientRect();
 
+firstParent.style.setProperty( 'top', (ifrc.bottom)+'px', 'important' );
+			firstParent.style.setProperty( 'left', (ifrc.left)+'px', 'important' );
+			
 
-					let ifrc=ifrm.getBoundingClientRect();
+					//ifrm.style.setProperty( 'min-height', (main.getBoundingClientRect().height)+'px', 'important' );
+				//	ifrm.style.setProperty( 'height', (main.getBoundingClientRect().height)+'px', 'important' );
 
 				
-					myVdo.style.setProperty( 'top', (ifrc.bottom)+'px', 'important' );
-			myVdo.style.setProperty( 'left', (ifrc.left)+'px', 'important' );
+
+			
+				let fprc=firstParent.getBoundingClientRect();
+										ifrm2.style.setProperty( 'top', (fprc.bottom)+'px', 'important' );
+			ifrm2.style.setProperty( 'left', (fprc.left)+'px', 'important' );
 			
 /*let vrc= myVdo.getBoundingClientRect();
 		if(vrc.top!=ifrc.bottom){
@@ -1058,7 +1078,7 @@ myVdo.playbackRate=1;
 			
 
 myVdo.ondurationchange= () => {
-	un_hider(true);
+	//un_hider(true);
   checkDur();
 }
 
@@ -1416,7 +1436,20 @@ ifrm2.style.setProperty=('min-width',ifw+'px','important');
 ifrm2.style.setProperty=('width',ifw+'px','important');
 ifrm2.style.setProperty=('max-width',ifw+'px','important');
 
-
+/*try{
+firstParent.style.setProperty( 'top', (myVdo.getBoundingClientRect().bottom)+'px', 'important' );
+}catch(e){
+					firstParent=myVdo;
+					
+					while(firstParent.parentElement!=document.body && firstParent.parentElement!=document.head && firstParent.parentElement!=document.documentElement){
+					 firstParent=firstParent.parentElement;
+				}
+				
+					console.log(firstParent);
+					firstParent.style.setProperty( 'top', (myVdo.getBoundingClientRect().bottom)+'px', 'important' );
+					
+}
+*/
 
 shiftBtns(true);
 
@@ -1502,27 +1535,16 @@ alert('Video not loaded!');
 
 let scrBr=`
 <style>
-::-webkit-scrollbar, ::-webkit-scrollbar-corner, ::-webkit-scrollbar-button, ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-track, ::-webkit-scrollbar-track-piece, ::-webkit-resizer{
-    opacity: 0 !important;
-	visibility: hidden !important;
-	background-color: transparent !important;
-	color: transparent !important;
-}
-*:hover::-webkit-scrollbar, *:hover::-webkit-scrollbar-corner, *:hover::-webkit-scrollbar-button, *:hover::-webkit-scrollbar-thumb, *:hover::-webkit-scrollbar-track, *:hover::-webkit-scrollbar-track-piece, *:hover::-webkit-resizer{
-    opacity: 1 !important;
-	visibility: visible !important;
-	background-color: buttonface !important;
-	color: buttonface !important;
-}
 video::-webkit-media-controls {
     display: flex !important;
     visibility: visible !important;
 }
 </style>
 `
+document.documentElement.style.setProperty('overflow','scroll','important');
 document.head.insertAdjacentHTML('afterbegin',scrBr);
 
-document.head.insertAdjacentElement('afterbegin',ifrm);
+document.body.insertAdjacentElement('afterbegin',ifrm);
 ifrm.src = "about:blank";
 
 ifrm.contentWindow.document.open();
@@ -1530,16 +1552,33 @@ ifrm.contentWindow.document.write(ht_a);
 ifrm.contentWindow.document.close();
 
 
-
-
-
-
-document.body.insertAdjacentElement('beforeend',ifrm2);
+ifrm.insertAdjacentElement('afterend',ifrm2);
 ifrm2.src = "about:blank";
 
 ifrm2.contentWindow.document.open();
 ifrm2.contentWindow.document.write(ht_c);
 ifrm2.contentWindow.document.close();
+
+
+ifrm2.style.setProperty( 'top',ifrm.getBoundingClientRect().bottom+'px', 'important' );
+document.body.style.setProperty( 'overflow','scroll', 'important' );
+
+
+let maxBtm=0;
+
+	
+let allNodes=[...document.querySelectorAll('*')];
+
+	allNodes.forEach(function(node) {
+		let rct= node.getBoundingClientRect();
+		maxBtm=(rct.bottom>maxBtm)?rct.bottom:maxBtm;
+	});
+
+
+
+
+ifrm2.style.setProperty( 'top', maxBtm+'px', 'important' );
+
 
 pageScript();
 
