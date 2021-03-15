@@ -14,6 +14,27 @@ function removeEls(d, array) {
     return newArray;
 }
 
+function expandFrame(fr){
+			fr.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
+			 
+			 
+			fr.style.setProperty( 'margin', 0, 'important' );
+			fr.style.setProperty( 'border', 0, 'important' );
+			fr.style.setProperty( 'padding', 0, 'important' );
+	
+			fr.style.setProperty( 'max-height','-webkit-fill-available', 'important' );
+			fr.style.setProperty( 'max-width','-webkit-fill-available', 'important' );
+			fr.style.setProperty( 'min-height','-webkit-fill-available', 'important' );
+			fr.style.setProperty( 'min-width','-webkit-fill-available', 'important' );
+			fr.style.setProperty( 'height','-webkit-fill-available', 'important' );
+			fr.style.setProperty( 'width','-webkit-fill-available', 'important' );
+
+			fr.style.setProperty( 'position', 'fixed', 'important' );
+			fr.style.setProperty( 'top',  window.screen.availTop+'px', 'important' );
+			fr.style.setProperty( 'left',  window.screen.availLeft+'px', 'important' );
+}
+
+
 function messageHdl(request, sender, sendResponse) {
 	console.log(request);
 	if(typeof request.type !=='undefined'){
@@ -41,15 +62,7 @@ function messageHdl(request, sender, sendResponse) {
 		}
 			
 			if(!!fr){
-						fr.style.setProperty( 'max-height', '-webkit-fill-available', 'important' );
-			fr.style.setProperty( 'max-width', '-webkit-fill-available', 'important' );	
-			fr.style.setProperty( 'min-height','-webkit-fill-available', 'important' );
-			fr.style.setProperty( 'min-width', '-webkit-fill-available', 'important' );
-			fr.style.setProperty( 'height','-webkit-fill-available', 'important' );
-			fr.style.setProperty( 'width', '-webkit-fill-available', 'important' );	
-
-			fr.style.setProperty( 'top', '', 'important' );
-			fr.style.setProperty( 'left', '', 'important' );
+				expandFrame(fr);
 			}
 		}else{
 			
@@ -159,7 +172,7 @@ emb_to_ifr(embeds);
 
 function handleBrowserActionClicked(bgMsg) {
 let ifrm=document.createElement('iframe');
-ifrm.style.setProperty( 'position', 'relative', 'important' );
+//ifrm.style.setProperty( 'position', 'relative', 'important' );
 ifrm.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
 ifrm.style.setProperty( 'width', '-webkit-fill-available', 'important' );
 ifrm.style.setProperty( 'height', '-webkit-fill-available', 'important' );
@@ -173,7 +186,7 @@ ifrm.style.setProperty( 'top', '0.37ch', 'important' );
 ifrm.style.setProperty( 'left', '0.66ch', 'important' );
 
 let ifrm2=document.createElement('iframe');
-ifrm2.style.setProperty( 'position', 'relative', 'important' );
+ifrm2.style.setProperty( 'position', 'sticky', 'important' );
 ifrm2.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
 ifrm2.style.setProperty( 'width', '-webkit-fill-available', 'important' );
 ifrm2.style.setProperty( 'margin', 0, 'important' );
@@ -183,6 +196,7 @@ ifrm2.style.setProperty( 'min-height', '100vh', 'important' );
 ifrm2.style.setProperty( 'pointer-events', 'none', 'important' );
 ifrm2.style.setProperty( 'display', 'flex', 'important' );
 ifrm2.style.setProperty( 'visibility', 'visible', 'important' );
+ifrm2.style.setProperty( 'background', '#121212', 'important' );
 
 function un_hider(bool){
 
@@ -192,7 +206,7 @@ let allNodes=[...document.querySelectorAll('*')];
 	
 allNodes.forEach(function(node) {
 if(node.nodeName=='VIDEO'){
-		vChild.push([...node.querySelectorAll('*')]);
+		vChild.push(...node.querySelectorAll('*'));
 	}
 });
 		vChild=Array.from(new Set(vChild));
@@ -232,6 +246,8 @@ allNodes.forEach(function(node) {
 		}
 	
 	if (node.nodeName==='VIDEO'){
+				//node.style.setProperty( 'width', 'inherit', 'important' );
+				//node.style.setProperty( 'height', 'inherit', 'important' );
 		node.controls=true;
 			node.onmouseenter= (event) => {
 			node.controls=true;
@@ -254,11 +270,11 @@ un_hider(false);
 document.head.style.setProperty( 'visibility', 'visible', 'important' );
 document.head.style.setProperty( 'display', 'flex', 'important' );
 document.body.style.setProperty( 'display', 'block', 'important' );
-document.head.style.setProperty( 'position', 'absolute', 'important' );
+document.head.style.setProperty( 'position', 'fixed', 'important' );
 document.head.style.setProperty( 'width', '-webkit-fill-available', 'important' );
 document.body.style.setProperty( 'overflow', 'scroll', 'important' );
 
-//document.documentElement.style.setProperty( 'white-space', 'pre-wrap', 'important' );
+document.documentElement.style.setProperty( 'white-space', 'pre-wrap', 'important' );
 document.documentElement.style.setProperty( 'position', 'sticky', 'important' );
 document.documentElement.style.setProperty( 'overflow', 'scroll', 'important' );
 //document.head.style.setProperty( 'pointer-events', '', 'important' );
@@ -275,7 +291,7 @@ input::-webkit-textfield-decoration-container {
     background: buttonface;
 }
 </style>
-<main style="margin: 0px !important; border: 0px !important; padding: 0px !important;">
+<main style="margin: 0px !important; border: 0px !important; padding: 0px !important; background-color: black !important;">
 <button style="background-color: buttonface !important; visibility: initial !important;" id="three_plus" type="button">+ 3 thumbs</button>
 <button style="background-color: buttonface !important; visibility: initial !important;" id="three_neg" type="button">- 3 thumbs</button>
 <button style="background-color: buttonface !important; display: none; visibility: initial !important;" type="button" id="every"></button>
@@ -360,6 +376,8 @@ var gapVid=9;
 ifrm.contentWindow.document.body.style.setProperty( 'margin', 0, 'important' );
 ifrm.contentWindow.document.body.style.setProperty( 'border', 0, 'important' );
 ifrm.contentWindow.document.body.style.setProperty( 'padding', 0, 'important' );
+ifrm.contentWindow.document.body.style.setProperty( 'display', 'inline-flex', 'important' );
+ifrm.contentWindow.document.documentElement.style.setProperty( 'display', 'inline-table', 'important' );
 
 ifrm2.contentWindow.document.body.style.setProperty( 'margin', 0, 'important' );
 ifrm2.contentWindow.document.body.style.setProperty( 'border', 0, 'important' );
@@ -371,9 +389,12 @@ main.style.setProperty( 'padding', 0, 'important' );
 
 
 
+
  
-//ifrm.style.minHeight=main.getBoundingClientRect().height;
+
 ifrm.style.setProperty( 'min-height', main.getBoundingClientRect().height+'px', 'important' );
+document.body.style.setProperty( 'position', 'absolute', 'important' );
+document.body.style.setProperty( 'top', main.getBoundingClientRect().bottom+'px', 'important' );
 var frame_btn=[...ifrm.contentWindow.document.querySelectorAll("span#frames")][0];
 var three_Plus=[...ifrm.contentWindow.document.querySelectorAll("button#three_plus")][0];
 var three_Neg=[...ifrm.contentWindow.document.querySelectorAll("button#three_neg")][0];
@@ -932,48 +953,7 @@ function LnkOp()
 			chrome.runtime.sendMessage({msg: txtBx[txtBx.selectedIndex].attributes.link.value, left: frct.left, right: frct.right, top: frct.top, bottom: frct.bottom, type: 'expand'}, function(response){
 			 gnrB.value='iFrame expanded!';
 
-			 
-		
-			 
-			 frEl.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
-			 
-			 //frEl.style.zIndex=Number.MAX_SAFE_INTEGER;
-			 
-			frEl.style.setProperty( 'margin', 0, 'important' );
-			frEl.style.setProperty( 'border', 0, 'important' );
-			frEl.style.setProperty( 'padding', 0, 'important' );
-			 
-			 frEl.style.setProperty( 'position', 'relative', 'important' );
-			 frEl.style.setProperty( 'top', '0px', 'important' );
-			 frEl.style.setProperty( 'left', '0px', 'important' );
-			 //frEl.style.setProperty( 'min-height', '-webkit-fill-available', 'important' );
-			// frEl.style.setProperty( 'min-width', '-webkit-fill-available', 'important' );
-			 //frEl.style.position='fixed';
-			 //frEl.style.top='0px';
-			 //frEl.style.left='0px';
-			 
-			/* let wdt=Math.min(window.innerWidth,document.body.innerWidth);
-			 let hgt=Math.min(window.innerHeight,document.body.innerHeight);*/
-			 
-		//	frEl.style.minHeight='-webkit-fill-available';
-			//frEl.style.minWidth='-webkit-fill-available';
-			
-			/*frEl.style.maxHeight='-webkit-fill-available';
-			 frEl.style.height=hgt;
-			 frEl.style.maxWidth=wdt;
-			 frEl.style.width=wdt;*/
-			 
-			//console.log('Expanded: '+response.message);
-			
-			let wd=Math.min(window.availWidth,document.documentElement.scrollWidth);
-			let hg=Math.min(window.availHeight,document.documentElement.scrollHeight);
-
-			frEl.style.setProperty( 'max-height', hg+'px', 'important' );
-			frEl.style.setProperty( 'max-width', wd+'px', 'important' );	
-			frEl.style.setProperty( 'min-height', hg+'px', 'important' );
-			frEl.style.setProperty( 'min-width', wd+'px', 'important' );
-			frEl.style.setProperty( 'height', hg+'px', 'important' );
-			frEl.style.setProperty( 'width', wd+'px', 'important' );	
+			 expandFrame(frEl);
 				
 			frEl.scrolling="yes";
 			
@@ -995,9 +975,9 @@ function LnkOp()
 		
 
 					
-					myVdo.style.setProperty( 'width', 'inherit', 'important' );
-					myVdo.style.setProperty( 'height', 'inherit', 'important' );
-					myVdo.style.setProperty( 'position', 'absolute', 'important' );
+					myVdo.style.setProperty( 'width', 'fit-content', 'important' );
+					myVdo.style.setProperty( 'height', 'fit-content', 'important' );
+					myVdo.style.setProperty( 'position', 'sticky', 'important' );
 
 
 					let ifrc=ifrm.getBoundingClientRect();
@@ -1015,9 +995,7 @@ function LnkOp()
 			myVdo.style.setProperty( 'left','0px', 'important' );
 		}
 			*/
-			
-			myVdo.scrollIntoView();
-		
+					
 		ifrm2.style.setProperty( 'pointer-events', '', 'important' );
 		shiftBtns(true);
 		//bSect.style.visibility='visible';
@@ -1030,12 +1008,16 @@ function LnkOp()
 		//thumbs.style.visibility='visible';
 		thumbs.style.setProperty( 'visibility', 'visible', 'important' );
 		vrc= myVdo.getBoundingClientRect();
-		ifrm2.style.setProperty( 'top', (vrc.bottom+gapVid)+'px', 'important' );
+		//ifrm2.style.setProperty( 'top', (vrc.bottom+gapVid)+'px', 'important' );
 		
 		/*let ifr2c=ifrm2.getBoundingClientRect();
 		if(ifr2c.top!=vrc.bottom){
 			ifrm2.style.setProperty( 'top', (parseFloat(ifrm2.style.top)-(ifr2c.top-vrc.bottom)+gapVid)+'px', 'important' );
 		}*/
+
+					myVdo.scrollIntoView();
+			ifrm2.scrollIntoView();
+			myVdo.scrollIntoView();
 
 		myVdo.onwheel= (event) => {
 		skip(event);
@@ -1340,14 +1322,18 @@ function thumbseek(bool){
 				rsz();
 				window.scrollTo(0,0);
 				
-				window.onscroll=()=>{
-				let a= window.scrollY-ifrm2.offsetTop;
+				function shiftBtns(){
+					let a=event.target.scrollTop-ifrm2.offsetTop;
+					//console.log(a+ ' - scrolling');
+					if(a>=0){
+						bSect.style.top=(a+3)+'px';
+					}
+				}
 				
-				if(a>=0){
-					bSect.style.top=(a+3)+'px';
-				}
-					
-				}
+				ifrm2.ownerDocument.addEventListener("scroll", (event) => {
+						shiftBtns();
+					}, true);
+				
 			}
 		}
 		 
@@ -1516,12 +1502,17 @@ alert('Video not loaded!');
 
 let scrBr=`
 <style>
-::-webkit-scrollbar, ::-webkit-scrollbar-corner{
+::-webkit-scrollbar, ::-webkit-scrollbar-corner, ::-webkit-scrollbar-button, ::-webkit-scrollbar-thumb, ::-webkit-scrollbar-track, ::-webkit-scrollbar-track-piece, ::-webkit-resizer{
     opacity: 0 !important;
+	visibility: hidden !important;
+	background-color: transparent !important;
+	color: transparent !important;
 }
-*:hover::-webkit-scrollbar, *:hover::-webkit-scrollbar-corner{
-    background-color: buttonface !important;
+*:hover::-webkit-scrollbar, *:hover::-webkit-scrollbar-corner, *:hover::-webkit-scrollbar-button, *:hover::-webkit-scrollbar-thumb, *:hover::-webkit-scrollbar-track, *:hover::-webkit-scrollbar-track-piece, *:hover::-webkit-resizer{
     opacity: 1 !important;
+	visibility: visible !important;
+	background-color: buttonface !important;
+	color: buttonface !important;
 }
 video::-webkit-media-controls {
     display: flex !important;
