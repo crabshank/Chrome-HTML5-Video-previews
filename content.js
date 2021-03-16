@@ -1,5 +1,5 @@
 try {
-	console.log(window.location.href+"- 'HTML5 Video previews page' has access");
+	console.log(window.location.href+" - 'HTML5 Video previews page' has access");
 	let expnd=[];
 
 let init=true;
@@ -194,87 +194,6 @@ ifrm2.style.setProperty( 'pointer-events', 'none', 'important' );
 ifrm2.style.setProperty( 'display', 'flex', 'important' );
 ifrm2.style.setProperty( 'visibility', 'visible', 'important' );
 ifrm2.style.setProperty( 'background', '#121212', 'important' );
-//ifrm.style.setProperty( 'transform', 'scale(0.4) translateX(40%)', 'important' );
-
-/*function un_hider(bool){
-	
-
-let allNodes=[...document.querySelectorAll('*')];
-
-
-	let vChild=[];
-	
-allNodes.forEach(function(node) {
-if(node.nodeName=='VIDEO'){
-		vChild.push(...node.querySelectorAll('*'));
-	}
-});
-		vChild=Array.from(new Set(vChild));
-
-if(bool){
-
-	allNodes.forEach(function(node) {
-	
-	if(node.nodeName!=='IFRAME' && node.nodeName!=='EMBED' && node.nodeName!=='VIDEO'){
-			if((node.getElementsByTagName('IFRAME').length===0 && node.getElementsByTagName('EMBED').length===0 && node.getElementsByTagName('VIDEO').length===0) && !vChild.includes(node)){
-			node.style.setProperty( 'display', '', 'important' );
-
-		}else{
-								node.style.setProperty( 'width', '', 'important' );
-								node.style.setProperty( 'height', '', 'important' );
-	
-}
-}
-	
-	});
-
-}else{
-			
-allNodes.forEach(function(node) {
-	
-	if(node.nodeName!=='IFRAME' && node.nodeName!=='EMBED' && node.nodeName!=='VIDEO'){
-			if((node.getElementsByTagName('IFRAME').length===0 && node.getElementsByTagName('EMBED').length===0 && node.getElementsByTagName('VIDEO').length===0) && !vChild.includes(node)){
-
-			node.style.setProperty( 'display', 'none', 'important' );
-
-		}else{
-								node.style.setProperty( 'width', '-webkit-fill-available', 'important' );
-								node.style.setProperty( 'height', '-webkit-fill-available', 'important' );
-								node.style.setProperty( 'background', 'transparent', 'important' );
-								node.style.setProperty( 'color', 'transparent', 'important' );
-	
-}
-}
-	
-	if (node.nodeName==='VIDEO'){
-				//node.style.setProperty( 'width', 'inherit', 'important' );
-				//node.style.setProperty( 'height', 'inherit', 'important' );
-				
-		node.controls=true;
-			node.onmouseenter= (event) => {
-			node.controls=true;
-			}			
-			
-			node.onmousemove= (event) => {
-			node.controls=true;
-			}
-	}	
-	if (node.nodeName==='EMBED'){
-		embeds.push(node);
-	}	
-});
-	
-}
-}
-
-un_hider(false);
-*/
-
-
-
-
-
-
 
 
 let ht_a=`
@@ -393,6 +312,7 @@ var clrr=[...ifrm.contentWindow.document.querySelectorAll("button#clear_er")][0]
 var mxsp=[...ifrm.contentWindow.document.querySelectorAll("input#mxs")][0];
 var myVdo;
 var firstParent;
+var ancestors;
 
 var bSect=[...ifrm2.contentWindow.document.querySelectorAll("section#bSec")][0];
 
@@ -437,7 +357,36 @@ var vids=[];
 var vhw={w:0,h:0};
 var allFrames=[];
 
-var rsz= ()=>{
+var ancsRsz= ()=>{
+	
+		firstParent=myVdo;
+	ancestors=[myVdo];
+	while(firstParent.parentElement!=document.body && firstParent.parentElement!=document.head && firstParent.parentElement!=document.documentElement){
+		 firstParent=firstParent.parentElement;
+		 ancestors.push(firstParent);
+	}
+	firstParent.style.setProperty( 'position', 'absolute', 'important' );
+	for (let i=0; i<ancestors.length; i++){
+	ancestors[i].style.setProperty( 'min-width', myVdo.videoWidth+'px', 'important' );
+		ancestors[i].style.setProperty( 'min-height', myVdo.videoHeight+'px', 'important' );
+		ancestors[i].style.setProperty( 'width','-webkit-fill-available', 'important' );
+		ancestors[i].style.setProperty( 'height','-webkit-fill-available', 'important' );
+	}
+	
+					let ifrc=ifrm.getBoundingClientRect();
+
+firstParent.style.setProperty( 'top', (ifrc.bottom)+'px', 'important' );
+			firstParent.style.setProperty( 'left', (ifrc.left)+'px', 'important' );
+						
+				let fprc=firstParent.getBoundingClientRect();
+				
+				ifrm2.style.top=fprc.bottom+'px';
+				ifrm2.style.left=fprc.left+'px';
+	
+	
+}
+	
+	var rsz= ()=>{
 	
 	 let scR=sc1.getBoundingClientRect();
  ifrm2.style.minHeight=scR.height+'px';
@@ -973,39 +922,10 @@ function LnkOp()
 				//	myVdo.style.setProperty( 'width', 'fit-content', 'important' );
 				//	myVdo.style.setProperty( 'height', 'fit-content', 'important' );
 				
-				firstParent=myVdo;
-				let ancestors=[myVdo];
-				while(firstParent.parentElement!=document.body && firstParent.parentElement!=document.head && firstParent.parentElement!=document.documentElement){
-					 firstParent=firstParent.parentElement;
-					 ancestors.push(firstParent);
-				}
-				
-				for (let i=0; i<ancestors.length; i++){
-				ancestors[i].style.setProperty( 'min-width', myVdo.videoWidth+'px', 'important' );
-					ancestors[i].style.setProperty( 'min-height', myVdo.videoHeight+'px', 'important' );
-					ancestors[i].style.setProperty( 'width', 'max-content', 'important' );
-					ancestors[i].style.setProperty( 'height', 'max-content', 'important' );
-				}
-				
-					console.log(firstParent);
-				
-					firstParent.style.setProperty( 'position', 'absolute', 'important' );
-				let ifrc=ifrm.getBoundingClientRect();
+				ancsRsz();
+						
+					
 
-firstParent.style.setProperty( 'top', (ifrc.bottom)+'px', 'important' );
-			firstParent.style.setProperty( 'left', (ifrc.left)+'px', 'important' );
-			
-
-					//ifrm.style.setProperty( 'min-height', (main.getBoundingClientRect().height)+'px', 'important' );
-				//	ifrm.style.setProperty( 'height', (main.getBoundingClientRect().height)+'px', 'important' );
-
-				
-
-			
-				let fprc=firstParent.getBoundingClientRect();
-										ifrm2.style.setProperty( 'top', (fprc.bottom)+'px', 'important' );
-			ifrm2.style.setProperty( 'left', (fprc.left)+'px', 'important' );
-			
 /*let vrc= myVdo.getBoundingClientRect();
 		if(vrc.top!=ifrc.bottom){
 			myVdo.style.setProperty( 'top', (vrc.top+ifrc.bottom-parseFloat(myVdo.style.top))+'px', 'important' );
@@ -1436,20 +1356,17 @@ ifrm2.style.setProperty=('min-width',ifw+'px','important');
 ifrm2.style.setProperty=('width',ifw+'px','important');
 ifrm2.style.setProperty=('max-width',ifw+'px','important');
 
-/*try{
-firstParent.style.setProperty( 'top', (myVdo.getBoundingClientRect().bottom)+'px', 'important' );
+try{
+	fprc=firstParent.getBoundingClientRect();
+	if(parseFloat(ifrm2.style.top)<parseFloat(fprc.bottom)){
+	ifrm2.style.setProperty( 'top', (fprc.bottom)+'px', 'important' );
+	}
 }catch(e){
-					firstParent=myVdo;
-					
-					while(firstParent.parentElement!=document.body && firstParent.parentElement!=document.head && firstParent.parentElement!=document.documentElement){
-					 firstParent=firstParent.parentElement;
-				}
-				
-					console.log(firstParent);
-					firstParent.style.setProperty( 'top', (myVdo.getBoundingClientRect().bottom)+'px', 'important' );
-					
+							
+ancsRsz();
+								
 }
-*/
+
 
 shiftBtns(true);
 
