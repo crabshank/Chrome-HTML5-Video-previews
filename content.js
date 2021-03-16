@@ -362,8 +362,8 @@ var ancsRsz= ()=>{
 	}
 	firstParent.style.setProperty( 'position', 'absolute', 'important' );
 	for (let i=ancestors.length-1; i>=0; i--){
-	ancestors[i].style.setProperty( 'min-width', myVdo.videoWidth+'px', 'important' );
-		ancestors[i].style.setProperty( 'min-height', myVdo.videoHeight+'px', 'important' );
+	//ancestors[i].style.setProperty( 'min-width', myVdo.videoWidth+'px', 'important' );
+		//ancestors[i].style.setProperty( 'min-height', myVdo.videoHeight+'px', 'important' );
 		ancestors[i].style.setProperty( 'width','-webkit-fill-available', 'important' );
 		ancestors[i].style.setProperty( 'height','-webkit-fill-available', 'important' );
 	}
@@ -388,7 +388,7 @@ firstParent.style.setProperty( 'top', (ifrc.bottom+gapVid)+'px', 'important' );
 	 let scR=sc1.getBoundingClientRect();
 	 let bsctR=bSect.getBoundingClientRect();
 	 
-	 let hg=Math.max(scR.height+scR.top,bsctR.height+bsctR.top)
+	 let hg=Math.max(scR.bottom,bsctR.bottom)
 	 
  ifrm2.style.minHeight=hg+'px';
  ifrm2.style.height=hg+'px';
