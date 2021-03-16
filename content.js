@@ -1250,17 +1250,19 @@ function thumbseek(bool){
 				rsz();
 				window.scrollTo(0,0);
 				
-				function shiftBtns(){
-					let a=event.target.scrollTop-ifrm2.offsetTop;
-					//console.log(a+ ' - scrolling');
+				function shiftBtns2(bool){
+					let a=(bool)?event.target.documentElement.scrollTop-ifrm2.offsetTop:event.target.documentElement.scrollTop;
 					if(a>=0){
 						bSect.style.top=(a+3)+'px';
 					}
 				}
 				
 				ifrm2.ownerDocument.addEventListener("scroll", (event) => {
-						shiftBtns();
+						shiftBtns2(true);
 					}, true);
+					ifrm2.contentDocument.addEventListener("scroll", (event) => {
+						shiftBtns2(false);
+					});
 				
 			}
 		}
@@ -1479,7 +1481,7 @@ let allNodes=[...document.querySelectorAll('*')];
 
 
 ifrm2.style.setProperty( 'top', maxBtm+'px', 'important' );
-
+ifrm.scrollIntoView();
 
 pageScript();
 
