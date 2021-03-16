@@ -1447,6 +1447,7 @@ video::-webkit-media-controls {
 </style>
 `
 document.documentElement.style.setProperty('overflow','scroll','important');
+document.body.style.setProperty('overflow','scroll','important');
 document.head.insertAdjacentHTML('afterbegin',scrBr);
 
 document.body.insertAdjacentElement('afterbegin',ifrm);
