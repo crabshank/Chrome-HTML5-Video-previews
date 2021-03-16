@@ -375,7 +375,7 @@ var ancsRsz= ()=>{
 			firstParent.style.setProperty( 'transform','scale(0.98)', 'important' );
 		firstParent.style.setProperty( 'transform-origin','left', 'important' );
 	
-					let ifrc=ifrm.getBoundingClientRect();
+					let ifrc=main.getBoundingClientRect();
 
 firstParent.style.setProperty( 'top', (ifrc.bottom)+'px', 'important' );
 			firstParent.style.setProperty( 'left', (ifrc.left)+'px', 'important' );
@@ -1468,9 +1468,6 @@ ifrm2.src = "about:blank";
 ifrm2.contentWindow.document.open();
 ifrm2.contentWindow.document.write(ht_c);
 ifrm2.contentWindow.document.close();
-
-
-ifrm2.style.setProperty( 'top',ifrm.getBoundingClientRect().bottom+'px', 'important' );
 
 let maxBtm=0;
 
