@@ -1,17 +1,8 @@
 try {
 function getUrl(tab){
-	if(tab.pendingUrl!=null){
-	return (tab.url=="")?tab.pendingUrl:tab.url;
-	}else{
-		
-		if(tab.url!=null){
-			return tab.url;
-		}else{
-			return tab; //if tab.url not there
-		}
-	
-	}
+	return (tab.url=="" && typeof tab.pendingUrl!=='undefined' && tab.pendingUrl!='')?tab.pendingUrl:tab.url;
 }
+
 function send(message,dims,tabId) {
 var msg={};
 
