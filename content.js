@@ -366,12 +366,14 @@ var ancsRsz= ()=>{
 		 ancestors.push(firstParent);
 	}
 	firstParent.style.setProperty( 'position', 'absolute', 'important' );
-	for (let i=0; i<ancestors.length; i++){
+	for (let i=ancestors.length-1; i>=0; i--){
 	ancestors[i].style.setProperty( 'min-width', myVdo.videoWidth+'px', 'important' );
 		ancestors[i].style.setProperty( 'min-height', myVdo.videoHeight+'px', 'important' );
 		ancestors[i].style.setProperty( 'width','-webkit-fill-available', 'important' );
 		ancestors[i].style.setProperty( 'height','-webkit-fill-available', 'important' );
 	}
+			firstParent.style.setProperty( 'transform','scale(0.98)', 'important' );
+		firstParent.style.setProperty( 'transform-origin','left', 'important' );
 	
 					let ifrc=ifrm.getBoundingClientRect();
 
@@ -380,8 +382,8 @@ firstParent.style.setProperty( 'top', (ifrc.bottom)+'px', 'important' );
 						
 				let fprc=firstParent.getBoundingClientRect();
 				
-				ifrm2.style.top=fprc.bottom+'px';
-				ifrm2.style.left=fprc.left+'px';
+				ifrm2.style.top=(fprc.bottom+gapVid)+'px';
+				ifrm2.style.left=(fprc.left+gapVid)+'px';
 	
 	
 }
@@ -938,26 +940,13 @@ function LnkOp()
 					
 		ifrm2.style.setProperty( 'pointer-events', '', 'important' );
 		shiftBtns(true);
-		//bSect.style.visibility='visible';
+
 		bSect.style.setProperty( 'visibility', 'visible', 'important' );
-		/*pip.style.visibility='visible';
-		spb.style.visibility='visible';
-		scrv.style.visibility='visible';
-		scrl.style.visibility='visible';
-		curr.style.visibility='visible';*/
-		//thumbs.style.visibility='visible';
+
 		thumbs.style.setProperty( 'visibility', 'visible', 'important' );
 		vrc= myVdo.getBoundingClientRect();
-		//ifrm2.style.setProperty( 'top', (vrc.bottom+gapVid)+'px', 'important' );
-		
-		/*let ifr2c=ifrm2.getBoundingClientRect();
-		if(ifr2c.top!=vrc.bottom){
-			ifrm2.style.setProperty( 'top', (parseFloat(ifrm2.style.top)-(ifr2c.top-vrc.bottom)+gapVid)+'px', 'important' );
-		}*/
 
-					myVdo.scrollIntoView();
-			ifrm2.scrollIntoView();
-			myVdo.scrollIntoView();
+					ifrm.scrollIntoView();
 
 		myVdo.onwheel= (event) => {
 		skip(event);
@@ -1358,8 +1347,8 @@ ifrm2.style.setProperty=('max-width',ifw+'px','important');
 
 try{
 	fprc=firstParent.getBoundingClientRect();
-	if(parseFloat(ifrm2.style.top)<parseFloat(fprc.bottom)){
-	ifrm2.style.setProperty( 'top', (fprc.bottom)+'px', 'important' );
+	if(parseFloat(ifrm2.style.top)<parseFloat(fprc.bottom+gapVid)){
+	ifrm2.style.setProperty( 'top', (fprc.bottom+gapVid)+'px', 'important' );
 	}
 }catch(e){
 							
@@ -1478,8 +1467,6 @@ ifrm2.contentWindow.document.close();
 
 
 ifrm2.style.setProperty( 'top',ifrm.getBoundingClientRect().bottom+'px', 'important' );
-document.body.style.setProperty( 'overflow','scroll', 'important' );
-
 
 let maxBtm=0;
 
