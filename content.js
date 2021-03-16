@@ -298,11 +298,6 @@ var main=[...ifrm.contentWindow.document.getElementsByTagName("main")][0];
 var sc1=[...ifrm2.contentWindow.document.getElementsByTagName("section")][0];main.style.setProperty( 'border', 0, 'important' );
 main.style.setProperty( 'padding', 0, 'important' );
 
-
-
-
- 
-
 ifrm.style.setProperty( 'min-height', main.getBoundingClientRect().height+'px', 'important' );
 
 var frame_btn=[...ifrm.contentWindow.document.querySelectorAll("span#frames")][0];
@@ -377,7 +372,7 @@ var ancsRsz= ()=>{
 	
 					let ifrc=main.getBoundingClientRect();
 
-firstParent.style.setProperty( 'top', (ifrc.bottom)+'px', 'important' );
+firstParent.style.setProperty( 'top', (ifrc.bottom+gapVid)+'px', 'important' );
 			firstParent.style.setProperty( 'left', (ifrc.left)+'px', 'important' );
 						
 				let fprc=firstParent.getBoundingClientRect();
