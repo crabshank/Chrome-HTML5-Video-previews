@@ -391,9 +391,13 @@ firstParent.style.setProperty( 'top', (ifrc.bottom)+'px', 'important' );
 	var rsz= ()=>{
 	
 	 let scR=sc1.getBoundingClientRect();
- ifrm2.style.minHeight=scR.height+'px';
- ifrm2.style.height=scR.height+'px';
- ifrm2.style.maxHeight=scR.height+'px';
+	 let bsctR=bSect.getBoundingClientRect();
+	 
+	 let hg=Math.max(scR.height+scR.top,bsctR.height+bsctR.top)
+	 
+ ifrm2.style.minHeight=hg+'px';
+ ifrm2.style.height=hg+'px';
+ ifrm2.style.maxHeight=hg+'px';
 	
 	let tmbw=bSect.getBoundingClientRect().left-mgLft;
 tmbw_f=tmbw.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
