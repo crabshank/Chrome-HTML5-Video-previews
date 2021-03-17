@@ -16,7 +16,8 @@
     "service_worker": "background.js"
   },
   "action": {
-	"default_icon": "ct.png"
+	"default_icon": "ct.png",
+	"default_popup": "index.html"
 	},
   	"icons": {
         "128": "ct.png"

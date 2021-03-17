@@ -37,10 +37,11 @@ function handleMessage(request, sender, sendResponse) {
 				"index": (sender.tab.index+1),
 				"active": false
 				}, function(tab) {});
+				}else if(request.type=='action'){
+				send(request.url,false,request.id);
 				}else{
 				send(request,true,sender.tab.id);
 				}
- // sendResponse({msg: 'Inaccessible frame expanded!'});
 }
 
 chrome.runtime.onMessage.addListener(handleMessage);
