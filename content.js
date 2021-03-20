@@ -176,7 +176,7 @@ ifrm.style.setProperty( 'padding', 0, 'important' );
 ifrm.style.setProperty( 'display', 'flex', 'important' );
 ifrm.style.setProperty( 'visibility', 'visible', 'important' );
 ifrm.style.setProperty( 'position', 'absolute', 'important' );
-//ifrm.style.setProperty( 'transform', 'scale(0.4) translateX(40%)', 'important' );
+ifrm.style.setProperty( 'transform', 'translateY(0px)', 'important' );
 
 
 ifrm.style.setProperty( 'top', '0.37ch', 'important' );
@@ -194,6 +194,7 @@ ifrm2.style.setProperty( 'pointer-events', 'none', 'important' );
 ifrm2.style.setProperty( 'display', 'flex', 'important' );
 ifrm2.style.setProperty( 'visibility', 'visible', 'important' );
 ifrm2.style.setProperty( 'background', '#121212', 'important' );
+ifrm2.style.setProperty( 'transform', 'translateY(0px)', 'important' );
 
 
 let ht_a=`
@@ -207,7 +208,7 @@ input::-webkit-textfield-decoration-container {
 <button style="background-color: buttonface !important; visibility: initial !important;" id="three_neg" type="button">- 3 thumbs</button>
 <button style="background-color: buttonface !important; display: none; visibility: initial !important;" type="button" id="every"></button>
 <button style="background-color: buttonface !important; visibility: initial !important;" id="clear_er" type="button">Clear</button>
-<select style="width: 48.3vw; color: black; background-color: buttonface; visibility: initial !important;" name="txt_Bx" id="txt_Bx"></select>
+<select style="width: 46.6vw; color: black; background-color: buttonface; visibility: initial !important;" name="txt_Bx" id="txt_Bx"></select>
 
 <input style="background-color: buttonface !important; visibility: initial !important;" id="scnB" type="button" Value="Scan for video">
 <input style="background-color: buttonface !important; visibility: initial !important;" id="genB" type="button" Value="Select video">
@@ -295,11 +296,39 @@ ifrm2.contentWindow.document.body.style.setProperty( 'border', 0, 'important' );
 ifrm2.contentWindow.document.body.style.setProperty( 'padding', 0, 'important' );
 
 var main=[...ifrm.contentWindow.document.getElementsByTagName("main")][0];
-var sc1=[...ifrm2.contentWindow.document.getElementsByTagName("section")][0];main.style.setProperty( 'border', 0, 'important' );
-main.style.setProperty( 'padding', 0, 'important' );
+let mainRct=main.getBoundingClientRect();
 
-ifrm.style.setProperty( 'min-height', main.getBoundingClientRect().height+'px', 'important' );
+ifrm.style.setProperty( 'min-height', (mainRct.height)+'px', 'important' );
+ifrm.style.setProperty( 'height', (mainRct.height)+'px', 'important' );
 
+let scrBr=`
+<style>
+video::-webkit-media-controls {
+    display: flex !important;
+    visibility: visible !important;
+}
+body > *, head > *{
+	transform: translateY(`+mainRct.bottom+`px) !important;
+	
+}
+</style>
+`
+document.head.insertAdjacentHTML('afterbegin',scrBr);
+
+let maxBtm=0;
+
+let allNodes=[...document.querySelectorAll('*')];
+
+	allNodes.forEach(function(node) {
+		let rct= node.getBoundingClientRect();
+		maxBtm=(rct.bottom>maxBtm)?rct.bottom:maxBtm;
+	});
+
+
+ifrm2.style.setProperty( 'top', maxBtm+'px', 'important' );
+ifrm.scrollIntoView();
+
+var sc1=[...ifrm2.contentWindow.document.getElementsByTagName("section")][0];
 var frame_btn=[...ifrm.contentWindow.document.querySelectorAll("span#frames")][0];
 var three_Plus=[...ifrm.contentWindow.document.querySelectorAll("button#three_plus")][0];
 var three_Neg=[...ifrm.contentWindow.document.querySelectorAll("button#three_neg")][0];
@@ -1440,17 +1469,10 @@ alert('Video not loaded!');
 
 }
 
-let scrBr=`
-<style>
-video::-webkit-media-controls {
-    display: flex !important;
-    visibility: visible !important;
-}
-</style>
-`
+
 document.documentElement.style.setProperty('overflow','scroll','important');
 document.body.style.setProperty('overflow','scroll','important');
-document.head.insertAdjacentHTML('afterbegin',scrBr);
+
 
 document.body.insertAdjacentElement('afterbegin',ifrm);
 ifrm.src = "about:blank";
@@ -1467,21 +1489,7 @@ ifrm2.contentWindow.document.open();
 ifrm2.contentWindow.document.write(ht_c);
 ifrm2.contentWindow.document.close();
 
-let maxBtm=0;
 
-	
-let allNodes=[...document.querySelectorAll('*')];
-
-	allNodes.forEach(function(node) {
-		let rct= node.getBoundingClientRect();
-		maxBtm=(rct.bottom>maxBtm)?rct.bottom:maxBtm;
-	});
-
-
-
-
-ifrm2.style.setProperty( 'top', maxBtm+'px', 'important' );
-ifrm.scrollIntoView();
 
 pageScript();
 
