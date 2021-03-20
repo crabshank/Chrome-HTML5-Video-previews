@@ -39,12 +39,18 @@ function handleMessage(request, sender, sendResponse) {
 				}, function(tab) {});
 				}else if(request.type=='action'){
 				send(request.url,false,request.id);
-				}else{
+				}else if(request.type!='init'){
 				send(request,true,sender.tab.id);
 				}
 }
 
-chrome.runtime.onMessage.addListener(handleMessage);
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+ handleMessage(request, sender, sendResponse);
+	});
+	
+chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
+ handleMessage(request, sender, sendResponse);
+	});
 
 
 } catch (e) {	
