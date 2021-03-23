@@ -223,7 +223,7 @@ if(typeof bgMsg.top !=='undefined'){
 
 ht_a+=`
 <br>
-<span style="color: #dfdfdf !important;font-size: 1.83ch !important;visibility: initial !important;background-color: #000000b5 !important;" id="frames" title="Scroll here to change number of frames.">24</span>
+<span style="color: #dfdfdf !important;font-size: 1.83ch !important;visibility: initial !important;background-color: #f0f0f0d4 !important;" id="frames" title="Scroll here to change number of frames.">24</span>
 <span style="color: #dfdfdf !important; font-size: 1.83ch !important; margin-inline-start: 4.4ch !important; visibility: initial !important;background-color: #000000b5 !important;" title="Maximum speed when speeding through; scroll to change.">Max speed: </span>
 <input title="Maximum speed when speeding through; scroll to change." type="number" id="mxs" min="1" max="16" step="0.5" value="6" style="width: 9ch !important; background-color: buttonface !important; border-width: 0px !important; visibility: initial !important;"></input>
 </main>
@@ -317,7 +317,7 @@ body > *, head > *{
 `
 document.head.insertAdjacentHTML('afterbegin',scrBr);
 
-let maxBtm=0;
+var maxBtm=0;
 
 let allNodes=[...document.querySelectorAll('*')];
 
@@ -393,13 +393,13 @@ var ancsRsz= ()=>{
 	if(!firstParent.ownerDocument.documentElement.contains(ifrm)){
 		
 		firstParent=document.documentElement;
-		let mxBtm=firstParent.getBoundingClientRect().bottom;
+		let mxBtm2=maxBtm;
 		for(let i=0; i<allFrames.length; i++){
 			if(myVdo_el[1].includes(allFrames[i][2]) && myVdo_el[1]!='' && document.documentElement.contains(allFrames[i][0])){
 				let frRc=allFrames[i][0].contentWindow.document.documentElement.getBoundingClientRect();
-					if(frRc.bottom>mxBtm){
+					if(frRc.bottom>mxBtm2){
 						firstParent=allFrames[i][0].contentWindow.document.documentElement;
-						mxBtm=frRc.bottom;
+						mxBtm2=frRc.bottom;
 					}
 			}
 		}
