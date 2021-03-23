@@ -1,6 +1,7 @@
 try {
 	console.log(window.location.href+" - 'HTML5 Video previews page' has access");
 	let expnd=[];
+	let exBool=true;
 
 let init=true;
 
@@ -371,7 +372,8 @@ var clse;
 try{
 	clse=[...ifrm.contentWindow.document.querySelectorAll("input#rstD")][0];
 	clse.onclick=()=>{
-					chrome.runtime.sendMessage({msg: clse.ownerDocument.URL, left: parseFloat(clse.attributes.lft.value), right: parseFloat(clse.attributes.rgt.value), top: parseFloat(clse.attributes.tp.value), bottom: parseFloat(clse.attributes.btm.value), type:'close'}, function(response){
+					exBool=(exBool)?false:true;
+					chrome.runtime.sendMessage({msg: clse.ownerDocument.URL, left: parseFloat(clse.attributes.lft.value), right: parseFloat(clse.attributes.rgt.value), top: parseFloat(clse.attributes.tp.value), bottom: parseFloat(clse.attributes.btm.value), type:'close', boolMrk:exBool}, function(response){
 					});
 	}
 }catch(e){;}
