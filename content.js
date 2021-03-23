@@ -37,7 +37,7 @@ function expandFrame(fr){
 			fr.style.setProperty( 'min-height','100vh', 'important' );
 			fr.style.setProperty( 'min-width','100vw', 'important' );
 			fr.style.setProperty( 'height','-webkit-fill-available', 'important' );
-			fr.style.setProperty( 'position','absolute', 'important' );
+			fr.style.setProperty( 'position','fixed', 'important' );
 			fr.style.setProperty( 'width','-webkit-fill-available', 'important' );
 
 			fr.style.setProperty( 'top',  window.screen.availTop+'px', 'important' );
