@@ -14,6 +14,16 @@ function removeEls(d, array) {
     return newArray;
 }
 
+function getAncestors(el){
+	firstParent=el;
+	let ancestors=[el];
+	while(!!firstParent && typeof firstParent !=='undefined' && !!firstParent.parentElement && typeof firstParent.parentElement!=='undefined' && firstParent.parentElement.tagName!='BODY' && firstParent.parentElement.tagName!='HEAD' && firstParent.parentElement.tagName!='HTML'){
+		firstParent=firstParent.parentElement;
+		ancestors.push(firstParent);
+	}
+	return ancestors;
+}
+
 function expandFrame(fr){
 			fr.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
 			 
@@ -27,17 +37,16 @@ function expandFrame(fr){
 			fr.style.setProperty( 'min-height','100vh', 'important' );
 			fr.style.setProperty( 'min-width','100vw', 'important' );
 			fr.style.setProperty( 'height','-webkit-fill-available', 'important' );
-			fr.style.setProperty( 'position','fixed', 'important' );
+			fr.style.setProperty( 'position','absolute', 'important' );
 			fr.style.setProperty( 'width','-webkit-fill-available', 'important' );
 
-			fr.style.setProperty( 'position', 'fixed', 'important' );
 			fr.style.setProperty( 'top',  window.screen.availTop+'px', 'important' );
 			fr.style.setProperty( 'left',  window.screen.availLeft+'px', 'important' );
 }
 
 
 function messageHdl(request, sender, sendResponse) {
-	console.log(request);
+	//console.log(request);
 	if(typeof request.type !=='undefined'){
 		 if(request.type ==='close'){
 		if(document.URL!=request.message){
@@ -89,7 +98,7 @@ function messageHdl(request, sender, sendResponse) {
 			fr.style.setProperty( 'width', wd+'px', 'important' );	
 
 			fr.style.setProperty( 'top', request.top+'px', 'important' );
-			 fr.style.setProperty( 'left', request.left+'px', 'important' );
+			fr.style.setProperty( 'left', request.left+'px', 'important' );
 			
 	}
 	
@@ -126,8 +135,6 @@ chrome.extension.onMessage.addListener(messageHdl);
 chrome.runtime.onMessage.addListener(messageHdl);
 
 
-
-
 /*function procNonIterable(array){
 	    var newArray = [];
     for (let i = 0; i < array.length; i++) {
@@ -135,8 +142,6 @@ chrome.runtime.onMessage.addListener(messageHdl);
     }
     return newArray;
 }*/
-
-
 
 function convertEmbeds(){
 	
@@ -155,8 +160,6 @@ function convertEmbeds(){
 	
 	
 	let embeds=[...document.getElementsByTagName('EMBED')];
-	
-	
 
 emb_to_ifr(embeds);
 
@@ -166,7 +169,6 @@ emb_to_ifr(embeds);
 function handleBrowserActionClicked(bgMsg) {
 
 let ifrm=document.createElement('iframe');
-//ifrm.style.setProperty( 'position', 'relative', 'important' );
 ifrm.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
 ifrm.style.setProperty( 'width', '-webkit-fill-available', 'important' );
 ifrm.style.setProperty( 'height','min-content', 'important' );
@@ -335,6 +337,7 @@ var three_Neg=[...ifrm.contentWindow.document.querySelectorAll("button#three_neg
 var clrr=[...ifrm.contentWindow.document.querySelectorAll("button#clear_er")][0];
 var mxsp=[...ifrm.contentWindow.document.querySelectorAll("input#mxs")][0];
 var myVdo;
+var myVdo_el=[];
 var firstParent;
 var ancestors;
 
@@ -383,32 +386,34 @@ var allFrames=[];
 
 var ancsRsz= ()=>{
 	
-		firstParent=myVdo;
-	ancestors=[myVdo];
-	while(firstParent.parentElement!=document.body && firstParent.parentElement!=document.head && firstParent.parentElement!=document.documentElement){
-		 firstParent=firstParent.parentElement;
-		 ancestors.push(firstParent);
+	ancestors=getAncestors(myVdo);
+	firstParent=ancestors[ancestors.length-1];
+	let ifrc=main.getBoundingClientRect();
+			
+	if(!firstParent.ownerDocument.documentElement.contains(ifrm)){
+		
+		firstParent=document.documentElement;
+		let mxBtm=firstParent.getBoundingClientRect().bottom;
+		for(let i=0; i<allFrames.length; i++){
+			if(myVdo_el[1].includes(allFrames[i][2]) && myVdo_el[1]!='' && document.documentElement.contains(allFrames[i][0])){
+				let frRc=allFrames[i][0].contentWindow.document.documentElement.getBoundingClientRect();
+					if(frRc.bottom>mxBtm){
+						firstParent=allFrames[i][0].contentWindow.document.documentElement;
+						mxBtm=frRc.bottom;
+					}
+			}
+		}
+		
 	}
-	firstParent.style.setProperty( 'position', 'absolute', 'important' );
-	for (let i=ancestors.length-1; i>=0; i--){
-	//ancestors[i].style.setProperty( 'min-width', myVdo.videoWidth+'px', 'important' );
-		//ancestors[i].style.setProperty( 'min-height', myVdo.videoHeight+'px', 'important' );
-		ancestors[i].style.setProperty( 'width','-webkit-fill-available', 'important' );
-		ancestors[i].style.setProperty( 'height','-webkit-fill-available', 'important' );
-	}
-			firstParent.style.setProperty( 'transform','scale(0.98)', 'important' );
-		firstParent.style.setProperty( 'transform-origin','left', 'important' );
 	
-					let ifrc=main.getBoundingClientRect();
-
-firstParent.style.setProperty( 'top', (ifrc.bottom+gapVid)+'px', 'important' );
-			firstParent.style.setProperty( 'left', (ifrc.left)+'px', 'important' );
-						
-				let fprc=firstParent.getBoundingClientRect();
-				
-				ifrm2.style.top=(fprc.bottom+gapVid)+'px';
-				ifrm2.style.left=(fprc.left+gapVid)+'px';
+		let fprc=firstParent.getBoundingClientRect();
+		firstParent.style.setProperty( 'transform-origin','left bottom', 'important' );
+		firstParent.style.setProperty( 'transform', 'scale(0.97) translate('+(ifrc.left-fprc.left)+'px,'+(ifrc.bottom-fprc.top)+'px)', 'important' );
 	
+		fprc=firstParent.getBoundingClientRect();
+		
+		ifrm2.style.top=(fprc.bottom+gapVid)+'px';
+		ifrm2.style.left=(fprc.left)+'px';
 	
 }
 	
@@ -944,28 +949,11 @@ function LnkOp()
 		vid.src = txtVal;      
 		myVdo.load(); 
 		myVdo.pause();*/
-		let myVdo_el=vids[tIx_el];
+		myVdo_el=vids[tIx_el];
 		myVdo=myVdo_el[0];
 		
-
-					
-				//	myVdo.style.setProperty( 'width', 'fit-content', 'important' );
-				//	myVdo.style.setProperty( 'height', 'fit-content', 'important' );
-				
-				ancsRsz();
-						
-					
-
-/*let vrc= myVdo.getBoundingClientRect();
-		if(vrc.top!=ifrc.bottom){
-			myVdo.style.setProperty( 'top', (vrc.top+ifrc.bottom-parseFloat(myVdo.style.top))+'px', 'important' );
-		}		
-		if(vrc.left!=ifrc.left){
-			//myVdo.style.setProperty( 'left',(vrc.left+ifrc.left-parseFloat(myVdo.style.left))+'px', 'important' );
-			myVdo.style.setProperty( 'left','0px', 'important' );
-		}
-			*/
-					
+		ancsRsz();
+			
 		ifrm2.style.setProperty( 'pointer-events', '', 'important' );
 		shiftBtns(true);
 
@@ -974,7 +962,7 @@ function LnkOp()
 		thumbs.style.setProperty( 'visibility', 'visible', 'important' );
 		vrc= myVdo.getBoundingClientRect();
 
-					ifrm.scrollIntoView();
+		ifrm.scrollIntoView();
 
 		myVdo.onwheel= (event) => {
 		skip(event);
@@ -1035,9 +1023,9 @@ myVdo.onloadedmetadata= () => {
 		 allFrames.forEach((frame,index) => {
 			if(!myVdo_el[1].includes(frame[2]) && myVdo_el[1]!='' && frame[0]!==ifrm && frame[0]!==ifrm2){
 			frame[0].style.setProperty( 'display', 'none', 'important' );
-			}else{
+			}/*else{
 				//node.style.setProperty( 'pointer-events', '', 'important' );
-			}
+			}*/
 		 });
 		
 		
@@ -1473,7 +1461,6 @@ alert('Video not loaded!');
 document.documentElement.style.setProperty('overflow','scroll','important');
 document.body.style.setProperty('overflow','scroll','important');
 
-
 document.body.insertAdjacentElement('afterbegin',ifrm);
 ifrm.src = "about:blank";
 
@@ -1481,15 +1468,12 @@ ifrm.contentWindow.document.open();
 ifrm.contentWindow.document.write(ht_a);
 ifrm.contentWindow.document.close();
 
-
 ifrm.insertAdjacentElement('afterend',ifrm2);
 ifrm2.src = "about:blank";
 
 ifrm2.contentWindow.document.open();
 ifrm2.contentWindow.document.write(ht_c);
 ifrm2.contentWindow.document.close();
-
-
 
 pageScript();
 
