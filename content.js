@@ -1,5 +1,5 @@
 try {
-	console.log(window.location.href+" - 'HTML5 Video previews page' has access");
+	//console.log(window.location.href+" - 'HTML5 Video previews page' has access");
 	let expnd=[];
 	let exBool=true;
 
