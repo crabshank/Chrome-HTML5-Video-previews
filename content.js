@@ -413,9 +413,10 @@ var ancsRsz= ()=>{
 		firstParent.style.setProperty( 'transform', 'scale(0.97) translate('+(ifrc.left-fprc.left)+'px,'+(ifrc.bottom-fprc.top)+'px)', 'important' );
 	
 		fprc=firstParent.getBoundingClientRect();
+		let vrc=myVdo.getBoundingClientRect();
 		
-		ifrm2.style.top=(fprc.bottom+gapVid)+'px';
-		ifrm2.style.left=(fprc.left)+'px';
+		ifrm2.style.top=(Math.max(fprc.bottom,vrc.bottom)+gapVid)+'px';
+		ifrm2.style.left=(Math.min(fprc.left,vrc.left))+'px';
 	
 }
 	
@@ -1366,9 +1367,11 @@ ifrm2.style.setProperty=('width',ifw+'px','important');
 ifrm2.style.setProperty=('max-width',ifw+'px','important');
 
 try{
-	fprc=firstParent.getBoundingClientRect();
-	if(parseFloat(ifrm2.style.top)<parseFloat(fprc.bottom+gapVid)){
-	ifrm2.style.setProperty( 'top', (fprc.bottom+gapVid)+'px', 'important' );
+	let fprc=firstParent.getBoundingClientRect();
+	let vrc=myVdo.getBoundingClientRect();
+	let btm=Math.max(fprc.bottom,vrc.bottom);
+	if(parseFloat(ifrm2.style.top)<parseFloat(btm+gapVid)){
+	ifrm2.style.setProperty( 'top', (btm+gapVid)+'px', 'important' );
 	}
 }catch(e){
 							
