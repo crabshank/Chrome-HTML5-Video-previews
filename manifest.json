@@ -1,9 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Fast forward",
-  "options_page":  "options.html",
-  "version": "2.43",
-  "content_scripts": [
+  "name": "HTML5 Video previews page",
+  "version": "2021.4",
+    "content_scripts": [
     {
 	      "all_frames": true,
       "matches": [
@@ -12,12 +11,15 @@
       "js": ["content.js"]
     }
   ],
-  "permissions": ["tabs","activeTab","storage"],
-  "action": {
-    "default_icon": "icon.png",
-    "default_title": "Fast forward"
+  "permissions": ["tabs","activeTab"],
+  "background": {
+    "service_worker": "background.js"
   },
+  "action": {
+	"default_icon": "ct.png",
+	"default_popup": "index.html"
+	},
   	"icons": {
-        "128": "icon.png"
+        "128": "ct.png"
     }
 }
