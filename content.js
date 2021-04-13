@@ -1271,7 +1271,8 @@ function thumbseek(bool){
 				window.scrollTo(0,0);
 				
 				function shiftBtns2(bool){
-					let a=(bool)?event.target.documentElement.scrollTop-ifrm2.offsetTop:event.target.documentElement.scrollTop;
+					let evt=(!!event.target.documentElement && typeof event.target.documentElement!=='undefined')?event.target.documentElement:event.target.ownerDocument.documentElement;
+					let a=(bool)?evt.scrollTop-ifrm2.offsetTop:evt.scrollTop;
 					if(a>=0){
 						bSect.style.top=(a+3)+'px';
 					}
