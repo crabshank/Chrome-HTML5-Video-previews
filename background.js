@@ -54,9 +54,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
  handleMessage(request, sender, sendResponse);
 	});
 	
-chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
+/*chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
  handleMessage(request, sender, sendResponse);
-	});
+	});*/
 
 
 } catch (e) {	
