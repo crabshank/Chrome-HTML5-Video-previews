@@ -132,7 +132,7 @@ function messageHdl(request, sender, sendResponse) {
 }
 }
 	
-//chrome.extension.onMessage.addListener(messageHdl);
+
 chrome.runtime.onMessage.addListener(messageHdl);
 
 
