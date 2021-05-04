@@ -130,6 +130,7 @@ function messageHdl(request, sender, sendResponse) {
 		// init=false;
 		
 }
+ return true;
 }
 	
 
