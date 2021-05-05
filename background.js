@@ -52,6 +52,7 @@ function handleMessage(request, sender, sendResponse) {
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
  handleMessage(request, sender, sendResponse);
+ return true;
 	});
 
 
