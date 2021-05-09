@@ -1284,6 +1284,12 @@ function thumbseek(bool){
 					}, true);
 					ifrm2.contentDocument.addEventListener("scroll", (event) => {
 						shiftBtns2(false);
+					});				
+					ifrm2.ownerDocument.addEventListener("wheel", (event) => {
+						shiftBtns2(true);
+					}, true);
+					ifrm2.contentDocument.addEventListener("wheel", (event) => {
+						shiftBtns2(false);
 					});
 				
 			}
