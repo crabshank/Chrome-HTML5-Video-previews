@@ -1272,8 +1272,10 @@ function thumbseek(bool){
 				window.scrollTo(0,0);
 				
 				function shiftBtns2(bool){
-					let evt=(!!event.target.documentElement && typeof event.target.documentElement!=='undefined')?event.target.documentElement:event.target.ownerDocument.documentElement;
-					let a=(bool)?evt.scrollTop-ifrm2.offsetTop:evt.scrollTop;
+					
+					let scrollTop = (typeof window.pageYOffset !== 'undefined') ? window.pageYOffset : (event.target.documentElement || event.target.ownerDocument.documentElement || document.documentElement || document.body.parentNode || document.body).scrollTop;
+					
+					let a=(bool)?scrollTop-ifrm2.offsetTop:scrollTop;
 					if(a>=0){
 						bSect.style.top=(a+3)+'px';
 					}
