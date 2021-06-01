@@ -267,6 +267,9 @@ var clck_a=-1;
 var t_a=0;
 var t_b=0;
 var clck_b=0;
+var nxtHi=0;
+var nxtHi_cnt=0;
+var nxtHi_sp=0;
 var m_c=0;
 var m_l=0;
 var curr_thumb=0;
@@ -592,15 +595,30 @@ let t_i=myVdo.buffered.end(i);
 let s_i=myVdo.buffered.start(i);
 
 if(t_i==myVdo.duration && c_i>=s_i){
-				myVdo.playbackRate=mxsp.value;
+				myVdo.playbackRate=(Number.isNaN(mxsp.valueAsNumber))?1:mxsp.valueAsNumber;
 				break;
 }else{
 
 if(c_i<=t_i && c_i>=s_i){
 	if(t_i>t_a){
-		lst=Math.floor((100000*((t_i-t_a)/(clck_b-clck_a))))*0.01;
-		t_a=t_i;
-		myVdo.playbackRate=Math.min(mxsp.value,Math.max(1,lst));
+						lst=Math.floor((100000*((t_i-t_a)/(clck_b-clck_a))))*0.01;
+						t_a=t_i;
+						let vN=(Number.isNaN(mxsp.valueAsNumber))?1:mxsp.valueAsNumber;
+						let vN1=vN;
+						vN=Math.min(vN,Math.max(1,lst));
+						nxtHi+=vN; //+clamped calc speed
+						nxtHi_cnt++;
+						nxtHi_sp+=vN1; //+clse.value
+						if(vN==vN1){
+							if(myVdo.playbackRate!=vN){
+									myVdo.playbackRate=vN;
+							}
+						}else{
+							let avgSp=Math.floor(100*Math.max(1,Math.min(vN1,Math.min(nxtHi/nxtHi_cnt,nxtHi_sp/nxtHi_cnt))))*0.01;
+							if(myVdo.playbackRate!=avgSp){
+								myVdo.playbackRate=avgSp;
+							}
+						}
 	}else{
 		calcAgain=true;
 		t_a=c_i;
@@ -635,6 +653,9 @@ if (calcAgain===true){
 function adjRate(){
 if(sp_swtch==1){
 myVdo.playbackRate=Math.min(16,Math.max(1,mxsp.valueAsNumber));
+nxtHi=0;
+nxtHi_cnt=0;
+nxtHi_sp=0;
 calcSp();
 }
 }
