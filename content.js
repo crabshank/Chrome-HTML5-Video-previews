@@ -1309,7 +1309,7 @@ function thumbseek(bool){
 				
 				function shiftBtns2(bool){
 					
-					let scrollTop = (typeof window.pageYOffset !== 'undefined') ? window.pageYOffset : (event.target.documentElement || event.target.ownerDocument.documentElement || document.documentElement || document.body.parentNode || document.body).scrollTop;
+					let scrollTop = (typeof window.pageYOffset !== 'undefined') ? window.pageYOffset : ( window.scrollY || event.target.documentElement.scrollTop || event.target.ownerDocument.documentElement.scrollTop || document.documentElement.scrollTop || document.body.parentNode.scrollTop || document.body.scrollTop);
 					
 					let a=(bool)?scrollTop-ifrm2.offsetTop:scrollTop;
 					if(a>=0){
