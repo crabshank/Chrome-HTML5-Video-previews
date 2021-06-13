@@ -900,7 +900,7 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 			 
 			 try{
 				 
-				 if(!vwg && frame[0].src!='' && frame[0].src!='about:blank' && frame[0].src!='javascript:false'&& frame[0].src!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2){
+				 if(!vwg && !!frame[0].src && frame[0].src!='' && frame[0].src!='about:blank' && frame[0].src!='javascript:false'&& frame[0].src!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2){
 					 	frame[0].style.setProperty( 'visibility', 'visible', 'important' );
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].src;
@@ -914,7 +914,7 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 				}catch(e){;}			
 
 				try{
-				 if(!vwg && frame[0].getAttribute('data-src')!='' && frame[0].getAttribute('data-src')!='about:blank' && frame[0].getAttribute('data-src')!='javascript:false'&& frame[0].getAttribute('data-src')!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2){
+				 if(!vwg && !!frame[0].getAttribute('data-src') && frame[0].getAttribute('data-src')!='' && frame[0].getAttribute('data-src')!='about:blank' && frame[0].getAttribute('data-src')!='javascript:false'&& frame[0].getAttribute('data-src')!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2){
 					 	frame[0].style.setProperty( 'visibility', 'visible', 'important' );
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].getAttribute('data-src');
