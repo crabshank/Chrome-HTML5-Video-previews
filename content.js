@@ -54,7 +54,7 @@ function messageHdl(request, sender, sendResponse) {
 			
 					let xfr=null;
 		for(let i=0; i<expnd.length; i++){
-			if (expnd[i].src===request.message){
+			if (expnd[i].src===request.message || expnd[i].getAttribute('data-src')===request.message){
 				xfr=expnd[i];
 				break;
 			}
@@ -65,7 +65,7 @@ function messageHdl(request, sender, sendResponse) {
 					let ifrs=[...document.getElementsByTagName('IFRAME')];
 		let fr=null;
 		for(let i=0; i<ifrs.length; i++){
-			if (ifrs[i].src===request.message){
+			if (ifrs[i].src===request.message || ifrs[i].getAttribute('data-src')===request.message){
 				fr=ifrs[i];
 				expnd.push(fr);
 				break;
@@ -81,7 +81,7 @@ function messageHdl(request, sender, sendResponse) {
 		let ifrs=[...document.getElementsByTagName('IFRAME')];
 		let fr=null;
 		for(let i=0; i<ifrs.length; i++){
-			if (ifrs[i].src===request.message){
+			if (ifrs[i].src===request.message || ifrs[i].getAttribute('data-src')===request.message){
 				fr=ifrs[i];
 				expnd=removeEls(fr, expnd);
 				break;
@@ -154,7 +154,7 @@ function convertEmbeds(){
 			node.outerHTML=node.outerHTML.split(rgx).join('<iframe ');
 			node.outerHTML=node.outerHTML.split('</embed>').join('</iframe>');
 		}catch(e){
-			node.outerHTML='<iframe src="'+node.src+'"></iframe>';
+			node.outerHTML='<iframe data-src="'+node.getAttribute('data-src')+'" src="'+node.src+'"></iframe>';
 		}
 	});
 	//return embeds;
@@ -911,6 +911,20 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 			tbG=false;
 		   gnrB.value='Select video';
 				 }
+				}catch(e){;}			
+
+				try{
+				 if(!vwg && frame[0].getAttribute('data-src')!='' && frame[0].getAttribute('data-src')!='about:blank' && frame[0].getAttribute('data-src')!='javascript:false'&& frame[0].getAttribute('data-src')!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2){
+					 	frame[0].style.setProperty( 'visibility', 'visible', 'important' );
+						let opt = document.createElement('option');
+						opt.textContent=frame[0].getAttribute('data-src');
+						opt.setAttribute("index", '-'+index);
+						opt.setAttribute("link", frame[0].getAttribute('data-src'));
+						opt.style.cssText='color: black !important;';
+						txtBx.appendChild(opt);	
+			tbG=false;
+		   gnrB.value='Select video';
+				 }
 				}catch(e){;}
 
 			});
@@ -1309,15 +1323,14 @@ function thumbseek(bool){
 				
 				function shiftBtns2(bool){
 					
-					let scrollTopArr = [window.pageYOffset,
-					window.pageYOffset, 	
-					window.scrollY, 
-					event.target.ownerDocument.documentElement.scrollTop,
-					document.documentElement.scrollTop,
-					document.body.parentNode.scrollTop,
-					document.body.scrollTop,
-					document.head.scrollTop
-					];
+					let scrollTopArr = [(!!window.pageYOffset && typeof  window.pageYOffset !=='undefined')?window.pageYOffset:null,
+					(!!window.scrollY && typeof  window.scrollY !=='undefined')?window.scrollY:null,
+					(!!event.target.ownerDocument.documentElement.scrollTop && typeof event.target.ownerDocument.documentElement.scrollTop !=='undefined')?event.target.ownerDocument.documentElement.scrollTop:null,
+					(!!document.documentElement.scrollTop && typeof  document.documentElement.scrollTop !=='undefined')?document.documentElement.scrollTop:null,
+					(!!document.body.parentNode.scrollTop && typeof  document.body.parentNode.scrollTop !=='undefined')?document.body.parentNode.scrollTop:null,
+					(!!document.body.scrollTop && typeof  document.body.scrollTop !=='undefined')?document.body.scrollTop:null,
+					(!!document.head.scrollTop && typeof  document.head.scrollTop !=='undefined')?document.head.scrollTop:null];
+					
 					let scrollTop=0;
 				for(let k=0; k<scrollTopArr.length; k++){
 					if(!!scrollTopArr[k] && typeof  scrollTopArr[k] !=='undefined' && scrollTopArr[k]>0){
