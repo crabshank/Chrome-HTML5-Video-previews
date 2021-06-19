@@ -33,7 +33,7 @@ chrome.action.onClicked.addListener((tab) => {
    send(getUrl(tab),false,tab.id);
 });
 
-function handleMessage(request, sender, sendResponse) {
+async function handleMessage(request, sender, sendResponse) {
 		return new Promise((resolve, reject)=>{
 				if(lastMsg[0]!=JSON.stringify(request) || lastMsg[1]!= JSON.stringify(sender)){
 					lastMsg[0]=JSON.stringify(request);
