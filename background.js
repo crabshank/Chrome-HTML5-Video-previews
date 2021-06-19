@@ -5,7 +5,8 @@ function getUrl(tab){
 
 var lastMsg=[];
 
-function send(message,dims,tabId) {
+async function send(message,dims,tabId) {
+	return new Promise((resolve, reject)=>{
 var msg={};
 
     if(dims){
@@ -23,15 +24,17 @@ var msg={};
       };
 		
 	}
-      chrome.tabs.sendMessage(tabId, msg);
+      chrome.tabs.sendMessage(tabId, msg,()=>{resolve();});
+	});
     }
 
 
 chrome.action.onClicked.addListener((tab) => {
-  send(getUrl(tab),false,tab.id);
+   send(getUrl(tab),false,tab.id);
 });
 
 function handleMessage(request, sender, sendResponse) {
+		return new Promise((resolve, reject)=>{
 				if(lastMsg[0]!=JSON.stringify(request) || lastMsg[1]!= JSON.stringify(sender)){
 					lastMsg[0]=JSON.stringify(request);
 					lastMsg[1]=JSON.stringify(sender);
@@ -41,19 +44,21 @@ function handleMessage(request, sender, sendResponse) {
 				"windowId": sender.tab.windowId,
 				"index": (sender.tab.index+1),
 				"active": false
-				}, function(tab) {});
+				}, function(tab) {resolve();});
 				}else if(request.type=='action'){
 				send(request.url,false,request.id);
 				}else if(request.type!='init'){
 				send(request,true,sender.tab.id);
 				}
 				}
+				reject();
+		});
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
  handleMessage(request, sender, sendResponse);
  return true;
-	});
+});
 
 
 } catch (e) {	
