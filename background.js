@@ -1,3 +1,57 @@
+try{
+var lifeline;
+
+keepAlive();
+
+chrome.runtime.onConnect.addListener((port)=> {
+  if (port.name === 'keepAlive') {
+    lifeline = port;
+    setTimeout(keepAliveForced, 295e3); // 5 minutes minus 5 seconds
+    port.onDisconnect.addListener(keepAliveForced);
+  }
+});
+
+function keepAliveForced() {
+  lifeline?.disconnect();
+  lifeline = null;
+  keepAlive();
+}
+
+async function keepAlive() {
+  if (lifeline) return;
+  for (var tab of await chrome.tabs.query({ url:"<all_urls>"})) {
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => chrome.runtime.connect({ name: 'keepAlive' }),
+      });
+	  console.log(lifeline);
+      chrome.tabs.onUpdated.removeListener(retryOnTabUpdate);
+	  chrome.tabs.onReplaced.addListener(retryOnTabUpdate2);
+	  chrome.tabs.onRemoved.addListener(retryOnTabUpdate3);
+      return;
+    } catch (e) {;}
+  }
+  chrome.tabs.onUpdated.addListener(retryOnTabUpdate);
+	  chrome.tabs.onReplaced.addListener(retryOnTabUpdate2);
+	  chrome.tabs.onRemoved.addListener(retryOnTabUpdate3);
+}
+
+async function retryOnTabUpdate(tabId, info, tab) {
+  if (info.url) {
+    keepAlive();
+  }
+}
+async function retryOnTabUpdate2(addedTabId, removedTabId) {
+    keepAlive();
+}
+async function retryOnTabUpdate3(tabId, removeInfo) {
+    keepAlive();
+}
+	/*Source: https://stackoverflow.com/a/66618269 - wOxxOm*/
+	
+}catch(e){;}
+
 try {
 function getUrl(tab){
 	return (tab.url=="" && !!tab.pendingUrl && typeof tab.pendingUrl!=='undefined' && tab.pendingUrl!='')?tab.pendingUrl:tab.url;
@@ -5,8 +59,7 @@ function getUrl(tab){
 
 var lastMsg=[];
 
-async function send(message,dims,tabId) {
-	return new Promise((resolve, reject)=>{
+function send(message,dims,tabId) {
 var msg={};
 
     if(dims){
@@ -24,17 +77,15 @@ var msg={};
       };
 		
 	}
-      chrome.tabs.sendMessage(tabId, msg,()=>{resolve();});
-	});
+      chrome.tabs.sendMessage(tabId, msg);
     }
 
 
 chrome.action.onClicked.addListener((tab) => {
-   send(getUrl(tab),false,tab.id);
+  send(getUrl(tab),false,tab.id);
 });
 
-async function handleMessage(request, sender, sendResponse) {
-		return new Promise((resolve, reject)=>{
+function handleMessage(request, sender, sendResponse) {
 				if(lastMsg[0]!=JSON.stringify(request) || lastMsg[1]!= JSON.stringify(sender)){
 					lastMsg[0]=JSON.stringify(request);
 					lastMsg[1]=JSON.stringify(sender);
@@ -44,21 +95,19 @@ async function handleMessage(request, sender, sendResponse) {
 				"windowId": sender.tab.windowId,
 				"index": (sender.tab.index+1),
 				"active": false
-				}, function(tab) {resolve();});
+				}, function(tab) {});
 				}else if(request.type=='action'){
 				send(request.url,false,request.id);
 				}else if(request.type!='init'){
 				send(request,true,sender.tab.id);
 				}
 				}
-				reject();
-		});
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
  handleMessage(request, sender, sendResponse);
  return true;
-});
+	});
 
 
 } catch (e) {	
