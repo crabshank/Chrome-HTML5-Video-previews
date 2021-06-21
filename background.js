@@ -18,7 +18,7 @@ function keepAliveForced() {
 }
 
 async function keepAlive() {
- if (lifeline) return;
+ if (!!lifeline) return;
   for (var tab of await chrome.tabs.query({ url:"*://*/*"})) {
     try {
 							chrome.scripting.executeScript({
