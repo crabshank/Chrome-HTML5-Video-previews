@@ -6,7 +6,7 @@ keepAlive();
 chrome.runtime.onConnect.addListener((port)=> {
   if (port.name === 'keepAlive') {
     lifeline = port;
-    setTimeout(keepAliveForced, 295e3); // 5 minutes minus 5 seconds
+    setTimeout(keepAliveForced, 295e3); // 5 minutes minus 5 seconds	
     port.onDisconnect.addListener(keepAliveForced);
   }
 });
@@ -18,13 +18,13 @@ function keepAliveForced() {
 }
 
 async function keepAlive() {
-  if (lifeline) return;
-  for (var tab of await chrome.tabs.query({ url:"<all_urls>"})) {
+ // if (lifeline) return;
+  for (var tab of await chrome.tabs.query({ url:"*://*/*"})) {
     try {
-      await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: () => chrome.runtime.connect({ name: 'keepAlive' }),
-      });
+							chrome.scripting.executeScript({
+								  target: {tabId: tab.id, allFrames: true},
+								  files: ['port_connect.js'],
+								}, () => {});
 	  console.log(lifeline);
       chrome.tabs.onUpdated.removeListener(retryOnTabUpdate);
 	  chrome.tabs.onReplaced.addListener(retryOnTabUpdate2);
