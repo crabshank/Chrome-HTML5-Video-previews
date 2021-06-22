@@ -19,28 +19,6 @@ function keepAliveForced() {
 
 async function keepAlive() {
  if (!!lifeline) return;
-  for (var tab of await chrome.tabs.query({ url:"*://*/*"})) {
-try{
-var lifeline;
-
-keepAlive();
-
-chrome.runtime.onConnect.addListener((port)=> {
-  if (port.name === 'keepAlive') {
-    lifeline = port;
-    setTimeout(keepAliveForced, 295e3); // 5 minutes minus 5 seconds	
-    port.onDisconnect.addListener(keepAliveForced);
-  }
-});
-
-function keepAliveForced() {
-  lifeline?.disconnect();
-  lifeline = null;
-  keepAlive();
-}
-
-async function keepAlive() {
- if (!!lifeline) return;
   for (var tab of await chrome.tabs.query({ url:"<all_urls>"})) {
     try {
 							chrome.scripting.executeScript({
