@@ -18,23 +18,38 @@ function keepAliveForced() {
 }
 
 async function keepAlive() {
- if (!!lifeline) return;
-  for (var tab of await chrome.tabs.query({ url:"<all_urls>"})) {
-    try {
-							chrome.scripting.executeScript({
-								  target: {tabId: tab.id},
+	await new Promise((resolve, reject)=>{
+	
+ if (!!lifeline){
+	 resolve();
+ }else{
+ var count=0;
+ 		chrome.tabs.query({}, function(tabs) {
+						   if (!chrome.runtime.lastError) {
+			for (let i = 0; i < tabs.length; i++) {
+				if(!tabs[i].url.startsWith('chrome://') && !tabs[i].url.startsWith('chrome-extension://')){
+												chrome.scripting.executeScript({
+								  target: {tabId: tabs[i].id},
 								  files: ['port_connect.js'],
 								}, () => {});
-	  console.log(lifeline);
-      chrome.tabs.onUpdated.removeListener(retryOnTabUpdate);
-	  chrome.tabs.onReplaced.addListener(retryOnTabUpdate2);
-	  chrome.tabs.onRemoved.addListener(retryOnTabUpdate3);
-      return;
-    } catch (e) {;}
-  }
+								count++;
+								break;
+				}
+			}
+		}
+		});
+ 
+if(count>0){
   chrome.tabs.onUpdated.addListener(retryOnTabUpdate);
 	  chrome.tabs.onReplaced.addListener(retryOnTabUpdate2);
 	  chrome.tabs.onRemoved.addListener(retryOnTabUpdate3);
+	  resolve();
+}else{
+	reject();
+}
+}
+}).then((response) => {;}).catch((e) => {;});
+
 }
 
 async function retryOnTabUpdate(tabId, info, tab) {
