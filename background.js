@@ -53,7 +53,7 @@ if(count>0){
 }
 
 async function retryOnTabUpdate(tabId, info, tab) {
-  if (info.url) {
+  if (!!info.url) {
     keepAlive();
   }
 }
