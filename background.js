@@ -1,3 +1,7 @@
+function getUrl(tab) {
+	return (tab.url == "" && !!tab.pendingUrl && typeof tab.pendingUrl !== 'undefined' && tab.pendingUrl != '') ? tab.pendingUrl : tab.url;
+}
+
 try{
 var lifeline;
 
@@ -27,7 +31,8 @@ async function keepAlive() {
  		chrome.tabs.query({}, function(tabs) {
 						   if (!chrome.runtime.lastError) {
 			for (let i = 0; i < tabs.length; i++) {
-				if(!tabs[i].url.startsWith('chrome://') && !tabs[i].url.startsWith('chrome-extension://')){
+				let tbURL=getUrl(tabs[i]);
+				if(!!tbURL && typeof tbURL!=='undefined' && !tbURL.startsWith('chrome://') && !tbURL.startsWith('chrome-extension://')){
 												chrome.scripting.executeScript({
 								  target: {tabId: tabs[i].id},
 								  files: ['port_connect.js'],
@@ -68,9 +73,6 @@ async function retryOnTabUpdate3(tabId, removeInfo) {
 }catch(e){;}
 
 try {
-function getUrl(tab){
-	return (tab.url=="" && !!tab.pendingUrl && typeof tab.pendingUrl!=='undefined' && tab.pendingUrl!='')?tab.pendingUrl:tab.url;
-}
 
 var lastMsg=[];
 
