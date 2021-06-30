@@ -24,11 +24,11 @@ var msg={};
       };
 		
 	}
-      chrome.tabs.sendMessage(tabId, msg);
+      self.chrome.tabs.sendMessage(tabId, msg);
     }
 
 
-chrome.action.onClicked.addListener((tab) => {
+self.chrome.action.onClicked.addListener((tab) => {
   send(getUrl(tab),false,tab.id);
 });
 
@@ -37,7 +37,7 @@ function handleMessage(request, sender, sendResponse) {
 					lastMsg[0]=JSON.stringify(request);
 					lastMsg[1]=JSON.stringify(sender);
   				if (request.type=='open'){
-				chrome.tabs.create({
+				self.chrome.tabs.create({
 				"url": request.msg,
 				"windowId": sender.tab.windowId,
 				"index": (sender.tab.index+1),
@@ -51,7 +51,7 @@ function handleMessage(request, sender, sendResponse) {
 				}
 }
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+self.chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
  handleMessage(request, sender, sendResponse);
  return true;
 	});
