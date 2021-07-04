@@ -5,6 +5,11 @@ try {
 
 let init=true;
 
+function median(arr){
+	 arr = arr.sort((a, b) => a - b);
+    return (arr[arr.length - 1 >> 1] + arr[arr.length >> 1]) / 2;
+}
+
 function removeEls(d, array) {
     var newArray = [];
     for (let i = 0; i < array.length; i++) {
@@ -263,13 +268,7 @@ progress {
 `;
 
 function pageScript(){
-var clck_a=-1;
-var t_a=0;
-var t_b=0;
-var clck_b=0;
-var nxtHi=0;
-var nxtHi_cnt=0;
-var nxtHi_sp=0;
+var lddArr=[];
 var m_c=0;
 var m_l=0;
 var curr_thumb=0;
@@ -580,82 +579,72 @@ function shiftBtns(bool){
 }
 
 //shiftBtns(true);
+
+
+
 function calcSp(){
-if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1 && !myVdo.paused){ 
-if(clck_a==-1){
-		t_a=myVdo.currentTime;
-	clck_a = performance.now();
-}else{
-let calcAgain=false;
-let recA=false;
-let c_i=myVdo.currentTime;
-clck_b = performance.now();
-for (let i=myVdo.buffered.length-1; i>=0; i--){	
-let t_i=myVdo.buffered.end(i);
-let s_i=myVdo.buffered.start(i);
-
-if(t_i==myVdo.duration && c_i>=s_i){
-				myVdo.playbackRate=(Number.isNaN(mxsp.valueAsNumber))?1:mxsp.valueAsNumber;
-				break;
-}else{
-
-if(c_i<=t_i && c_i>=s_i){
-	if(t_i>t_a){
-						lst=Math.floor((100000*((t_i-t_a)/(clck_b-clck_a))))*0.01;
-						t_a=t_i;
-						let vN=(Number.isNaN(mxsp.valueAsNumber))?1:mxsp.valueAsNumber;
-						let vN1=vN;
-						vN=Math.min(vN,Math.max(1,lst));
-						nxtHi+=vN; //+clamped calc speed
-						nxtHi_cnt++;
-						nxtHi_sp+=vN1; //+clse.value
-						if(vN==vN1){
-							if(myVdo.playbackRate!=vN){
-									myVdo.playbackRate=vN;
-							}
-						}else{
-							let avgSp=Math.floor(100*Math.max(1,Math.min(vN1,Math.min(nxtHi/nxtHi_cnt,nxtHi_sp/nxtHi_cnt))))*0.01;
-							if(myVdo.playbackRate!=avgSp){
-								myVdo.playbackRate=avgSp;
-							}
-						}
-	}else{
-		calcAgain=true;
-		t_a=c_i;
-	}
-	recA=true;
-	break;
-}else if(c_i>t_i){
-	break;
-}
-
-}
-
-
-}
-
-if (calcAgain===true){
-				if(recA===true){
-				   clck_a=performance.now();
+if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1){ 
+				var lddRaw;
+				var rgs=[];
+				var lastPart=false;
+				let c_i=myVdo.currentTime;
+			for (let k=myVdo.buffered.length-1; k>=0; k--){
+			let t_i=myVdo.buffered.end(k);
+			let s_i=myVdo.buffered.start(k);
+			
+				if(t_i==myVdo.duration && c_i>=s_i){
+					lastPart=true;
+					break;
+				}else if(c_i>=s_i && t_i>=c_i){
+					rgs.push([s_i,t_i]);
 				}
-				calcSp();
+			}
+			
+			if(lastPart){
+					let vN=(Number.isNaN(mxsp.valueAsNumber))?1:mxsp.valueAsNumber;
+						myVdo.playbackRate=vN;		
 			}else{
-				if(recA===true){
-				   clck_a=performance.now();
-                }
-            }
+					var tot=0;
+					if(rgs.length>0){
+						
+					let sorted=rgs.sort((a, b) => {return a[0] - b[0];})
+					tot=sorted[0][1]-c_i;
+					
+					for (let k=1; k<sorted.length; k++){
+						if(sorted[k-1][1]==sorted[k][0]){
+							tot+=sorted[k][1]-sorted[k][0];
+						}else{
+							break;
+						}
+					}
+					
+					}
+		
+						lddRaw=(myVdo.playbackRate==0)?tot:tot/myVdo.playbackRate;
+						lddArr.push(lddRaw);
+						let mdian=median(lddArr);
+						while(lddArr.length>19){ //keep last 19 buffered times and the median so far
+							lddArr.shift();
+						}
+							lddArr.unshift(mdian);
 
-}
+						let vN=(Number.isNaN(mxsp.valueAsNumber))?1:mxsp.valueAsNumber;
+						let outSp=(mdian==0)?1:Math.floor(100*(tot/mdian))*0.01;
+						outSp=Math.max(1,Math.min(outSp,vN));		
+						if(outSp!=myVdo.playbackRate){
+							myVdo.playbackRate=outSp;		
+						}
 
-}
+			}
+				
+					}
+
 }
 
 function adjRate(){
 if(sp_swtch==1){
 myVdo.playbackRate=Math.min(16,Math.max(1,mxsp.valueAsNumber));
-nxtHi=0;
-nxtHi_cnt=0;
-nxtHi_sp=0;
+lddArr=[];
 calcSp();
 }
 }
