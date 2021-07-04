@@ -419,7 +419,7 @@ var ancsRsz= ()=>{
 		let vrc=myVdo.getBoundingClientRect();
 		
 		ifrm2.style.top=(Math.max(fprc.bottom,vrc.bottom)+gapVid)+'px';
-		ifrm2.style.left=(Math.min(fprc.left,vrc.left))+'px';
+		ifrm2.style.left=(Math.max(0,Math.min(fprc.left,vrc.left)))+'px';
 	
 }
 	
@@ -1312,19 +1312,18 @@ function thumbseek(bool){
 				
 				function shiftBtns2(bool){
 					
-					let scrollTopArr = [(!!window.pageYOffset && typeof  window.pageYOffset !=='undefined')?window.pageYOffset:null,
-					(!!window.scrollY && typeof  window.scrollY !=='undefined')?window.scrollY:null,
-					(!!event.target.ownerDocument.documentElement.scrollTop && typeof event.target.ownerDocument.documentElement.scrollTop !=='undefined')?event.target.ownerDocument.documentElement.scrollTop:null,
-					(!!document.documentElement.scrollTop && typeof  document.documentElement.scrollTop !=='undefined')?document.documentElement.scrollTop:null,
-					(!!document.body.parentNode.scrollTop && typeof  document.body.parentNode.scrollTop !=='undefined')?document.body.parentNode.scrollTop:null,
-					(!!document.body.scrollTop && typeof  document.body.scrollTop !=='undefined')?document.body.scrollTop:null,
-					(!!document.head.scrollTop && typeof  document.head.scrollTop !=='undefined')?document.head.scrollTop:null];
+										let scrollTopArr = [window?.pageYOffset,
+					window?.scrollY,
+					event?.target?.ownerDocument?.documentElement?.scrollTop,
+					document?.documentElement?.scrollTop,
+					document?.body?.parentNode?.scrollTop,
+					document?.body?.scrollTop,
+					document?.head?.scrollTop];
 					
 					let scrollTop=0;
 				for(let k=0; k<scrollTopArr.length; k++){
 					if(!!scrollTopArr[k] && typeof  scrollTopArr[k] !=='undefined' && scrollTopArr[k]>0){
-						scrollTop=scrollTopArr[k];
-						break;
+						scrollTop=(scrollTopArr[k]>scrollTop)?scrollTopArr[k]:scrollTop;
 					}
 				}
 					
