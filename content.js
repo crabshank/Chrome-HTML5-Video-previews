@@ -5,11 +5,6 @@ try {
 
 let init=true;
 
-function median(arr){
-	 arr = arr.sort((a, b) => a - b);
-    return (arr[arr.length - 1 >> 1] + arr[arr.length >> 1]) / 2;
-}
-
 function removeEls(d, array) {
     var newArray = [];
     for (let i = 0; i < array.length; i++) {
@@ -599,9 +594,9 @@ if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1){
 					rgs.push([s_i,t_i]);
 				}
 			}
+			let vN=(Number.isNaN(mxsp.valueAsNumber))?1:mxsp.valueAsNumber;
 			
 			if(lastPart){
-					let vN=(Number.isNaN(mxsp.valueAsNumber))?1:mxsp.valueAsNumber;
 						myVdo.playbackRate=vN;		
 			}else{
 					var tot=0;
@@ -620,20 +615,23 @@ if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1){
 					
 					}
 		
-						lddRaw=(myVdo.playbackRate==0)?tot:tot/myVdo.playbackRate;
-						lddArr.push(lddRaw);
-						let mdian=median(lddArr);
-						while(lddArr.length>19){ //keep last 19 buffered times and the median so far
-							lddArr.shift();
-						}
-							lddArr.unshift(mdian);
 
-						let vN=(Number.isNaN(mxsp.valueAsNumber))?1:mxsp.valueAsNumber;
-						let outSp=(mdian==0)?1:Math.floor(100*(tot/mdian))*0.01;
-						outSp=Math.max(1,Math.min(outSp,vN));		
-						if(outSp!=myVdo.playbackRate){
-							myVdo.playbackRate=outSp;		
-						}
+						lddRaw=(myVdo.playbackRate==0)?tot:tot/myVdo.playbackRate;
+						let prev_mx=(lddArr.length==0)?lddRaw:Math.max(...lddArr);
+						lddArr.push(lddRaw);
+						let outSp=vN;
+						if(lddRaw>prev_mx){
+							lddArr=[];
+						}else{
+								//let mx=Math.max(...lddArr);
+								let mn=Math.min(...lddArr);
+								let rng=prev_mx-mn;
+								let rng_norm=(prev_mx==0)?1:rng/prev_mx;
+								let outSp=Math.floor(100*((1-rng_norm)*vN+rng_norm))*0.01;	
+					}
+						//if(outSp!=myVdo.playbackRate){
+							myVdo.playbackRate=outSp;
+						//}
 
 			}
 				
