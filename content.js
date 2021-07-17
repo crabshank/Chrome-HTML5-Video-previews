@@ -620,8 +620,8 @@ if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1){
 						let prev_mx=(lddArr.length==0)?lddRaw:Math.max(...lddArr);
 						lddArr.push(lddRaw);
 						let outSp=vN;
-						if(tot<=1){
-						 outSp=1;
+						if(lddRaw<=1){
+						 outSp=Math.min(vN,Math.max(tot,1));
 						}else if(lddRaw>prev_mx){
 							lddArr=[];
 						}else{
