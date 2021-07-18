@@ -621,7 +621,7 @@ if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1){
 						lddArr.push(lddRaw);
 						let outSp=vN;
 						if(lddRaw<=1){
-						 outSp=Math.min(vN,Math.max(tot,1));
+						 outSp=Math.min(vN,Math.max(Math.floor(100*tot)*0.01,1));
 						}else if(lddRaw>prev_mx){
 							lddArr=[];
 						}else{
@@ -629,7 +629,7 @@ if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1){
 								let mn=Math.min(...lddArr);
 								let rng=prev_mx-mn;
 								let rng_norm=(prev_mx==0)?1:rng/prev_mx;
-								let outSp=Math.min(Math.floor(100*((1-rng_norm)*vN+rng_norm))*0.01,Math.min(vN,Math.max(tot,1)));
+								let outSp=Math.min(Math.floor(100*((1-rng_norm)*vN+rng_norm))*0.01,Math.min(vN,Math.max(Math.floor(100*tot)*0.01,1)));
 					}
 						//if(outSp!=myVdo.playbackRate){
 							myVdo.playbackRate=outSp;
