@@ -373,7 +373,7 @@ var rsz_ifrm=()=>{
 	if(!!firstParent){
 		firstParent.style.setProperty( 'transform', 'scale(0.97) translateY('+mainRct.height+'px)', 'important' );
 		let fpRct=absBoundingClientRect(firstParent); 
-		ifrm2.style.setProperty( 'top',(fpRct.bottom+gapVid)+'px', 'important' );
+		ifrm2.style.top=(fpRct.bottom+gapVid)+'px';
 	}
 	ifrm.style.setProperty( 'height', (mainRct.height)+'px', 'important' );
 }
