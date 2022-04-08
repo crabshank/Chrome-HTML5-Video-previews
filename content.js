@@ -5,6 +5,86 @@ try {
 
 let init=true;
 
+var firstParent=null;
+
+function getTagNameShadow(docm, tgn){
+	var shrc=[];
+	var out=[];
+	
+		let allNodes=[...docm.querySelectorAll('*')];
+		let srCnt=0;
+		
+		while(srCnt<allNodes.length){ //1st round
+			if(!!allNodes[srCnt] && typeof allNodes[srCnt] !=='undefined' && allNodes[srCnt].tagName===tgn){
+				out.push(allNodes[srCnt]);
+			}
+			
+			if(!!allNodes[srCnt].shadowRoot && typeof allNodes[srCnt].shadowRoot !=='undefined'){
+				let c=allNodes[srCnt].shadowRoot.children;
+				shrc.push(...c);
+			}
+			srCnt++;
+		}
+		
+		srCnt=0;
+		let srCnt_l=shrc.length;
+		
+		while(srCnt<srCnt_l){ //2nd round
+			if(!!shrc[srCnt].shadowRoot && typeof shrc[srCnt].shadowRoot !=='undefined'){
+				let c=shrc[srCnt].shadowRoot.children;
+				shrc.push(...c);
+				srCnt_l+=c.length;
+			}
+			srCnt++;
+		}
+	
+	let srv=shrc.filter((c)=>{return c.tagName===tgn;});
+	out.push(...srv);
+	
+	return out;
+}
+
+function absBoundingClientRect(el){
+	let st = [window?.scrollY,
+					window?.pageYOffset,
+					el?.ownerDocument?.documentElement?.scrollTop,
+					document?.documentElement?.scrollTop,
+					document?.body?.parentNode?.scrollTop,
+					document?.body?.scrollTop,
+					document?.head?.scrollTop];
+					
+		let sl = [window?.scrollX,
+						window?.pageXOffset,
+						el?.ownerDocument?.documentElement?.scrollLeft,
+						document?.documentElement?.scrollLeft,
+						document?.body?.parentNode?.scrollLeft,
+						document?.body?.scrollLeft,
+						document?.head?.scrollLeft];
+						
+				let scrollTop=0;
+				for(let k=0; k<st.length; k++){
+					if(!!st[k] && typeof  st[k] !=='undefined' && st[k]>0){
+						scrollTop=(st[k]>scrollTop)?st[k]:scrollTop;
+					}
+				}			
+
+				let scrollLeft=0;
+				for(let k=0; k<sl.length; k++){
+					if(!!sl[k] && typeof  sl[k] !=='undefined' && sl[k]>0){
+						scrollLeft=(sl[k]>scrollLeft)?sl[k]:scrollLeft;
+					}
+				}
+	
+	let r=el.getBoundingClientRect();
+	
+	r.left+=window.scrollX;
+	r.right+=window.scrollX;
+	r.top+=window.scrollY;
+	r.bottom+=window.scrollY;
+	
+	return r;
+}
+
 function removeEls(d, array) {
     var newArray = [];
     for (let i = 0; i < array.length; i++) {
@@ -18,9 +98,22 @@ function removeEls(d, array) {
 function getAncestors(el){
 	firstParent=el;
 	let ancestors=[el];
-	while(!!firstParent && typeof firstParent !=='undefined' && !!firstParent.parentElement && typeof firstParent.parentElement!=='undefined' && firstParent.parentElement.tagName!='BODY' && firstParent.parentElement.tagName!='HEAD' && firstParent.parentElement.tagName!='HTML'){
-		firstParent=firstParent.parentElement;
-		ancestors.push(firstParent);
+	let end=false;
+	while(!end){
+		if(!!firstParent.parentElement && typeof firstParent.parentElement!=='undefined'){
+			if(firstParent.parentElement.tagName==='BODY' || firstParent.parentElement.tagName==='HEAD' || firstParent.parentElement.tagName==='HTML'){
+				end=true;
+			}else{
+				firstParent=firstParent.parentElement;
+			}
+		}else if(!!firstParent.parentNode && typeof firstParent.parentNode!=='undefined'){
+				firstParent=firstParent.parentNode;
+		}else if(!!firstParent.host && typeof firstParent.host!=='undefined'){
+				firstParent=firstParent.host;
+		}
+		if(!end){
+			ancestors.push(firstParent);
+		}
 	}
 	return ancestors;
 }
@@ -62,8 +155,7 @@ function messageHdl(request, sender, sendResponse) {
 		
 		if(!xfr){
 			
-					let ifrs=[...document.getElementsByTagName('IFRAME')];
-		let fr=null;
+					let ifrs=getTagNameShadow(document,'IFRAME');
 		for(let i=0; i<ifrs.length; i++){
 			if (ifrs[i].src===request.message || ifrs[i].getAttribute('data-src')===request.message){
 				fr=ifrs[i];
@@ -78,7 +170,7 @@ function messageHdl(request, sender, sendResponse) {
 		}else{
 			
 			
-		let ifrs=[...document.getElementsByTagName('IFRAME')];
+		let ifrs=getTagNameShadow(document,'IFRAME');
 		let fr=null;
 		for(let i=0; i<ifrs.length; i++){
 			if (ifrs[i].src===request.message || ifrs[i].getAttribute('data-src')===request.message){
@@ -132,18 +224,8 @@ function messageHdl(request, sender, sendResponse) {
 }
  return true;
 }
-	
 
 chrome.runtime.onMessage.addListener(messageHdl);
-
-
-/*function procNonIterable(array){
-	    var newArray = [];
-    for (let i = 0; i < array.length; i++) {
-            newArray.push(array[i]);
-    }
-    return newArray;
-}*/
 
 function convertEmbeds(){
 	
@@ -161,7 +243,7 @@ function convertEmbeds(){
 	}
 	
 	
-	let embeds=[...document.getElementsByTagName('EMBED')];
+	let embeds=getTagNameShadow(document,'EMBED');
 
 emb_to_ifr(embeds);
 
@@ -173,7 +255,6 @@ function handleBrowserActionClicked(bgMsg) {
 let ifrm=document.createElement('iframe');
 ifrm.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
 ifrm.style.setProperty( 'width', '-webkit-fill-available', 'important' );
-ifrm.style.setProperty( 'height','min-content', 'important' );
 ifrm.style.setProperty( 'margin', 0, 'important' );
 ifrm.style.setProperty( 'border', 0, 'important' );
 ifrm.style.setProperty( 'padding', 0, 'important' );
@@ -286,6 +367,17 @@ var perc;
 var tbG=false;
 var mgLft=4;
 var gapVid=9;
+
+var rsz_ifrm=()=>{
+	let mainRct=absBoundingClientRect(main); 
+	if(!!firstParent){
+		firstParent.style.setProperty( 'transform', 'scale(0.97) translateY('+mainRct.height+'px)', 'important' );
+		let fpRct=absBoundingClientRect(firstParent); 
+		ifrm2.style.setProperty( 'top',(fpRct.bottom+gapVid)+'px', 'important' );
+	}
+	ifrm.style.setProperty( 'height', (mainRct.height)+'px', 'important' );
+}
+
 ifrm.contentWindow.document.body.style.setProperty( 'margin', 0, 'important' );
 ifrm.contentWindow.document.body.style.setProperty( 'border', 0, 'important' );
 ifrm.contentWindow.document.body.style.setProperty( 'padding', 0, 'important' );
@@ -297,7 +389,7 @@ ifrm2.contentWindow.document.body.style.setProperty( 'border', 0, 'important' );
 ifrm2.contentWindow.document.body.style.setProperty( 'padding', 0, 'important' );
 
 var main=[...ifrm.contentWindow.document.getElementsByTagName("main")][0];
-let mainRct=main.getBoundingClientRect();
+let mainRct=absBoundingClientRect(main);
 
 ifrm.style.setProperty( 'min-height', (mainRct.height)+'px', 'important' );
 ifrm.style.setProperty( 'height', (mainRct.height)+'px', 'important' );
@@ -321,7 +413,7 @@ var maxBtm=0;
 let allNodes=[...document.querySelectorAll('*')];
 
 	allNodes.forEach(function(node) {
-		let rct= node.getBoundingClientRect();
+		let rct= absBoundingClientRect(node);
 		maxBtm=(rct.bottom>maxBtm)?rct.bottom:maxBtm;
 	});
 
@@ -342,7 +434,7 @@ var ancestors;
 
 var bSect=[...ifrm2.contentWindow.document.querySelectorAll("section#bSec")][0];
 
-let sc1w=(bSect.getBoundingClientRect().left-mgLft).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+let sc1w=(absBoundingClientRect(bSect).left-mgLft).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 
  sc1.style.minWidth=sc1w+'px';
  sc1.style.width=sc1w+'px';
@@ -388,7 +480,7 @@ var ancsRsz= ()=>{
 	
 	ancestors=getAncestors(myVdo);
 	firstParent=ancestors[ancestors.length-1];
-	let ifrc=main.getBoundingClientRect();
+	let ifrc=absBoundingClientRect(main);
 			
 	if(!firstParent.ownerDocument.documentElement.contains(ifrm)){
 		
@@ -396,7 +488,7 @@ var ancsRsz= ()=>{
 		let mxBtm2=maxBtm;
 		for(let i=0; i<allFrames.length; i++){
 			if(myVdo_el[1].includes(allFrames[i][2]) && myVdo_el[1]!='' && document.documentElement.contains(allFrames[i][0])){
-				let frRc=allFrames[i][0].contentWindow.document.documentElement.getBoundingClientRect();
+				let frRc=absBoundingClientRect(allFrames[i][0].contentWindow.document.documentElement);
 					if(frRc.bottom>mxBtm2){
 						firstParent=allFrames[i][0].contentWindow.document.documentElement;
 						mxBtm2=frRc.bottom;
@@ -406,22 +498,22 @@ var ancsRsz= ()=>{
 		
 	}
 	
-		let fprc=firstParent.getBoundingClientRect();
+		let fprc=absBoundingClientRect(firstParent);
 		firstParent.style.setProperty( 'transform-origin','left bottom', 'important' );
-		firstParent.style.setProperty( 'transform', 'scale(0.97) translate('+(ifrc.left-fprc.left)+'px,'+(ifrc.bottom-fprc.top)+'px)', 'important' );
+		firstParent.style.setProperty( 'transform', 'scale(0.97) translateY('+ifrc.height+'px)', 'important' );
 	
-		fprc=firstParent.getBoundingClientRect();
-		let vrc=myVdo.getBoundingClientRect();
+		fprc=absBoundingClientRect(firstParent);
+		let vrc=absBoundingClientRect(myVdo);
 		
 		ifrm2.style.top=(Math.max(fprc.bottom,vrc.bottom)+gapVid)+'px';
 		ifrm2.style.left=(Math.max(0,Math.min(fprc.left,vrc.left)))+'px';
 	
 }
-	
+
 	var rsz= ()=>{
 	
-	 let scR=sc1.getBoundingClientRect();
-	 let bsctR=bSect.getBoundingClientRect();
+	 let scR=absBoundingClientRect(sc1);
+	 let bsctR=absBoundingClientRect(bSect);
 	 
 	 let hg=Math.max(scR.bottom,bsctR.bottom)
 	 
@@ -429,7 +521,7 @@ var ancsRsz= ()=>{
  ifrm2.style.height=hg+'px';
  ifrm2.style.maxHeight=hg+'px';
 	
-	let tmbw=bSect.getBoundingClientRect().left-mgLft;
+	let tmbw=absBoundingClientRect(bSect).left-mgLft;
 tmbw_f=tmbw.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 
 let wd=Math.min(window.availWidth,document.documentElement.scrollWidth);
@@ -446,9 +538,7 @@ let wd=Math.min(window.availWidth,document.documentElement.scrollWidth);
  thumbs.style.width=tmbw_f+'px';
  thumbs.style.maxWidth=tmbw_f+'px';
  
-
 let scts=[...thumbs.children];
-
 
 for(let j = 0; j < scts.length; j++){
 
@@ -470,33 +560,45 @@ scts[j].style.zoom=fPrp_f;
 	
 }
 
-
 clrr.onclick=()=>{
+	rsz_ifrm();
 	clr();
 }
 
 evry.onclick=()=>{
+	rsz_ifrm();
 	setEveryFrames();
 }
 
 three_Plus.onclick=()=>{
+	rsz_ifrm();
 	setPlusFrames();
 }
 
 three_Neg.onclick=()=>{
+	rsz_ifrm();
 	setMinusFrames();
 }
 
 scanB.onclick=()=>{
+	rsz_ifrm();
 	ifrScan();
 }
 
 gnrB.onclick=()=>{
+	rsz_ifrm();
 	changeValue();
 }
 
 opnr.onclick=()=>{
+	rsz_ifrm();
 	LnkOp();
+}
+
+main.onwheel=(event)=>{
+	event.preventDefault();
+	event.stopPropagation();
+	rsz_ifrm();
 }
 
 txtBx.onchange=()=>{
@@ -520,7 +622,7 @@ function pgBar(ix,ths,ev,attr,nxt){
 			ev.stopPropagation();
 			nowFlag=ix;
 			let cur=parseFloat(attr.timestamp.nodeValue);
-			let rct=ths.getBoundingClientRect();
+			let rct=absBoundingClientRect(ths);
 			let fct=parseFloat(captions[ix].parentElement.parentElement.parentElement.style.zoom);
 			 progresses[ix].value=(ev.offsetX / ((rct.right-rct.left)*fct));
 			 myVdo.currentTime=(progresses[ix].value)*(nxt-cur)+cur;
@@ -563,12 +665,12 @@ var checkDur = function() {
 
 function shiftBtns(bool){
 	try{
-	pip.style.top=Math.min(curr.getBoundingClientRect().top-23,myVdo.clientHeight)+'px';
+	pip.style.top=Math.min(absBoundingClientRect(curr).top-23,myVdo.clientHeight)+'px';
 	//curr.style.top=(parseFloat(pip.style.top)+4)+'px';
 	if(bool){
-	spb.style.top=(pip.getBoundingClientRect().top-pip.getBoundingClientRect().height-2)+'px';
-	scrv.style.top=(spb.getBoundingClientRect().top-spb.getBoundingClientRect().height-2)+'px';
-	scrl.style.top=(scrv.getBoundingClientRect().top-scrv.getBoundingClientRect().height-2)+'px';
+	spb.style.top=(absBoundingClientRect(pip).top-absBoundingClientRect(pip).height-2)+'px';
+	scrv.style.top=(absBoundingClientRect(spb).top-absBoundingClientRect(spb).height-2)+'px';
+	scrl.style.top=(absBoundingClientRect(scrv).top-absBoundingClientRect(scrv).height-2)+'px';
 	}
 	}catch(e){;}
 }
@@ -755,6 +857,8 @@ if (event.deltaY<0){
 setPlusFrames();
 }
 
+rsz_ifrm();
+
 }
 
 
@@ -818,17 +922,19 @@ gnrB.value='Select video';
 			return f[0].contentWindow.window.frames;
 		}catch(e){;}
 	}
-	
+		
 		vids=[];
 		allFrames=[];
 		let gene=0;
-		let vids0=[...document.getElementsByTagName('VIDEO')]; 
+
+
+		let vids0=getTagNameShadow(document,'VIDEO');
 		for (let k=0; k<vids0.length; k++){
 			vids.push([vids0[k],'']);
 		}
 
 
-	let frms=[...document.getElementsByTagName('IFRAME')]; 
+	let frms=getTagNameShadow(document,'IFRAME'); 
 	
 		if(!!frms && frms.length>0){
 		for (let k=0; k<frms.length; k++){
@@ -838,29 +944,29 @@ gnrB.value='Select video';
 		}
 
 if(allFrames.length>0){
-while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b})>0){
-	for (let j=0; j<allFrames.length; j++){
-		if(allFrames[j][1]==1){
-	let frms1=getContainedFrames(allFrames[j]); 
-	allFrames[j][1]=0;
-	if(!!frms1 && frms1.length>0){
-	for (let k=0; k<frms1.length; k++){
-			allFrames.push([frms1[k],1,allFrames[j][2]+',f'+gene+',']);
-			gene++;
+	while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b})>0){
+		for (let j=0; j<allFrames.length; j++){
+			if(allFrames[j][1]==1){
+		let frms1=getContainedFrames(allFrames[j]); 
+		allFrames[j][1]=0;
+		if(!!frms1 && frms1.length>0){
+		for (let k=0; k<frms1.length; k++){
+				allFrames.push([frms1[k],1,allFrames[j][2]+',f'+gene+',']);
+				gene++;
+			}
 		}
 	}
-}
-}
-}
+	}
+	}
 }
 	for (let j=0; j<allFrames.length; j++){
 		let vids1=[];
 		
 		try{
-					vids1=[...allFrames[j][0].document.getElementsByTagName('VIDEO')]; 
+					vids1=getTagNameShadow(allFrames[j][0].document,'VIDEO');
 		}catch(e){
 			try{
-				vids1=[...allFrames[j][0].contentDocument.getElementsByTagName('VIDEO')]; 
+				vids1=getTagNameShadow(allFrames[j][0].contentDocument,'VIDEO');
 			}catch(e){;}
 		}	
 		
@@ -876,12 +982,7 @@ while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b
 			}
 		}	
 		
-		vids=[];
-		for (let k=0; k<filt_vid.length; k++){
-			vids.push(filt_vid[k]);
-		}
-		
-		
+		vids=[...filt_vid];		
 				
 		 allFrames.forEach((frame,index) => {
 			 let vwg=false;
@@ -973,7 +1074,7 @@ function LnkOp()
 			let frEl=allFrames[tIx_el][0];
 		if(tIx<0){
 			if(!expnd.includes(frEl)){
-			let frct=frEl.getBoundingClientRect();
+			let frct=absBoundingClientRect(frEl);
 			chrome.runtime.sendMessage({msg: txtBx[txtBx.selectedIndex].attributes.link.value, left: frct.left, right: frct.right, top: frct.top, bottom: frct.bottom, type: 'expand'}, function(response){
 			 gnrB.value='iFrame expanded!';
 
@@ -1008,7 +1109,7 @@ function LnkOp()
 		bSect.style.setProperty( 'visibility', 'visible', 'important' );
 
 		thumbs.style.setProperty( 'visibility', 'visible', 'important' );
-		vrc= myVdo.getBoundingClientRect();
+		vrc= absBoundingClientRect(myVdo);
 
 		ifrm.scrollIntoView();
 
@@ -1337,17 +1438,25 @@ function thumbseek(bool){
 						bSect.style.top=(a+3)+'px';
 					}
 				}
-				
-				ifrm2.ownerDocument.addEventListener("scroll", (event) => {
+									
+					ifrm2.ownerDocument.addEventListener("scroll", (event) => {
+						event.preventDefault();
+						event.stopPropagation();
 						shiftBtns2(true);
 					}, true);
 					ifrm2.contentDocument.addEventListener("scroll", (event) => {
+						event.preventDefault();
+						event.stopPropagation();
 						shiftBtns2(false);
 					});				
 					ifrm2.ownerDocument.addEventListener("wheel", (event) => {
+						event.preventDefault();
+						event.stopPropagation();
 						shiftBtns2(true);
 					}, true);
 					ifrm2.contentDocument.addEventListener("wheel", (event) => {
+						event.preventDefault();
+						event.stopPropagation();
 						shiftBtns2(false);
 					});
 				
@@ -1434,8 +1543,8 @@ ifrm2.style.setProperty=('width',ifw+'px','important');
 ifrm2.style.setProperty=('max-width',ifw+'px','important');
 
 try{
-	let fprc=firstParent.getBoundingClientRect();
-	let vrc=myVdo.getBoundingClientRect();
+	let fprc=absBoundingClientRectfirstParent();
+	let vrc=absBoundingClientRect(myVdo);
 	let btm=Math.max(fprc.bottom,vrc.bottom);
 	if(parseFloat(ifrm2.style.top)<parseFloat(btm+gapVid)){
 	ifrm2.style.setProperty( 'top', (btm+gapVid)+'px', 'important' );
@@ -1462,9 +1571,6 @@ f.style.setProperty( 'border', 0, 'important' );
 f.style.setProperty( 'padding', 0, 'important' );
 
 f.appendChild(c);
-
-
-
 f.appendChild(pgs);
 ct.innerHTML=format_time;
 pgs.appendChild(pgb);
@@ -1474,12 +1580,7 @@ progresses.push(pgb);
 f.style.cssText="display: inline-grid !important; margin: 0 0 0 0 !important;";
 ct.style.cssText+="color: white  !important; font-size: 169%  !important; display: inline-table !important; position: absolute !important; transform-origin: top left !important; font-family: Microsoft JhengHei UI !important";
 
-
-
-
 //ct.style.setProperty( 'transform', 'scale('+().toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+')', 'important' );
-
-
 
 pgb.style.width=window.getComputedStyle(f).width;
 
@@ -1488,6 +1589,8 @@ rsz();
 ct.style.setProperty( 'transform', 'scale('+((f.scrollWidth/ct.clientWidth)*0.2).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+')', 'important' );
 
 f.onwheel= (event) => {
+event.preventDefault();
+event.stopPropagation();
 captions[curr_thumb].parentElement.parentElement.scrollIntoView();
 skip(event);
 }
@@ -1529,11 +1632,11 @@ alert('Video not loaded!');
 
 }
 
-
 document.documentElement.style.setProperty('overflow','scroll','important');
 document.body.style.setProperty('overflow','scroll','important');
 
 document.body.insertAdjacentElement('afterbegin',ifrm);
+
 ifrm.src = "about:blank";
 
 ifrm.contentWindow.document.open();
@@ -1541,6 +1644,7 @@ ifrm.contentWindow.document.write(ht_a);
 ifrm.contentWindow.document.close();
 
 ifrm.insertAdjacentElement('afterend',ifrm2);
+
 ifrm2.src = "about:blank";
 
 ifrm2.contentWindow.document.open();
