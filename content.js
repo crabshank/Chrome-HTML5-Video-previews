@@ -77,10 +77,10 @@ function absBoundingClientRect(el){
 	
 	let r=el.getBoundingClientRect();
 	
-	r.left+=sl;
-	r.right+=sl;
-	r.top+=st;
-	r.bottom+=st;
+	r.left+=scrollLeft;
+	r.right+=scrollLeft;
+	r.top+=scrollTop;
+	r.bottom+=scrollTop;
 	
 	return r;
 }
