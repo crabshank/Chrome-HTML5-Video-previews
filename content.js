@@ -5,6 +5,8 @@ try {
 
 let init=true;
 
+var g_ancestors=[];
+var firstAncestor=null;
 var firstParent=null;
 
 function getTagNameShadow(docm, tgn){
@@ -99,6 +101,7 @@ function getAncestors(el){
 	firstParent=el;
 	let ancestors=[el];
 	let end=false;
+	let shadow=false;
 	while(!end){
 		if(!!firstParent.parentElement && typeof firstParent.parentElement!=='undefined'){
 			if(firstParent.parentElement.tagName==='BODY' || firstParent.parentElement.tagName==='HEAD' || firstParent.parentElement.tagName==='HTML'){
@@ -115,7 +118,14 @@ function getAncestors(el){
 			ancestors.push(firstParent);
 		}
 	}
-	return ancestors;
+	let out=[];
+	for(let i=ancestors.length-1; i>=0; i--){
+		out.unshift(ancestors[i]);
+		if(!!ancestors[i].shadowRoot && typeof ancestors[i].shadowRoot !=='undefined'){
+			i=0;
+		}
+	}
+	return out;
 }
 
 function expandFrame(fr){
@@ -370,11 +380,14 @@ var gapVid=9;
 
 var rsz_ifrm=()=>{
 	let mainRct=absBoundingClientRect(main); 
-	if(!!firstParent){
-		firstParent.style.setProperty( 'transform', 'scale(0.97) translateY('+mainRct.height+'px)', 'important' );
-		let fpRct=absBoundingClientRect(firstParent); 
-		ifrm2.style.top=(fpRct.bottom+gapVid)+'px';
+	if(!!firstAncestor){
+		firstAncestor.style.setProperty( 'transform', 'scale(0.97) translateY('+mainRct.height+'px)', 'important' );
+		let fprc=absBoundingClientRect(firstParent);
+		let vrc=absBoundingClientRect(myVdo);
+		ifrm2.style.top=(Math.max(fprc.bottom,vrc.bottom)+gapVid)+'px';
+		ifrm2.style.left=(Math.max(0,Math.min(fprc.left,vrc.left)))+'px';
 	}
+	
 	ifrm.style.setProperty( 'height', (mainRct.height)+'px', 'important' );
 }
 
@@ -429,8 +442,6 @@ var clrr=[...ifrm.contentWindow.document.querySelectorAll("button#clear_er")][0]
 var mxsp=[...ifrm.contentWindow.document.querySelectorAll("input#mxs")][0];
 var myVdo;
 var myVdo_el=[];
-var firstParent;
-var ancestors;
 
 var bSect=[...ifrm2.contentWindow.document.querySelectorAll("section#bSec")][0];
 
@@ -478,8 +489,9 @@ var allFrames=[];
 
 var ancsRsz= ()=>{
 	
-	ancestors=getAncestors(myVdo);
-	firstParent=ancestors[ancestors.length-1];
+	g_ancestors=getAncestors(myVdo);
+	firstParent=g_ancestors[((g_ancestors.length==1)?0:1)];
+	firstAncestor=g_ancestors[g_ancestors.length-1];
 	let ifrc=absBoundingClientRect(main);
 			
 	if(!firstParent.ownerDocument.documentElement.contains(ifrm)){
@@ -498,11 +510,11 @@ var ancsRsz= ()=>{
 		
 	}
 	
-		let fprc=absBoundingClientRect(firstParent);
-		firstParent.style.setProperty( 'transform-origin','left bottom', 'important' );
-		firstParent.style.setProperty( 'transform', 'scale(0.97) translateY('+ifrc.height+'px)', 'important' );
+		let farc=absBoundingClientRect(firstAncestor);
+		firstAncestor.style.setProperty( 'transform-origin','left bottom', 'important' );
+		firstAncestor.style.setProperty( 'transform', 'scale(0.97) translateY('+ifrc.height+'px)', 'important' );
 	
-		fprc=absBoundingClientRect(firstParent);
+		let fprc=absBoundingClientRect(firstParent);
 		let vrc=absBoundingClientRect(myVdo);
 		
 		ifrm2.style.top=(Math.max(fprc.bottom,vrc.bottom)+gapVid)+'px';
@@ -1543,7 +1555,7 @@ ifrm2.style.setProperty=('width',ifw+'px','important');
 ifrm2.style.setProperty=('max-width',ifw+'px','important');
 
 try{
-	let fprc=absBoundingClientRectfirstParent();
+	let fprc=absBoundingClientRect(firstParent);
 	let vrc=absBoundingClientRect(myVdo);
 	let btm=Math.max(fprc.bottom,vrc.bottom);
 	if(parseFloat(ifrm2.style.top)<parseFloat(btm+gapVid)){
