@@ -11,7 +11,6 @@ var firstParent=null;
 
 function getTagNameShadow(docm, tgn){
 var shrc=[docm];
-var out=[];
 var shrc_l=1;
 
 let srCnt=0;
@@ -19,8 +18,8 @@ let srCnt=0;
 while(srCnt<shrc_l){
 	allNodes=[shrc[srCnt],...shrc[srCnt].querySelectorAll('*')];
 	for(let i=0, len=allNodes.length; i<len; i++){
-		if(!!allNodes[i] && typeof allNodes[i] !=='undefined' && allNodes[i].tagName===tgn){
-			out.push(allNodes[i]);
+		if(!!allNodes[i] && typeof allNodes[i] !=='undefined' && allNodes[i].tagName===tgn && i>0){
+			shrc.push(allNodes[i]);
 		}
 
 		if(!!allNodes[i].shadowRoot && typeof allNodes[i].shadowRoot !=='undefined'){
@@ -32,8 +31,7 @@ while(srCnt<shrc_l){
 	shrc_l=shrc.length;
 }
 	shrc=shrc.slice(1);
-	let srv=shrc.filter((c)=>{return c.tagName===tgn;});
-	out.push(...srv);
+	let out=shrc.filter((c)=>{return c.tagName===tgn;});
 	
 	return out;
 }
