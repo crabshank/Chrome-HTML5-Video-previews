@@ -1118,61 +1118,54 @@ function LnkOp()
 
 		ifrm.scrollIntoView();
 
-		myVdo.onwheel= (event) => {
-		skip(event);
-		}
-
-myVdo.onprogress= () => {
+myVdo.addEventListener("progress", (event) => {
 if(myVdo.readyState>2){
 calcSp();
 }else{
 myVdo.playbackRate=1;
 }
-}
+});
 
-
-myVdo.onplay= () => {
+myVdo.addEventListener("play", (event) => {
 if(myVdo.readyState>2){
 calcSp();
 }else{
 myVdo.playbackRate=1;
 }
-}
+});
 
-
-myVdo.onseeked= () => {
+myVdo.addEventListener("seeked", (event) => {
 t_a=myVdo.currentTime;
 if(myVdo.readyState>2){
 calcSp();
 }else{
 myVdo.playbackRate=1;
 }
-}
-
- myVdo.ontimeupdate= () => {
+});
+		
+myVdo.addEventListener("timeupdate", (event) => {
 	if(!tTrkFlg){
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
 	}
-}
-			
+});		
 
-myVdo.ondurationchange= () => {
+myVdo.addEventListener("durationchange", (event) => {
 	//un_hider(true);
   checkDur();
-}
+});
 
-myVdo.onloadedmetadata= () => {
+myVdo.addEventListener("loadedmetadata", (event) => {
   checkDur();
-}
-  
-   myVdo.onratechange =function() {
+});		
+
+myVdo.addEventListener("ratechange", (event) => {
 	if(!tTrkFlg){
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
 	}
 	if(myVdo.readyState>2){
 	calcSp();
 	}
- }			
+});		
 
 		 allFrames.forEach((frame,index) => {
 			if(!myVdo_el[1].includes(frame[2]) && myVdo_el[1]!='' && frame[0]!==ifrm && frame[0]!==ifrm2){
@@ -1181,10 +1174,7 @@ myVdo.onloadedmetadata= () => {
 				//node.style.setProperty( 'pointer-events', '', 'important' );
 			}*/
 		 });
-		
-		
 
-		
 		pip.onclick=function(){
 		if (myVdo.ownerDocument.pictureInPictureElement) {
 		myVdo.ownerDocument.exitPictureInPicture();
@@ -1235,8 +1225,8 @@ if(!tTrkFlg){
 curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
 }
 
- myVdo.ontimeupdate= () => {
-	if(!tTrkFlg){
+myVdo.addEventListener("timeupdate", (event) => {
+		if(!tTrkFlg){
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
 	}
  if(aseek==0){
@@ -1364,11 +1354,8 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 }
 cap=-1;
 }
- }
+});		
 
-/*myVdo.onloadeddata= function() {
-
-}*/
 
 	let gtmv = setInterval(getMoving, (Math.abs(mx)+1));
 	
@@ -1448,22 +1435,22 @@ function thumbseek(bool){
 						event.preventDefault();
 						event.stopPropagation();
 						shiftBtns2(true);
-					}, true);
+					}, {capture: true, passive:false});
 					ifrm2.contentDocument.addEventListener("scroll", (event) => {
 						event.preventDefault();
 						event.stopPropagation();
 						shiftBtns2(false);
-					});				
+					}, {capture: false, passive:false});				
 					ifrm2.ownerDocument.addEventListener("wheel", (event) => {
 						event.preventDefault();
 						event.stopPropagation();
 						shiftBtns2(true);
-					}, true);
+					}, {capture: true, passive:false});
 					ifrm2.contentDocument.addEventListener("wheel", (event) => {
 						event.preventDefault();
 						event.stopPropagation();
 						shiftBtns2(false);
-					});
+					}, {capture: false, passive:false});
 				
 			}
 		}
@@ -1475,38 +1462,38 @@ function thumbseek(bool){
 
 }
  
-myVdo.onseeking=function(){
+ myVdo.addEventListener("seeking", (event) => {
 	if((aseek==1)&&(myVdo.readyState>=2)&&(myVdo.currentTime>time_track)){  
 		thumbseek(true);
 	}else{
 		thumbseek(false);
 	}
-}
+}); 
 
-myVdo.onwating=function(){
+myVdo.addEventListener("wating", (event) => {
 myVdo.playbackRate=1;
 	if((aseek==1)&&(myVdo.readyState>=2)&&(myVdo.currentTime>time_track)){  
 		thumbseek(true);
 	}else{
 		thumbseek(false);
 	}
-} 
+});
 
-myVdo.onseeked= function(){
-t_a=myVdo.currentTime;
-if(myVdo.readyState>2){
-calcSp();
-}else{
-myVdo.playbackRate=1;
-}
+myVdo.addEventListener("seeked", (event) => {
+	t_a=myVdo.currentTime;
+	if(myVdo.readyState>2){
+	calcSp();
+	}else{
+	myVdo.playbackRate=1;
+	}
 
 	if((aseek==1)&&(myVdo.currentTime>time_track)){  
 		thumbseek(true);
 	}else{
 		thumbseek(false);
 	}
-}
- 
+});
+
 function generateThumbnail() {
 
 var f = ifrm2.contentWindow.document.createElement("figure");
