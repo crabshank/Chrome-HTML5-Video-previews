@@ -375,10 +375,13 @@ var rsz_ifrm=()=>{
 	let mainRct=absBoundingClientRect(main); 
 	if(!!firstAncestor){
 		firstAncestor.style.setProperty( 'transform', 'scale(0.97) translateY('+mainRct.height+'px)', 'important' );
+		
+		
 		let fprc=absBoundingClientRect(firstParent);
 		let vrc=absBoundingClientRect(myVdo);
+		
 		ifrm2.style.top=(Math.max(fprc.bottom,vrc.bottom)+gapVid)+'px';
-		ifrm2.style.left=(Math.max(0,Math.min(fprc.left,vrc.left)))+'px';
+		ifrm2.style.left='0px';
 	}
 	
 	ifrm.style.setProperty( 'height', (mainRct.height)+'px', 'important' );
@@ -507,11 +510,12 @@ var ancsRsz= ()=>{
 		firstAncestor.style.setProperty( 'transform-origin','left bottom', 'important' );
 		firstAncestor.style.setProperty( 'transform', 'scale(0.97) translateY('+ifrc.height+'px)', 'important' );
 	
+		let farct=absBoundingClientRect(firstAncestor);
 		let fprc=absBoundingClientRect(firstParent);
 		let vrc=absBoundingClientRect(myVdo);
 		
 		ifrm2.style.top=(Math.max(fprc.bottom,vrc.bottom)+gapVid)+'px';
-		ifrm2.style.left=(Math.max(0,Math.min(fprc.left,vrc.left)))+'px';
+		ifrm2.style.left='0px';
 	
 }
 
