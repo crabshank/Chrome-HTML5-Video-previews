@@ -439,6 +439,7 @@ var mxsp=[...ifrm.contentWindow.document.querySelectorAll("input#mxs")][0];
 var myVdo;
 var wndWh=false;
 var shb2=false;
+var figSk=false;
 var myVdo_el=[];
 
 var bSect=[...ifrm2.contentWindow.document.querySelectorAll("section#bSec")][0];
@@ -1448,7 +1449,7 @@ function thumbseek(bool){
 								wndWh=false;
 							}
 					}
-									
+							
 					ifrm2.ownerDocument.addEventListener("wheel", (event) => {
 						wnd_wheel(event);
 						shiftBtns2(true);
@@ -1465,12 +1466,25 @@ function thumbseek(bool){
 						shiftBtns2(true);
 					}, {capture: false, passive:false});
 					
+		function figSkipper(event){
+						if(!figSk){
+							figSk=true;
+							if(event.path.filter((p)=>{return p.tagName==='FIGURE';}).length>0){
+								captions[curr_thumb].parentElement.parentElement.scrollIntoView();
+								skip(event);						
+							}
+							figSk=false;
+						}
+		}
+					
 		
 					ifrm2.contentDocument.addEventListener("wheel", (event) => {
 						shiftBtns2(false);
+						figSkipper(event);
 					}, {capture: false, passive:false});
 					ifrm2.contentDocument.addEventListener("wheel", (event) => {
 						shiftBtns2(false);
+						figSkipper(event);
 					}, {capture: true, passive:false});
 					
 					ifrm2.contentDocument.addEventListener("scroll", (event) => {
@@ -1608,13 +1622,6 @@ pgb.style.width=window.getComputedStyle(f).width;
 rsz();
 
 ct.style.setProperty( 'transform', 'scale('+((f.scrollWidth/ct.clientWidth)*0.2).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+')', 'important' );
-
-f.onwheel= (event) => {
-event.preventDefault();
-event.stopPropagation();
-captions[curr_thumb].parentElement.parentElement.scrollIntoView();
-skip(event);
-}
 
   f.onclick= function(){
     var index = captions.indexOf(this.lastElementChild.lastElementChild);
