@@ -438,6 +438,7 @@ var clrr=[...ifrm.contentWindow.document.querySelectorAll("button#clear_er")][0]
 var mxsp=[...ifrm.contentWindow.document.querySelectorAll("input#mxs")][0];
 var myVdo;
 var wndWh=false;
+var shb2=false;
 var myVdo_el=[];
 
 var bSect=[...ifrm2.contentWindow.document.querySelectorAll("section#bSec")][0];
@@ -1121,24 +1122,6 @@ function LnkOp()
 
 		ifrm.scrollIntoView();
 		
-		
-function wnd_wheel(){
-		if(!wndWh){
-			wndWh=true;
-			if(event.path.includes(myVdo)){
-				skip(event);
-			}
-			wndWh=false;
-		}
-}
-
-window.addEventListener('wheel', function (event) {
-	wnd_wheel();
-},{capture: true, passive:false});
-
-window.addEventListener('wheel', function (event) {
-	wnd_wheel();
-},{capture: false, passive:false});
 
 myVdo.addEventListener("progress", (event) => {
 if(myVdo.readyState>2){
@@ -1431,48 +1414,74 @@ function thumbseek(bool){
 				window.scrollTo(0,0);
 				
 				function shiftBtns2(bool){
-					
-										let scrollTopArr = [window?.pageYOffset,
-					window?.scrollY,
-					event?.target?.ownerDocument?.documentElement?.scrollTop,
-					document?.documentElement?.scrollTop,
-					document?.body?.parentNode?.scrollTop,
-					document?.body?.scrollTop,
-					document?.head?.scrollTop];
-					
-					let scrollTop=0;
-				for(let k=0; k<scrollTopArr.length; k++){
-					if(!!scrollTopArr[k] && typeof  scrollTopArr[k] !=='undefined' && scrollTopArr[k]>0){
-						scrollTop=(scrollTopArr[k]>scrollTop)?scrollTopArr[k]:scrollTop;
-					}
-				}
-					
-					let a=(bool)?scrollTop-ifrm2.offsetTop:scrollTop;
-					if(a>=0){
-						bSect.style.top=(a+3)+'px';
+					if(!shb2){
+							shb2=true;
+							let scrollTopArr = [window?.pageYOffset,
+							window?.scrollY,
+							event?.target?.ownerDocument?.documentElement?.scrollTop,
+							document?.documentElement?.scrollTop,
+							document?.body?.parentNode?.scrollTop,
+							document?.body?.scrollTop,
+							document?.head?.scrollTop];
+							
+							let scrollTop=0;
+							for(let k=0; k<scrollTopArr.length; k++){
+								if(!!scrollTopArr[k] && typeof  scrollTopArr[k] !=='undefined' && scrollTopArr[k]>0){
+									scrollTop=(scrollTopArr[k]>scrollTop)?scrollTopArr[k]:scrollTop;
+								}
+							}
+							
+							let a=(bool)?scrollTop-ifrm2.offsetTop:scrollTop;
+							if(a>=0){
+								bSect.style.top=(a+3)+'px';
+							}
+						shb2=false;
 					}
 				}
 									
-					ifrm2.ownerDocument.addEventListener("scroll", (event) => {
-						event.preventDefault();
-						event.stopPropagation();
-						shiftBtns2(true);
-					}, {capture: true, passive:false});
-					ifrm2.contentDocument.addEventListener("scroll", (event) => {
-						event.preventDefault();
-						event.stopPropagation();
-						shiftBtns2(false);
-					}, {capture: false, passive:false});				
+					function wnd_wheel(event){
+							if(!wndWh){
+								wndWh=true;
+								if(event.path.includes(myVdo)){
+									skip(event);
+								}
+								wndWh=false;
+							}
+					}
+									
 					ifrm2.ownerDocument.addEventListener("wheel", (event) => {
-						event.preventDefault();
-						event.stopPropagation();
 						shiftBtns2(true);
 					}, {capture: true, passive:false});
+					ifrm2.ownerDocument.addEventListener("wheel", (event) => {
+						wnd_wheel(event);
+						shiftBtns2(true);
+					}, {capture: false, passive:false});
+
+					ifrm2.ownerDocument.addEventListener("scroll", (event) => {
+						shiftBtns2(true);
+					}, {capture: true, passive:false});
+					ifrm2.ownerDocument.addEventListener("scroll", (event) => {
+						shiftBtns2(true);
+						wnd_wheel(event);
+					}, {capture: false, passive:false});
+					
+		
+					ifrm2.contentDocument.addEventListener("wheel", (event) => {
+						shiftBtns2(false);
+					}, {capture: false, passive:false});
 					ifrm2.contentDocument.addEventListener("wheel", (event) => {
 						event.preventDefault();
 						event.stopPropagation();
 						shiftBtns2(false);
-					}, {capture: false, passive:false});
+					}, {capture: true, passive:false});
+					
+					ifrm2.contentDocument.addEventListener("scroll", (event) => {
+						shiftBtns2(false);
+					}, {capture: false, passive:false});		
+					ifrm2.contentDocument.addEventListener("scroll", (event) => {
+						shiftBtns2(false);
+					}, {capture: true, passive:false});				
+
 				
 			}
 		}
