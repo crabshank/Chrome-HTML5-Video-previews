@@ -381,7 +381,7 @@ var rsz_ifrm=()=>{
 		let vrc=absBoundingClientRect(myVdo);
 		
 		ifrm2.style.top=(Math.max(fprc.bottom,vrc.bottom)+gapVid)+'px';
-		ifrm2.style.left='0px';
+		ifrm2.style.left='4px';
 	}
 	
 	ifrm.style.setProperty( 'height', (mainRct.height)+'px', 'important' );
@@ -515,7 +515,7 @@ var ancsRsz= ()=>{
 		let vrc=absBoundingClientRect(myVdo);
 		
 		ifrm2.style.top=(Math.max(fprc.bottom,vrc.bottom)+gapVid)+'px';
-		ifrm2.style.left='0px';
+		ifrm2.style.left='4px';
 	
 }
 
