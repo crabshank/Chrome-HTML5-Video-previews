@@ -1470,8 +1470,8 @@ function thumbseek(bool){
 						if(!figSk){
 							figSk=true;
 							if(event.path.filter((p)=>{return p.tagName==='FIGURE';}).length>0){
-								captions[curr_thumb].parentElement.parentElement.scrollIntoView();
 								skip(event);						
+								captions[curr_thumb].parentElement.parentElement.scrollIntoView();
 							}
 							figSk=false;
 						}
