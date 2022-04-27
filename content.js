@@ -1450,6 +1450,7 @@ function thumbseek(bool){
 					}
 									
 					ifrm2.ownerDocument.addEventListener("wheel", (event) => {
+						wnd_wheel(event);
 						shiftBtns2(true);
 					}, {capture: true, passive:false});
 					ifrm2.ownerDocument.addEventListener("wheel", (event) => {
@@ -1462,7 +1463,6 @@ function thumbseek(bool){
 					}, {capture: true, passive:false});
 					ifrm2.ownerDocument.addEventListener("scroll", (event) => {
 						shiftBtns2(true);
-						wnd_wheel(event);
 					}, {capture: false, passive:false});
 					
 		
@@ -1470,8 +1470,6 @@ function thumbseek(bool){
 						shiftBtns2(false);
 					}, {capture: false, passive:false});
 					ifrm2.contentDocument.addEventListener("wheel", (event) => {
-						event.preventDefault();
-						event.stopPropagation();
 						shiftBtns2(false);
 					}, {capture: true, passive:false});
 					
