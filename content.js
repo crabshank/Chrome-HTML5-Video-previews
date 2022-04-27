@@ -381,7 +381,7 @@ var rsz_ifrm=()=>{
 		let vrc=absBoundingClientRect(myVdo);
 		
 		ifrm2.style.top=(Math.max(fprc.bottom,vrc.bottom)+gapVid)+'px';
-		ifrm2.style.left='4px';
+		ifrm2.style.left='0.22%';
 	}
 	
 	ifrm.style.setProperty( 'height', (mainRct.height)+'px', 'important' );
@@ -437,6 +437,7 @@ var three_Neg=[...ifrm.contentWindow.document.querySelectorAll("button#three_neg
 var clrr=[...ifrm.contentWindow.document.querySelectorAll("button#clear_er")][0];
 var mxsp=[...ifrm.contentWindow.document.querySelectorAll("input#mxs")][0];
 var myVdo;
+var wndWh=false;
 var myVdo_el=[];
 
 var bSect=[...ifrm2.contentWindow.document.querySelectorAll("section#bSec")][0];
@@ -515,7 +516,7 @@ var ancsRsz= ()=>{
 		let vrc=absBoundingClientRect(myVdo);
 		
 		ifrm2.style.top=(Math.max(fprc.bottom,vrc.bottom)+gapVid)+'px';
-		ifrm2.style.left='4px';
+		ifrm2.style.left='0.22%';
 	
 }
 
@@ -778,10 +779,8 @@ if (event.deltaY<0){
 
 
 window.addEventListener('resize', function () {
-
-rsz();
-
-shiftBtns(true);
+	rsz();
+	shiftBtns(true);
 });
 
 
@@ -1121,6 +1120,25 @@ function LnkOp()
 		vrc= absBoundingClientRect(myVdo);
 
 		ifrm.scrollIntoView();
+		
+		
+function wnd_wheel(){
+		if(!wndWh){
+			wndWh=true;
+			if(event.path.includes(myVdo)){
+				skip(event);
+			}
+			wndWh=false;
+		}
+}
+
+window.addEventListener('wheel', function (event) {
+	wnd_wheel();
+},{capture: true, passive:false});
+
+window.addEventListener('wheel', function (event) {
+	wnd_wheel();
+},{capture: false, passive:false});
 
 myVdo.addEventListener("progress", (event) => {
 if(myVdo.readyState>2){
