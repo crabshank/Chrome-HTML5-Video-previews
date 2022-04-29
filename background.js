@@ -52,9 +52,10 @@ function handleMessage(request, sender, sendResponse) {
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
- handleMessage(request, sender, sendResponse);
- return true;
-	});
+	handleMessage(request, sender, sendResponse);
+	Promise.resolve("").then(result => sendResponse(result));
+	return true;
+});
 
 
 } catch (e) {	
