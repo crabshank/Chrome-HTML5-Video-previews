@@ -1467,6 +1467,7 @@ function thumbseek(bool){
 					}, {capture: false, passive:false});
 					
 		function figSkipper(event){
+			try{
 						if(!figSk){
 							figSk=true;
 							if(event.path.filter((p)=>{return p.tagName==='FIGURE';}).length>0){
@@ -1475,6 +1476,7 @@ function thumbseek(bool){
 							}
 							figSk=false;
 						}
+			}catch(e){figSk=false;}
 		}
 					
 		
