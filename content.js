@@ -90,11 +90,11 @@ function removeEls(d, array) {
     return newArray;
 }
 
-function getAncestors(el){
+function getAncestors(el, elementsOnly, elToHTML, notInShadow){
 	firstParent=el;
 	let ancestors=[el];
+	let outAncestors=[];
 	let end=false;
-	let shadow=false;
 	while(!end){
 		if(!!firstParent.parentElement && typeof firstParent.parentElement!=='undefined'){
 			if(firstParent.parentElement.tagName==='BODY' || firstParent.parentElement.tagName==='HEAD' || firstParent.parentElement.tagName==='HTML'){
@@ -106,19 +106,40 @@ function getAncestors(el){
 				firstParent=firstParent.parentNode;
 		}else if(!!firstParent.host && typeof firstParent.host!=='undefined'){
 				firstParent=firstParent.host;
+		}else{
+			end=true;
 		}
 		if(!end){
-			ancestors.push(firstParent);
+			if(!elementsOnly || (elementsOnly && firstParent.nodeType==1)){
+				if(elToHTML){
+					ancestors.push(firstParent);
+				}else{
+					ancestors.unshift(firstParent);
+				}
+			}
 		}
 	}
-	let out=[];
-	for(let i=ancestors.length-1; i>=0; i--){
-		out.unshift(ancestors[i]);
-		if(!!ancestors[i].shadowRoot && typeof ancestors[i].shadowRoot !=='undefined'){
-			i=0;
+	
+	if(notInShadow){
+		if(elToHTML){
+			for(let i=ancestors.length-1; i>=0; i--){
+				outAncestors.unshift(ancestors[i]);
+				if(!!ancestors[i].shadowRoot && typeof ancestors[i].shadowRoot !=='undefined'){
+					i=0;
+				}
+			}
+		}else{
+			for(let i=0, len=ancestors.length; i<len; i++){
+				outAncestors.push(ancestors[i]);
+				if(!!ancestors[i].shadowRoot && typeof ancestors[i].shadowRoot !=='undefined'){
+					i=len-1;
+				}
+			}
 		}
+	}else{
+		outAncestors=ancestors;
 	}
-	return out;
+	return outAncestors;
 }
 
 function expandFrame(fr){
@@ -488,7 +509,7 @@ var allFrames=[];
 
 var ancsRsz= ()=>{
 	
-	g_ancestors=getAncestors(myVdo);
+	g_ancestors=getAncestors(myVdo,true,true,true);
 	firstParent=g_ancestors[((g_ancestors.length==1)?0:1)];
 	firstAncestor=g_ancestors[g_ancestors.length-1];
 	let ifrc=absBoundingClientRect(main);
@@ -527,7 +548,7 @@ var ancsRsz= ()=>{
 	 let scR=absBoundingClientRect(sc1);
 	 let bsctR=absBoundingClientRect(bSect);
 	 
-	 let hg=Math.max(scR.bottom,bsctR.bottom)
+	 let hg=Math.max(scR.bottom,bsctR.bottom);
 	 
  ifrm2.style.minHeight=hg+'px';
  ifrm2.style.height=hg+'px';
