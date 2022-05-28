@@ -1,62 +1,37 @@
-function getUrl(tab) {
-	return (tab.url == "" && !!tab.pendingUrl && typeof tab.pendingUrl !== 'undefined' && tab.pendingUrl != '') ? tab.pendingUrl : tab.url;
-}
+var sc=0;
+var sync=[];
+var dly=0;
+var msg=0;
+chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
+	console.log(request);
+	switch (request.message){
+		case "Flush!":
+		sc=0;
+			msg={message:"Flush!"};
+		 for (var i = 0, len = sync.length; i < len; i++){
+	chrome.tabs.sendMessage(sync[i].sender.tab.id,msg);
+		 }
+		sync=[];
 
-try {
-
-var lastMsg=[];
-
-function send(message,dims,tabId) {
-var msg={};
-
-    if(dims){
-	 msg = {
-        message: message.msg,
-		left: message.left,
-		right: message.right,
-		top: message.top,
-		bottom: message.bottom,
-		type: message.type
-      };
-	}else{
-		 msg = {
-        message: message
-      };
+		break;
 		
-	}
-      chrome.tabs.sendMessage(tabId, msg);
-    }
+	case "Buttons created!":
+		msg={message:"Buttons creation noted!"};
+	chrome.tabs.sendMessage(sender.tab.id,msg);
+	break;
+/*
+	case "sEvt":
+		msg=request;
+		msg.dly=dly;
+		 for (var i = 0, len = sync.length; i < len; i++){
+	chrome.tabs.sendMessage(sync[i].sender.tab.id,msg);
+		 }
+	break;
+*/
 
-
-chrome.action.onClicked.addListener((tab) => {
-  send(getUrl(tab),false,tab.id);
-});
-
-function handleMessage(request, sender, sendResponse) {
-				if(lastMsg[0]!=JSON.stringify(request) || lastMsg[1]!= JSON.stringify(sender)){
-					lastMsg[0]=JSON.stringify(request);
-					lastMsg[1]=JSON.stringify(sender);
-  				if (request.type=='open'){
-				chrome.tabs.create({
-				"url": request.msg,
-				"windowId": sender.tab.windowId,
-				"index": (sender.tab.index+1),
-				"active": false
-				}, function(tab) {});
-				}else if(request.type=='action'){
-				send(request.url,false,request.id);
-				}else if(request.type!='init'){
-				send(request,true,sender.tab.id);
-				}
-				}
-}
-
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-	handleMessage(request, sender, sendResponse);
-	return true;
-});
-
-
-} catch (e) {	
-  console.error(e);
-}
+	default:
+	console.log(request);
+	break;
+	 }
+	 sendResponse({response: "Message received"});
+	});

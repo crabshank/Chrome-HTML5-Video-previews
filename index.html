@@ -2,10 +2,51 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Chrome HTML5 Video previews main dashboard</title>
+    <title>HTML5 Syncer main dahsboard</title>
   </head>
   <body>
-    <div>Attaching menu…</div>
-	<script type="text/javascript" src="index.js"></script>
+    <style>
+	button{
+	background-color: buttonface;
+	}
+	</style>
+	<button id="scan">Scan</button>
+	<button id="flush">Flush</button>
+	<script>
+  function send(message) {
+
+    let params = {
+      active: true,
+      currentWindow: true
+    }
+    chrome.tabs.query(params, gotTabs);
+
+    function gotTabs(tabs) {
+      console.log("got tabs");
+      console.log(tabs);
+      // send a message to the content script
+     // let message = userinput.value();
+      let msg = {
+        message: message
+      };
+      chrome.tabs.sendMessage(tabs[0].id, msg);
+    }
+
+  }
+
+ let scn=document.querySelector('button#scan');
+ let fls=document.querySelector('button#flush');
+ 
+ 
+ scn.onclick=function(){
+ send("Scan!");
+ } 
+ 
+ fls.onclick=function(){
+ send("Flush!");
+ }
+
+}
+	</script>
   </body>
 </html>
