@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "HTML5 Video previews",
-  "version": "2022.5",
-  "content_scripts": [
+  "name": "HTML5 Video previews page",
+  "version": "2022.8",
+    "content_scripts": [
     {
 	      "all_frames": true,
       "matches": [
@@ -11,15 +11,14 @@
       "js": ["content.js"]
     }
   ],
-   "background": {
-     "service_worker": "background.js"
-  },
   "permissions": ["tabs","activeTab"],
-  "action": {
-    "default_icon": "ct.png",
-    "default_popup": "index.html",
-    "default_title": "Scan for videos/audio streams"
+  "background": {
+    "service_worker": "background.js"
   },
+  "action": {
+	"default_icon": "ct.png",
+	"default_popup": "index.html"
+	},
   	"icons": {
         "128": "ct.png"
     }
