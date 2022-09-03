@@ -1421,6 +1421,9 @@ function thumbseek(bool){
 			mx=(tm>mx)?tm:mx;
 			tTrkFlg=true;
 			curr.innerText= formatTime(myVdo.currentTime)+"\n"+ttmp+"/"+done_t;
+			if(ttmp===1){
+				ifrm2.scrollIntoView();
+			}
 			myVdo.currentTime = ttmp*(myVdo.duration/t);
 			}else {
 				endGtMv();
