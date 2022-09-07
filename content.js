@@ -1436,7 +1436,7 @@ function thumbseek(bool){
 				shiftBtns(false);
 				scrl.style.visibility='';
 				rsz();
-				window.scrollTo(0,0);
+				ifrm2.scrollIntoView();
 				
 				function shiftBtns2(bool){
 					if(!shb2){
