@@ -8,6 +8,7 @@ let init=true;
 var g_ancestors=[];
 var firstAncestor=null;
 var firstParent=null;
+var pNode={p:null, y_sib:null};
 
 function getTagNameShadow(docm, tgn){
 var shrc=[docm];
@@ -361,6 +362,7 @@ progress {
 <button id="scroll_vid" style="background-color: buttonface !important;">Scroll to video</button>
 <button id="spdt" style="background-color: buttonface !important;">Speed through video</button>
 <button id="pnp" style="background-color: buttonface !important;">Toggle picture-in-picture</button>
+<button id="mvvb" style="background-color: buttonface !important;">Toggle relocate video</button>
 
 <div id="currTime" style="color: white !important;background-color: black !important;font-size: 185% !important;font-weight: bold !important;text-align: center !important;"></div>
 </section>
@@ -389,6 +391,7 @@ var mx=-3000;
 var perc_r;
 var perc;
 var tbG=false;
+var mvv=false;
 var mgLft=4;
 var gapVid=9;
 
@@ -457,6 +460,7 @@ var three_Plus=[...ifrm.contentWindow.document.querySelectorAll("button#three_pl
 var three_Neg=[...ifrm.contentWindow.document.querySelectorAll("button#three_neg")][0];
 var clrr=[...ifrm.contentWindow.document.querySelectorAll("button#clear_er")][0];
 var mxsp=[...ifrm.contentWindow.document.querySelectorAll("input#mxs")][0];
+
 var myVdo;
 var wndWh=false;
 var shb2=false;
@@ -464,6 +468,7 @@ var figSk=false;
 var myVdo_el=[];
 
 var bSect=[...ifrm2.contentWindow.document.querySelectorAll("section#bSec")][0];
+var mvdb=[...ifrm2.contentWindow.document.querySelectorAll("button#mvvb")][0];
 
 let sc1w=(absBoundingClientRect(bSect).left-mgLft).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 
@@ -512,6 +517,8 @@ var ancsRsz= ()=>{
 	g_ancestors=getAncestors(myVdo,true,true,true);
 	firstParent=g_ancestors[((g_ancestors.length==1)?0:1)];
 	firstAncestor=g_ancestors[g_ancestors.length-1];
+		pNode.p=myVdo.parentNode;
+		pNode.y_sib=myVdo.nextSibling;
 	let ifrc=absBoundingClientRect(main);
 			
 	if(!firstParent.ownerDocument.documentElement.contains(ifrm)){
@@ -542,7 +549,54 @@ var ancsRsz= ()=>{
 		ifrm2.style.left='0.22%';
 	
 }
+var shiftVid=(obj)=>{ //{t: /*top*/, bsctR: /*bSect Rect*/, ...}
+	let vfr=(myVdo.parentElement===ifrm2.contentWindow.document.body)?true:false;
+	if(mvv){
+		let isob=(typeof obj!=='undefined')?true:false;
+		if(!vfr){
+											myVdo.setAttribute('ctrls_shown',myVdo.controls);
+											myVdo.setAttribute('css_txt',myVdo.style.cssText);
+											ifrm2.contentWindow.document.body.insertAdjacentElement('beforeend',myVdo);
+											myVdo.style.setProperty('display','block', 'important' );
+											myVdo.style.setProperty('visibility','visible', 'important' );
+											myVdo.style.setProperty('opacity','1', 'important' );
+											myVdo.controls=true;
+											thumbs.style.setProperty('transform-origin','top left', 'important' );
+											thumbs.style.setProperty('transform','scale(calc(2/3))', 'important' );
+											myVdo.style.setProperty('position','absolute', 'important' );
+											myVdo.style.setProperty('transform-origin','top left', 'important' );									
+						}
+						myVdo.style.setProperty('transform','', 'important' );		
+						myVdo.style.setProperty('left','0px', 'important' );
+						let bsctR=(isob && typeof obj.bsctR!=='undefined')?obj.bsctR:absBoundingClientRect(bSect);
+						let thumbsR=(isob && typeof obj.thumbsR!=='undefined')?obj.bsctR:absBoundingClientRect(thumbs);
+						let myVdoR=(isob && typeof obj.myVdoR!=='undefined')?obj.myVdoR:absBoundingClientRect(myVdo);
+						let vw=bsctR.left-thumbsR.right-7;
+						myVdo.style.setProperty('transform','scale('+(vw/myVdoR.width)+')', 'important' );								
+						myVdo.style.setProperty('left',(thumbsR.right+2)+'px', 'important' );
+					
+		if(isob && typeof obj.t!=='undefined'){
+			myVdo.style.setProperty('top',obj.t+'px', 'important' );
+		}
+		
+	}else if(vfr){
+			if(myVdo.getAttribute('css_txt')!==null){
+				myVdo.style.cssText=myVdo.getAttribute('css_txt');
+			}
+			
+			if(myVdo.getAttribute('ctrls_shown')!==null){
+				myVdo.cssText=myVdo.getAttribute('ctrls_shown');
+			}
+			
+			if(pNode.y_sib!==null){
+				pNode.p.insertBefore(myVdo, pNode.y_sib);
+			}else{
+				pNode.p.prepend(myVdo);
+			}
+			thumbs.style.setProperty('transform','', 'important' );
+	}
 
+}
 	var rsz= ()=>{
 	
 	 let scR=absBoundingClientRect(sc1);
@@ -587,10 +641,8 @@ for (let i = 0; i < figs.length; i++) {
 fPrp=(sctW==0)?1:(tmbw/(sctW/figs.length))*(1/3);
 fPrp_f=fPrp.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 scts[j].style.zoom=fPrp_f;
-
-
 }
-	
+
 }
 
 clrr.onclick=()=>{
@@ -698,14 +750,17 @@ var checkDur = function() {
 
 function shiftBtns(bool){
 	try{
-	pip.style.top=Math.min(absBoundingClientRect(curr).top-23,myVdo.clientHeight)+'px';
 	//curr.style.top=(parseFloat(pip.style.top)+4)+'px';
 	if(bool){
+	pip.style.top=(absBoundingClientRect(mvdb).top-absBoundingClientRect(mvdb).height-2)+'px';
 	spb.style.top=(absBoundingClientRect(pip).top-absBoundingClientRect(pip).height-2)+'px';
 	scrv.style.top=(absBoundingClientRect(spb).top-absBoundingClientRect(spb).height-2)+'px';
 	scrl.style.top=(absBoundingClientRect(scrv).top-absBoundingClientRect(scrv).height-2)+'px';
 	}
-	}catch(e){;}
+	}catch(e){;}finally{
+			shiftVid();
+	}
+	
 }
 
 //shiftBtns(true);
@@ -830,6 +885,11 @@ secs=(secs==10)?" "+(floorSecs+1)+".0s":" "+floorSecs+"."+Math.max(0,secs).toLoc
 
 scrl.onclick=function(){
 captions[curr_thumb].parentElement.parentElement.scrollIntoView();
+};
+
+mvdb.onclick=function(){
+	mvv=(!mvv && !		tbG)?true:false;
+	shiftVid();
 };
 
 scrv.onclick=function(){
@@ -1219,6 +1279,7 @@ myVdo.addEventListener("ratechange", (event) => {
 		threeSct=thumbs.firstChild;
 		scrl.style.visibility='hidden';
 		shiftBtns(true);
+		mvdb.style.display='none';
 		checkDur();
 		tbG=true;
 		gnrB.value='Generate thumbs';
@@ -1252,7 +1313,7 @@ if(!tTrkFlg){
 curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
 }
 
-myVdo.addEventListener("timeupdate", (event) => {
+var tu2=(event) => {
 		if(!tTrkFlg){
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
 	}
@@ -1267,6 +1328,7 @@ myVdo.addEventListener("timeupdate", (event) => {
 		progresses[i].style.display='none';
 		}
 		
+if(myVdo.readyState>0){
 	cap=(cap!=-1)?cap:myVdo.currentTime*(done_t)/myVdo.duration;
 	cap_el=Math.floor(cap);
 	perc_r=Math.min(1,Math.max(0,cap-cap_el));
@@ -1338,7 +1400,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			captions[nowFlag].style.backgroundColor="#0004ff99";
 					progresses[nowFlag].value=perc_r;
 			captions[nowFlag].parentElement.parentElement.onmousemove=function (e) {
-			pgBar(nowFlag,progresses[nowFlag],e,attr,video.duration);
+			pgBar(nowFlag,progresses[nowFlag],e,attr,myVdo.duration);
 			}
 	}else if (cap==cap_el){
 		if(cap_el>=captions.length){
@@ -1381,6 +1443,15 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 }
 cap=-1;
 }
+}
+}
+
+myVdo.addEventListener("timeupdate", (event)=>{
+	tu2(event);
+});	
+
+myVdo.addEventListener("playing", (event)=>{
+	tu2(event);
 });		
 
 
@@ -1433,6 +1504,7 @@ function thumbseek(bool){
 				time_track=-1;
 				ttmp=0;
 				myVdo.currentTime=0;
+				mvdb.style.display='block';
 				shiftBtns(false);
 				scrl.style.visibility='';
 				rsz();
@@ -1458,11 +1530,13 @@ function thumbseek(bool){
 							
 							let a=(bool)?scrollTop-ifrm2.offsetTop:scrollTop;
 							if(a>=0){
-								bSect.style.top=(a+3)+'px';
+									let t=a+3;
+									bSect.style.top=t+'px';
+									shiftVid({t: t});
 							}
+					}
 						shb2=false;
 					}
-				}
 									
 					function wnd_wheel(event){
 							if(!wndWh){
@@ -1531,7 +1605,12 @@ function thumbseek(bool){
 
 }
  
- myVdo.addEventListener("seeking", (event) => {
+ myVdo.addEventListener("error", (event) => {
+	nowFlag=0;
+	cap=0;
+});  
+
+myVdo.addEventListener("seeking", (event) => {
 	if((aseek==1)&&(myVdo.readyState>=2)&&(myVdo.currentTime>time_track)){  
 		thumbseek(true);
 	}else{
