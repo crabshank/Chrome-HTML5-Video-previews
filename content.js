@@ -8,7 +8,7 @@ let init=true;
 var g_ancestors=[];
 var firstAncestor=null;
 var firstParent=null;
-var pNode={p:null, y_sib:null};
+var vfr=null;
 
 function getTagNameShadow(docm, tgn){
 var shrc=[docm];
@@ -391,14 +391,14 @@ var mx=-3000;
 var perc_r;
 var perc;
 var tbG=false;
-var mvv=false;
 var mgLft=4;
 var gapVid=9;
 
 var rsz_ifrm=()=>{
 	let mainRct=absBoundingClientRect(main); 
 	if(!!firstAncestor){
-		firstAncestor.style.setProperty( 'transform', 'scale(0.97) translateY('+mainRct.height+'px)', 'important' );
+		firstAncestor.style.setProperty( 'transform-origin','left bottom','important' );
+		firstAncestor.style.setProperty( 'transform', 'scale(0.97) translateY('+mainRct.height+'px)','important' );
 		
 		
 		let fprc=absBoundingClientRect(firstParent);
@@ -477,6 +477,7 @@ let sc1w=(absBoundingClientRect(bSect).left-mgLft).toLocaleString('en-GB', {mini
  sc1.style.maxWidth=sc1w+'px';
 
 var thumbs=[...ifrm2.contentWindow.document.querySelectorAll("div#thumbs")][0];
+thumbs.style.setProperty('transform-origin','top left', 'important' );
 var threeSct=thumbs.firstChild;
 thumbs.style.setProperty( 'margin', 0, 'important' );
 thumbs.style.setProperty( 'border', 0, 'important' );
@@ -517,8 +518,7 @@ var ancsRsz= ()=>{
 	g_ancestors=getAncestors(myVdo,true,true,true);
 	firstParent=g_ancestors[((g_ancestors.length==1)?0:1)];
 	firstAncestor=g_ancestors[g_ancestors.length-1];
-		pNode.p=myVdo.parentNode;
-		pNode.y_sib=myVdo.nextSibling;
+	vfr=(vfr===null)?null:false;
 	let ifrc=absBoundingClientRect(main);
 			
 	if(!firstParent.ownerDocument.documentElement.contains(ifrm)){
@@ -538,8 +538,8 @@ var ancsRsz= ()=>{
 	}
 	
 		let farc=absBoundingClientRect(firstAncestor);
-		firstAncestor.style.setProperty( 'transform-origin','left bottom', 'important' );
-		firstAncestor.style.setProperty( 'transform', 'scale(0.97) translateY('+ifrc.height+'px)', 'important' );
+		firstAncestor.style.setProperty( 'transform-origin','left bottom','important'  );
+		firstAncestor.style.setProperty( 'transform', 'scale(0.97) translateY('+ifrc.height+'px)','important'  );
 	
 		let farct=absBoundingClientRect(firstAncestor);
 		let fprc=absBoundingClientRect(firstParent);
@@ -549,52 +549,38 @@ var ancsRsz= ()=>{
 		ifrm2.style.left='0.22%';
 	
 }
-var shiftVid=(obj)=>{ //{t: /*top*/, bsctR: /*bSect Rect*/, ...}
-	let vfr=(myVdo.parentElement===ifrm2.contentWindow.document.body)?true:false;
-	if(mvv){
-		let isob=(typeof obj!=='undefined')?true:false;
-		if(!vfr){
-											myVdo.setAttribute('ctrls_shown',myVdo.controls);
-											myVdo.setAttribute('css_txt',myVdo.style.cssText);
-											ifrm2.contentWindow.document.body.insertAdjacentElement('beforeend',myVdo);
-											myVdo.style.setProperty('display','block', 'important' );
-											myVdo.style.setProperty('visibility','visible', 'important' );
-											myVdo.style.setProperty('opacity','1', 'important' );
-											myVdo.controls=true;
-											thumbs.style.setProperty('transform-origin','top left', 'important' );
-											thumbs.style.setProperty('transform','scale(calc(2/3))', 'important' );
-											myVdo.style.setProperty('position','absolute', 'important' );
-											myVdo.style.setProperty('transform-origin','top left', 'important' );									
-						}
-						myVdo.style.setProperty('transform','', 'important' );		
-						myVdo.style.setProperty('left','0px', 'important' );
-						let bsctR=(isob && typeof obj.bsctR!=='undefined')?obj.bsctR:absBoundingClientRect(bSect);
-						let thumbsR=(isob && typeof obj.thumbsR!=='undefined')?obj.bsctR:absBoundingClientRect(thumbs);
-						let myVdoR=(isob && typeof obj.myVdoR!=='undefined')?obj.myVdoR:absBoundingClientRect(myVdo);
-						let vw=bsctR.left-thumbsR.right-7;
-						myVdo.style.setProperty('transform','scale('+(vw/myVdoR.width)+')', 'important' );								
-						myVdo.style.setProperty('left',(thumbsR.right+2)+'px', 'important' );
-					
-		if(isob && typeof obj.t!=='undefined'){
-			myVdo.style.setProperty('top',obj.t+'px', 'important' );
-		}
-		
-	}else if(vfr){
-			if(myVdo.getAttribute('css_txt')!==null){
-				myVdo.style.cssText=myVdo.getAttribute('css_txt');
+var shiftVid=(force_default_place)=>{ 
+		if(force_default_place){ //put video back in original location
+			if(firstAncestor.getAttribute('css_txt')!==null){
+				firstAncestor.style.cssText=firstAncestor.getAttribute('css_txt');
 			}
-			
-			if(myVdo.getAttribute('ctrls_shown')!==null){
-				myVdo.cssText=myVdo.getAttribute('ctrls_shown');
-			}
-			
-			if(pNode.y_sib!==null){
-				pNode.p.insertBefore(myVdo, pNode.y_sib);
-			}else{
-				pNode.p.prepend(myVdo);
-			}
+			vfr=false;
+			ifrm2.style.background='#121212';
 			thumbs.style.setProperty('transform','', 'important' );
-	}
+		}else{
+					if(vfr===false || vfr===null ){ //if video not already relocated
+								firstAncestor.setAttribute('css_txt',firstAncestor.style.cssText);
+								thumbs.style.setProperty('transform-origin','top left', 'important' );
+								thumbs.style.setProperty('transform','scale(calc(2/3))', 'important' );
+								vfr=true;
+								ifrm2.style.background='transparent';
+						}
+						
+						// just do translation here:
+						
+							let thumbsR=absBoundingClientRect(thumbs);
+							let myVdoR=absBoundingClientRect(myVdo);
+							let bSectR=absBoundingClientRect(bSect);
+							
+
+							let vw=bSectR.left-thumbsR.right-7;
+							let s=vw/myVdoR.width;
+							firstAncestor.style.cssText='';	
+							firstAncestor.style.setProperty('transform-origin','top left', 'important' );	
+							firstAncestor.style.setProperty('transform','scale('+s+')', 'important' );	
+							myVdoR=absBoundingClientRect(myVdo);						
+							firstAncestor.style.setProperty('transform','scale('+s+') translateX('+((thumbsR.right+2-myVdoR.left)/s)+'px) translateY('+((bSectR.top-myVdoR.top)/s)+'px)', 'important' );
+		}
 
 }
 	var rsz= ()=>{
@@ -758,7 +744,9 @@ function shiftBtns(bool){
 	scrl.style.top=(absBoundingClientRect(scrv).top-absBoundingClientRect(scrv).height-2)+'px';
 	}
 	}catch(e){;}finally{
-			shiftVid();
+			if(vfr){
+				shiftVid(false);
+			}
 	}
 	
 }
@@ -888,8 +876,7 @@ captions[curr_thumb].parentElement.parentElement.scrollIntoView();
 };
 
 mvdb.onclick=function(){
-	mvv=(!mvv && !		tbG)?true:false;
-	shiftVid();
+	shiftVid(	( (vfr===true && vfr!==null ) ?  true :  false )	);
 };
 
 scrv.onclick=function(){
@@ -1532,7 +1519,9 @@ function thumbseek(bool){
 							if(a>=0){
 									let t=a+3;
 									bSect.style.top=t+'px';
-									shiftVid({t: t});
+									if(vfr){
+										shiftVid(false);
+									}
 							}
 					}
 						shb2=false;
@@ -1776,7 +1765,7 @@ ifrm.contentWindow.document.open();
 ifrm.contentWindow.document.write(ht_a);
 ifrm.contentWindow.document.close();
 
-ifrm.insertAdjacentElement('afterend',ifrm2);
+document.body.insertAdjacentElement('beforeend',ifrm2);
 
 ifrm2.src = "about:blank";
 
