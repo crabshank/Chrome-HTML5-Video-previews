@@ -8,7 +8,7 @@ let init=true;
 var g_ancestors=[];
 var firstAncestor=null;
 var firstParent=null;
-var vfr=null;
+var vfr=false;
 
 function getTagNameShadow(docm, tgn){
 var shrc=[docm];
@@ -35,6 +35,68 @@ while(srCnt<shrc_l){
 	let out=shrc.filter((c)=>{return c.tagName===tgn;});
 	
 	return out;
+}
+
+function getScreenWidth(){
+	let w=[
+					document?.documentElement?.scrollWidth,
+					document?.body?.parentNode?.scrollWidth,
+					document?.body?.scrollWidth,
+					document?.head?.scrollWidth,
+					window.screen.availWidth,
+					window.screen.width,
+					document?.documentElement?. clientWidth,
+					document?.body?.parentNode?. clientWidth,
+					document?.body?. clientWidth,
+					document?.head?. clientWidth,
+					document?.documentElement?. offsetWidth,
+					document?.body?.parentNode?. offsetWidth,
+					document?.body?. offsetWidth,
+					document?.head?. offsetWidth
+				].filter(d=>{return d>0});
+																
+	return Math.min(...w);
+}
+
+
+
+function setScrollY(y){	
+						let t = [		window?.pageYOffset,
+											window?.scrollY,
+											document?.documentElement?.scrollTop,
+											document?.body?.parentNode?.scrollTop,
+											document?.body?.scrollTop,
+											document?.head?.scrollTop
+										].filter( (p)=>{return p>0} );
+										
+	let mx=Math.max(...t);
+	let ix = t.indexOf(mx);
+	let dfy=y-mx;
+	
+	if(ix<2){
+		window.scrollBy(0,dfy);
+	}else if(ix==2){
+		document.documentElement.scrollBy(0,dfy);
+	}else if(ix==3){
+		document.body.parentNode.scrollBy(0,dfy);
+	}else if(ix==4){
+		document.body.scrollBy(0,dfy);
+	}else if(ix==5){
+		document.head.scrollBy(0,dfy);
+	}
+
+}	
+
+function getScrollY(){					
+						let t = [		window?.pageYOffset,
+											window?.scrollY,
+											document?.documentElement?.scrollTop,
+											document?.body?.parentNode?.scrollTop,
+											document?.body?.scrollTop,
+											document?.head?.scrollTop
+										].filter( (p)=>{return p>0} );
+	
+	return Math.max(...t);
 }
 
 function absBoundingClientRect(el){
@@ -295,17 +357,31 @@ ifrm.style.setProperty( 'left', '0.66ch', 'important' );
 let ifrm2=document.createElement('iframe');
 ifrm2.style.setProperty( 'position', 'absolute', 'important' );
 ifrm2.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
+ifrm2.style.setProperty( 'min-width', '-webkit-fill-available', 'important' );
 ifrm2.style.setProperty( 'width', '-webkit-fill-available', 'important' );
 ifrm2.style.setProperty( 'margin', 0, 'important' );
 ifrm2.style.setProperty( 'border', 0, 'important' );
 ifrm2.style.setProperty( 'padding', 0, 'important' );
 ifrm2.style.setProperty( 'min-height', '100vh', 'important' );
-ifrm2.style.setProperty( 'pointer-events', 'none', 'important' );
 ifrm2.style.setProperty( 'display', 'flex', 'important' );
 ifrm2.style.setProperty( 'visibility', 'visible', 'important' );
 ifrm2.style.setProperty( 'background', '#121212', 'important' );
 ifrm2.style.setProperty( 'transform', 'translateY(0px)', 'important' );
+ifrm2.style.setProperty( 'transform-origin', 'left center', 'important' );
 
+let ifrm3=document.createElement('iframe');
+ifrm3.style.setProperty( 'position', 'absolute', 'important' );
+ifrm3.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
+ifrm3.style.setProperty( 'min-height', '100vh', 'important' );
+ifrm3.style.setProperty( 'min-width', '-webkit-fill-available', 'important' );
+ifrm3.style.setProperty( 'width', '-webkit-fill-available', 'important' );
+ifrm3.style.setProperty( 'margin', 0, 'important' );
+ifrm3.style.setProperty( 'border', 0, 'important' );
+ifrm3.style.setProperty( 'padding', 0, 'important' );
+ifrm3.style.setProperty( 'display', 'flex', 'important' );
+ifrm3.style.setProperty( 'visibility', 'visible', 'important' );
+ifrm3.style.setProperty( 'transform', 'translateY(0px)', 'important' );
+ifrm3.style.setProperty( 'transform-origin', 'left center', 'important' );
 
 let ht_a=`
 <style>
@@ -357,7 +433,11 @@ progress {
 <div id="thumbs">
 <section style="display: inline-flex !important;"></section>
 </div>
-<section id="bSec" style="display: inline-flex !important;position: fixed !important; visibility: hidden; width: min-content !important;right: 2% !important;flex-direction: column !important;">	
+</section>
+`;
+
+let ht_d=`
+<section id="bSec" style="display: inline-flex !important;position: fixed !important; width: min-content !important; top: 0px !important; left: 0px !important; flex-direction: column !important;">	
 <button id="scroll_curr" style="background-color: buttonface !important;">Scroll to current thumb</button>
 <button id="scroll_vid" style="background-color: buttonface !important;">Scroll to video</button>
 <button id="spdt" style="background-color: buttonface !important;">Speed through video</button>
@@ -365,7 +445,6 @@ progress {
 <button id="mvvb" style="background-color: buttonface !important;">Toggle relocate video</button>
 
 <div id="currTime" style="color: white !important;background-color: black !important;font-size: 185% !important;font-weight: bold !important;text-align: center !important;"></div>
-</section>
 </section>
 `;
 
@@ -393,6 +472,75 @@ var perc;
 var tbG=false;
 var mgLft=4;
 var gapVid=9;
+var shiftBtns2=null;
+var ifrmRsz=()=>{
+
+	 let scR=absBoundingClientRect(sc1);
+
+	let bSectR=absBoundingClientRect(bSect);
+	ifrm3.style.minWidth=bSectR.width+'px';
+	ifrm3.style.width=bSectR.width+'px';
+	ifrm3.style.maxWidth=bSectR.width+'px';
+
+	ifrm3.style.minHeight=bSectR.height+'px';
+	ifrm3.style.height=bSectR.height+'px';
+	ifrm3.style.maxHeight=bSectR.height+'px';
+
+	let ifrm3R=absBoundingClientRect(ifrm3);
+	let wd=getScreenWidth();
+	let i2w=wd-ifrm3R.width;
+	ifrm3.style.left=i2w+'px';
+	
+	sc1.style.minWidth=i2w+'px';
+	sc1.style.width=i2w+'px';
+	sc1.style.maxWidth=i2w+'px';
+	
+	ifrm2.style.minWidth=i2w+'px';
+	ifrm2.style.width=i2w+'px';
+	ifrm2.style.maxWidth=i2w+'px';
+
+	let ifrm2R=absBoundingClientRect(ifrm2);
+	if(!vfr){
+		ifrm3.style.left=ifrm2R.right+'px';
+	}
+
+	ifrm3R=absBoundingClientRect(ifrm3);
+	let hg=Math.max(scR.bottom,ifrm3R.bottom);
+
+	ifrm2.style.minHeight=hg+'px';
+	ifrm2.style.height=hg+'px';
+	ifrm2.style.maxHeight=hg+'px';
+	
+	let td=(typeof thumbs!=='undefined')?true:false;
+	
+	if(td){
+				thumbs.style.minWidth=i2w+'px';
+				thumbs.style.width=i2w+'px';
+				thumbs.style.maxWidth=i2w+'px';
+				let scts=[...thumbs.children];
+
+			for(let j = 0; j < scts.length; j++){
+				
+				let figs=[...scts[j].children];
+
+				sctPrp=(figs.length==0)?i2w:i2w/figs.length;
+				sctPrp_f=sctPrp.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+
+				let sctW=0;
+				for (let i = 0; i < figs.length; i++) {
+					sctW+=figs[i].scrollWidth;
+				}
+				fPrp=(sctW==0)?1:(i2w/(sctW/figs.length))*(1/3);
+				fPrp_f=fPrp.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+				scts[j].style.zoom=fPrp_f;
+			}
+	}
+	
+	if(shiftBtns2!==null){
+		shiftBtns2();
+	}
+
+}
 
 var rsz_ifrm=()=>{
 	let mainRct=absBoundingClientRect(main); 
@@ -404,7 +552,9 @@ var rsz_ifrm=()=>{
 		let fprc=absBoundingClientRect(firstParent);
 		let vrc=absBoundingClientRect(myVdo);
 		
-		ifrm2.style.top=(Math.max(fprc.bottom,vrc.bottom)+gapVid)+'px';
+		let tp=Math.max(fprc.bottom,vrc.bottom)+gapVid;
+		ifrm2.style.top=tp+'px';
+		ifrm3.style.top=tp+'px';
 		ifrm2.style.left='0.22%';
 	}
 	
@@ -420,6 +570,10 @@ ifrm.contentWindow.document.documentElement.style.setProperty( 'display', 'inlin
 ifrm2.contentWindow.document.body.style.setProperty( 'margin', 0, 'important' );
 ifrm2.contentWindow.document.body.style.setProperty( 'border', 0, 'important' );
 ifrm2.contentWindow.document.body.style.setProperty( 'padding', 0, 'important' );
+
+ifrm3.contentWindow.document.body.style.setProperty( 'margin', 0, 'important' );
+ifrm3.contentWindow.document.body.style.setProperty( 'border', 0, 'important' );
+ifrm3.contentWindow.document.body.style.setProperty( 'padding', 0, 'important' );
 
 var main=[...ifrm.contentWindow.document.getElementsByTagName("main")][0];
 let mainRct=absBoundingClientRect(main);
@@ -452,9 +606,12 @@ let allNodes=[...document.querySelectorAll('*')];
 
 
 ifrm2.style.setProperty( 'top', maxBtm+'px', 'important' );
+ifrm3.style.setProperty( 'top', maxBtm+'px', 'important' );
 ifrm.scrollIntoView();
 
 var sc1=[...ifrm2.contentWindow.document.getElementsByTagName("section")][0];
+sc1.style.setProperty( 'min-width', '100%', 'important' );
+sc1.style.setProperty( 'width', '100%', 'important' );
 var frame_btn=[...ifrm.contentWindow.document.querySelectorAll("span#frames")][0];
 var three_Plus=[...ifrm.contentWindow.document.querySelectorAll("button#three_plus")][0];
 var three_Neg=[...ifrm.contentWindow.document.querySelectorAll("button#three_neg")][0];
@@ -467,14 +624,16 @@ var shb2=false;
 var figSk=false;
 var myVdo_el=[];
 
-var bSect=[...ifrm2.contentWindow.document.querySelectorAll("section#bSec")][0];
-var mvdb=[...ifrm2.contentWindow.document.querySelectorAll("button#mvvb")][0];
+var bSect=[...ifrm3.contentWindow.document.querySelectorAll("section#bSec")][0];
+var mvdb=[...ifrm3.contentWindow.document.querySelectorAll("button#mvvb")][0];
 
-let sc1w=(absBoundingClientRect(bSect).left-mgLft).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+ifrmRsz();
+
+/*let sc1w=(absBoundingClientRect(bSect).left-mgLft).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 
  sc1.style.minWidth=sc1w+'px';
  sc1.style.width=sc1w+'px';
- sc1.style.maxWidth=sc1w+'px';
+ sc1.style.maxWidth=sc1w+'px';*/
 
 var thumbs=[...ifrm2.contentWindow.document.querySelectorAll("div#thumbs")][0];
 thumbs.style.setProperty('transform-origin','top left', 'important' );
@@ -483,11 +642,11 @@ thumbs.style.setProperty( 'margin', 0, 'important' );
 thumbs.style.setProperty( 'border', 0, 'important' );
 thumbs.style.setProperty( 'padding', 0, 'important' );
 
-var scrl= [...ifrm2.contentWindow.document.querySelectorAll("button#scroll_curr")][0];
-var scrv= [...ifrm2.contentWindow.document.querySelectorAll("button#scroll_vid")][0];
-var spb= [...ifrm2.contentWindow.document.querySelectorAll("button#spdt")][0];
-var pip= [...ifrm2.contentWindow.document.querySelectorAll("button#pnp")][0];
-var curr  =[...ifrm2.contentWindow.document.querySelectorAll("div#currTime")][0];
+var scrl= [...ifrm3.contentWindow.document.querySelectorAll("button#scroll_curr")][0];
+var scrv= [...ifrm3.contentWindow.document.querySelectorAll("button#scroll_vid")][0];
+var spb= [...ifrm3.contentWindow.document.querySelectorAll("button#spdt")][0];
+var pip= [...ifrm3.contentWindow.document.querySelectorAll("button#pnp")][0];
+var curr  =[...ifrm3.contentWindow.document.querySelectorAll("div#currTime")][0];
 
 var evry= [...ifrm.contentWindow.document.querySelectorAll("button#every")][0];
 var scanB= [...ifrm.contentWindow.document.querySelectorAll("input#scnB")][0];
@@ -518,7 +677,7 @@ var ancsRsz= ()=>{
 	g_ancestors=getAncestors(myVdo,true,true,true);
 	firstParent=g_ancestors[((g_ancestors.length==1)?0:1)];
 	firstAncestor=g_ancestors[g_ancestors.length-1];
-	vfr=(vfr===null)?null:false;
+	vfr=false;
 	let ifrc=absBoundingClientRect(main);
 			
 	if(!firstParent.ownerDocument.documentElement.contains(ifrm)){
@@ -536,99 +695,62 @@ var ancsRsz= ()=>{
 		}
 		
 	}
-	
-		let farc=absBoundingClientRect(firstAncestor);
 		firstAncestor.style.setProperty( 'transform-origin','left bottom','important'  );
 		firstAncestor.style.setProperty( 'transform', 'scale(0.97) translateY('+ifrc.height+'px)','important'  );
 	
-		let farct=absBoundingClientRect(firstAncestor);
 		let fprc=absBoundingClientRect(firstParent);
 		let vrc=absBoundingClientRect(myVdo);
 		
-		ifrm2.style.top=(Math.max(fprc.bottom,vrc.bottom)+gapVid)+'px';
+		let tp=Math.max(fprc.bottom,vrc.bottom)+gapVid;
+		ifrm2.style.top=tp+'px';
+		ifrm3.style.top=tp+'px';
 		ifrm2.style.left='0.22%';
-	
+		ifrmRsz();
 }
-var shiftVid=(force_default_place)=>{ 
+
+function scrollHdl(){
+	let scrollTop=getScrollY();
+	let ifrm2R=absBoundingClientRect(ifrm2);
+	scrollTop=( (scrollTop>ifrm2R.top)? scrollTop : ifrm2R.top );
+	ifrm3.style.top=scrollTop+'px';
+}
+			
+var shiftVid=(force_default_place)=>{
 		if(force_default_place){ //put video back in original location
 			if(firstAncestor.getAttribute('css_txt')!==null){
 				firstAncestor.style.cssText=firstAncestor.getAttribute('css_txt');
 			}
-			vfr=false;
-			ifrm2.style.background='#121212';
-			thumbs.style.setProperty('transform','', 'important' );
+
+			let p=ifrm2.style.cssText.split(/transform\s*\:\s*[^\!]*/);
+						 ifrm2.style.cssText=p.join('transform: translateY(0px) ');
 		}else{
-					if(vfr===false || vfr===null ){ //if video not already relocated
+							if(firstAncestor.getAttribute('css_txt')===null){
 								firstAncestor.setAttribute('css_txt',firstAncestor.style.cssText);
-								thumbs.style.setProperty('transform-origin','top left', 'important' );
-								thumbs.style.setProperty('transform','scale(calc(2/3))', 'important' );
-								vfr=true;
-								ifrm2.style.background='transparent';
-						}
-						
-						// just do translation here:
-						
-							let thumbsR=absBoundingClientRect(thumbs);
-							let myVdoR=absBoundingClientRect(myVdo);
-							let bSectR=absBoundingClientRect(bSect);
+							}
 							
+							let p=ifrm2.style.cssText.split(/transform\s*\:\s*[^\!]*/);
+							ifrm2.style.cssText=p.join('transform: scale(calc(2/3)) ');
+							scrollHdl();
+							let ifrm2R=absBoundingClientRect(ifrm2);
+							let ifrm3R=absBoundingClientRect(ifrm3);
+							//let wdt=getScreenWidth();
 
-							let vw=bSectR.left-thumbsR.right-7;
-							let s=vw/myVdoR.width;
-							firstAncestor.style.cssText='';	
+							let vw=ifrm3R.left-ifrm2R.right;
+							let s=vw/myVdo.clientWidth;
+							
+							firstAncestor.style.cssText='';
+							firstAncestor.style.setProperty('position','fixed', 'important' );	
+							firstAncestor.style.setProperty('top','0px', 'important' );	
+							firstAncestor.style.setProperty('left','0px', 'important' );	
 							firstAncestor.style.setProperty('transform-origin','top left', 'important' );	
-							firstAncestor.style.setProperty('transform','scale('+s+')', 'important' );	
-							myVdoR=absBoundingClientRect(myVdo);						
-							firstAncestor.style.setProperty('transform','scale('+s+') translateX('+((thumbsR.right+2-myVdoR.left)/s)+'px) translateY('+((bSectR.top-myVdoR.top)/s)+'px)', 'important' );
+							firstAncestor.style.setProperty('transform','scale('+s+')','important' );
+							let myVdoR=absBoundingClientRect(myVdo);
+							firstAncestor.style.setProperty('transform','scale('+s+') translateX('+((ifrm2R.right-myVdoR.left)/s)+'px) translateY('+((ifrm3R.top-myVdoR.top)/s)+'px)', 'important' );
 		}
-
-}
-	var rsz= ()=>{
-	
-	 let scR=absBoundingClientRect(sc1);
-	 let bsctR=absBoundingClientRect(bSect);
-	 
-	 let hg=Math.max(scR.bottom,bsctR.bottom);
-	 
- ifrm2.style.minHeight=hg+'px';
- ifrm2.style.height=hg+'px';
- ifrm2.style.maxHeight=hg+'px';
-	
-	let tmbw=absBoundingClientRect(bSect).left-mgLft;
-tmbw_f=tmbw.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
-
-let wd=Math.min(window.availWidth,document.documentElement.scrollWidth);
-
- ifrm2.style.minWidth=wd+'px';
- ifrm2.style.width=wd+'px';
- ifrm2.style.maxWidth=wd+'px'; 
- 
- sc1.style.minWidth=tmbw_f+'px';
- sc1.style.width=tmbw_f+'px';
- sc1.style.maxWidth=tmbw_f+'px';
-
- thumbs.style.minWidth=tmbw_f+'px';
- thumbs.style.width=tmbw_f+'px';
- thumbs.style.maxWidth=tmbw_f+'px';
- 
-let scts=[...thumbs.children];
-
-for(let j = 0; j < scts.length; j++){
-
-let figs=[...scts[j].children];
-
-sctPrp=(figs.length==0)?tmbw:tmbw/figs.length;
-sctPrp_f=sctPrp.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
-
-let sctW=0;
-for (let i = 0; i < figs.length; i++) {
-	sctW+=figs[i].scrollWidth;
-}
-fPrp=(sctW==0)?1:(tmbw/(sctW/figs.length))*(1/3);
-fPrp_f=fPrp.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
-scts[j].style.zoom=fPrp_f;
 }
 
+var rsz= ()=>{
+	ifrmRsz();
 }
 
 clrr.onclick=()=>{
@@ -730,6 +852,7 @@ var checkDur = function() {
 
 	if(!tTrkFlg){
 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
+	ifrmRsz();
 	}
 }
 
@@ -738,17 +861,16 @@ function shiftBtns(bool){
 	try{
 	//curr.style.top=(parseFloat(pip.style.top)+4)+'px';
 	if(bool){
-	pip.style.top=(absBoundingClientRect(mvdb).top-absBoundingClientRect(mvdb).height-2)+'px';
-	spb.style.top=(absBoundingClientRect(pip).top-absBoundingClientRect(pip).height-2)+'px';
-	scrv.style.top=(absBoundingClientRect(spb).top-absBoundingClientRect(spb).height-2)+'px';
-	scrl.style.top=(absBoundingClientRect(scrv).top-absBoundingClientRect(scrv).height-2)+'px';
+	let r=absBoundingClientRect(mvdb);
+	pip.style.top=(r.top-r.height-2)+'px';
+	r=absBoundingClientRect(pip);
+	spb.style.top=(r.top-r.height-2)+'px';
+	r=absBoundingClientRect(spb);
+	scrv.style.top=(r.top-r.height-2)+'px';
+	r=absBoundingClientRect(scrv);
+	scrl.style.top=(r.top-r.height-2)+'px';
 	}
-	}catch(e){;}finally{
-			if(vfr){
-				shiftVid(false);
-			}
-	}
-	
+	}catch(e){;}
 }
 
 //shiftBtns(true);
@@ -875,12 +997,9 @@ scrl.onclick=function(){
 captions[curr_thumb].parentElement.parentElement.scrollIntoView();
 };
 
-mvdb.onclick=function(){
-	shiftVid(	( (vfr===true && vfr!==null ) ?  true :  false )	);
-};
 
 scrv.onclick=function(){
-myVdo.scrollIntoView();
+	setScrollY(absBoundingClientRect(myVdo).top);
 };
 
 mxsp.onwheel= (event) => {
@@ -1181,10 +1300,7 @@ function LnkOp()
 		
 		ancsRsz();
 			
-		ifrm2.style.setProperty( 'pointer-events', '', 'important' );
 		shiftBtns(true);
-
-		bSect.style.setProperty( 'visibility', 'visible', 'important' );
 
 		thumbs.style.setProperty( 'visibility', 'visible', 'important' );
 		vrc= absBoundingClientRect(myVdo);
@@ -1220,6 +1336,7 @@ myVdo.playbackRate=1;
 myVdo.addEventListener("timeupdate", (event) => {
 	if(!tTrkFlg){
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
+	ifrmRsz();
 	}
 });		
 
@@ -1235,6 +1352,7 @@ myVdo.addEventListener("loadedmetadata", (event) => {
 myVdo.addEventListener("ratechange", (event) => {
 	if(!tTrkFlg){
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
+	ifrmRsz();
 	}
 	if(myVdo.readyState>2){
 	calcSp();
@@ -1264,7 +1382,7 @@ myVdo.addEventListener("ratechange", (event) => {
 		curr_thumb=0;
 		thumbs.innerHTML = '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;"></section>';
 		threeSct=thumbs.firstChild;
-		scrl.style.visibility='hidden';
+		scrl.style.display='none';
 		shiftBtns(true);
 		mvdb.style.display='none';
 		checkDur();
@@ -1298,11 +1416,13 @@ aseek=1;
 
 if(!tTrkFlg){
 curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
+ifrmRsz();
 }
 
 var tu2=(event) => {
 		if(!tTrkFlg){
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
+	ifrmRsz();
 	}
  if(aseek==0){
 	for(let i=0;i<captions.length;i++){
@@ -1479,6 +1599,7 @@ function thumbseek(bool){
 			mx=(tm>mx)?tm:mx;
 			tTrkFlg=true;
 			curr.innerText= formatTime(myVdo.currentTime)+"\n"+ttmp+"/"+done_t;
+			ifrmRsz();
 			if(ttmp===1){
 				ifrm2.scrollIntoView();
 			}
@@ -1493,39 +1614,31 @@ function thumbseek(bool){
 				myVdo.currentTime=0;
 				mvdb.style.display='block';
 				shiftBtns(false);
-				scrl.style.visibility='';
+				scrl.style.display='';
 				rsz();
 				ifrm2.scrollIntoView();
-				
-				function shiftBtns2(bool){
-					if(!shb2){
-							shb2=true;
-							let scrollTopArr = [window?.pageYOffset,
-							window?.scrollY,
-							event?.target?.ownerDocument?.documentElement?.scrollTop,
-							document?.documentElement?.scrollTop,
-							document?.body?.parentNode?.scrollTop,
-							document?.body?.scrollTop,
-							document?.head?.scrollTop];
-							
-							let scrollTop=0;
-							for(let k=0; k<scrollTopArr.length; k++){
-								if(!!scrollTopArr[k] && typeof  scrollTopArr[k] !=='undefined' && scrollTopArr[k]>0){
-									scrollTop=(scrollTopArr[k]>scrollTop)?scrollTopArr[k]:scrollTop;
+
+				shiftBtns2=(handleScr)=>{
+						if(!shb2){
+								shb2=true;
+								if(typeof handleScr==='undefined' || handleScr===true){
+									scrollHdl();
 								}
-							}
-							
-							let a=(bool)?scrollTop-ifrm2.offsetTop:scrollTop;
-							if(a>=0){
-									let t=a+3;
-									bSect.style.top=t+'px';
-									if(vfr){
-										shiftVid(false);
-									}
-							}
-					}
+								if(vfr){
+									shiftVid(false);
+								}else{
+									shiftVid(true);
+								}
+
 						shb2=false;
 					}
+				};
+				
+				mvdb.onclick=function(){
+					vfr=!vfr;
+					shb2=false;
+					shiftBtns2(false);
+				};
 									
 					function wnd_wheel(event){
 							if(!wndWh){
@@ -1539,18 +1652,34 @@ function thumbseek(bool){
 							
 					ifrm2.ownerDocument.addEventListener("wheel", (event) => {
 						wnd_wheel(event);
-						shiftBtns2(true);
+						shiftBtns2();
 					}, {capture: true, passive:false});
 					ifrm2.ownerDocument.addEventListener("wheel", (event) => {
 						wnd_wheel(event);
-						shiftBtns2(true);
+						shiftBtns2();
 					}, {capture: false, passive:false});
 
 					ifrm2.ownerDocument.addEventListener("scroll", (event) => {
-						shiftBtns2(true);
+						shiftBtns2();
 					}, {capture: true, passive:false});
 					ifrm2.ownerDocument.addEventListener("scroll", (event) => {
-						shiftBtns2(true);
+						shiftBtns2();
+					}, {capture: false, passive:false});
+
+					ifrm3.ownerDocument.addEventListener("wheel", (event) => {
+						wnd_wheel(event);
+						shiftBtns2();
+					}, {capture: true, passive:false});
+					ifrm3.ownerDocument.addEventListener("wheel", (event) => {
+						wnd_wheel(event);
+						shiftBtns2();
+					}, {capture: false, passive:false});
+
+					ifrm3.ownerDocument.addEventListener("scroll", (event) => {
+						shiftBtns2();
+					}, {capture: true, passive:false});
+					ifrm3.ownerDocument.addEventListener("scroll", (event) => {
+						shiftBtns2();
 					}, {capture: false, passive:false});
 					
 		function figSkipper(event){
@@ -1568,19 +1697,35 @@ function thumbseek(bool){
 					
 		
 					ifrm2.contentDocument.addEventListener("wheel", (event) => {
-						shiftBtns2(false);
+						shiftBtns2();
 						figSkipper(event);
 					}, {capture: false, passive:false});
 					ifrm2.contentDocument.addEventListener("wheel", (event) => {
-						shiftBtns2(false);
+						shiftBtns2();
 						figSkipper(event);
 					}, {capture: true, passive:false});
 					
 					ifrm2.contentDocument.addEventListener("scroll", (event) => {
-						shiftBtns2(false);
+						shiftBtns2();
 					}, {capture: false, passive:false});		
 					ifrm2.contentDocument.addEventListener("scroll", (event) => {
-						shiftBtns2(false);
+						shiftBtns2();
+					}, {capture: true, passive:false});	
+
+					ifrm3.contentDocument.addEventListener("wheel", (event) => {
+						shiftBtns2();
+						figSkipper(event);
+					}, {capture: false, passive:false});
+					ifrm3.contentDocument.addEventListener("wheel", (event) => {
+						shiftBtns2();
+						figSkipper(event);
+					}, {capture: true, passive:false});
+					
+					ifrm3.contentDocument.addEventListener("scroll", (event) => {
+						shiftBtns2();
+					}, {capture: false, passive:false});		
+					ifrm3.contentDocument.addEventListener("scroll", (event) => {
+						shiftBtns2();
 					}, {capture: true, passive:false});				
 
 				
@@ -1663,10 +1808,7 @@ c.setAttribute('timestamp_fmt', format_time);
 
 ctx.drawImage(myVdo, 0, 0, v_width, v_height);
 
-
-
-
-let ifw=Math.min(window.availWidth,document.documentElement.scrollWidth);
+let ifw=getScreenWidth();
 ifrm2.style.setProperty=('min-width',ifw+'px','important');
 ifrm2.style.setProperty=('width',ifw+'px','important');
 ifrm2.style.setProperty=('max-width',ifw+'px','important');
@@ -1676,7 +1818,9 @@ try{
 	let vrc=absBoundingClientRect(myVdo);
 	let btm=Math.max(fprc.bottom,vrc.bottom);
 	if(parseFloat(ifrm2.style.top)<parseFloat(btm+gapVid)){
-	ifrm2.style.setProperty( 'top', (btm+gapVid)+'px', 'important' );
+		let tp=btm+gapVid;
+		ifrm2.style.setProperty( 'top', tp+'px', 'important' );
+		ifrm3.style.setProperty( 'top', tp+'px', 'important' );
 	}
 }catch(e){
 							
@@ -1772,6 +1916,14 @@ ifrm2.src = "about:blank";
 ifrm2.contentWindow.document.open();
 ifrm2.contentWindow.document.write(ht_c);
 ifrm2.contentWindow.document.close();
+
+ifrm2.insertAdjacentElement('afterend',ifrm3);
+
+ifrm3.src = "about:blank";
+
+ifrm3.contentWindow.document.open();
+ifrm3.contentWindow.document.write(ht_d);
+ifrm3.contentWindow.document.close();
 
 pageScript();
 
