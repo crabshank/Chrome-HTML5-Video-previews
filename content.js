@@ -37,7 +37,7 @@ while(srCnt<shrc_l){
 	return out;
 }
 
-function getScreenWidth(){
+function getScreenWidth(mx){
 	let w=[
 					document?.documentElement?.scrollWidth,
 					document?.body?.parentNode?.scrollWidth,
@@ -53,25 +53,69 @@ function getScreenWidth(){
 					document?.body?.parentNode?. offsetWidth,
 					document?.body?. offsetWidth,
 					document?.head?. offsetWidth
-				].filter(d=>{return d>0});
-																
-	return Math.min(...w);
+				].filter( (d)=>{return d>0} );
+				
+		if(w.length>0){
+				if(mx){	
+					return Math.max(...w);
+				}else{
+					return Math.min(...w);
+				}
+			}else{
+				return 0;
+			}
+}
+
+function getScreenHeight(mx){
+	let h=[
+					document?.documentElement?.scrollHeight,
+					document?.body?.parentNode?.scrollHeight,
+					document?.body?.scrollHeight,
+					document?.head?.scrollHeight,
+					window.screen.availHeight,
+					window.screen.height,
+					document?.documentElement?. clientHeight,
+					document?.body?.parentNode?. clientHeight,
+					document?.body?. clientHeight,
+					document?.head?. clientHeight,
+					document?.documentElement?. offsetHeight,
+					document?.body?.parentNode?. offsetHeight,
+					document?.body?. offsetHeight,
+					document?.head?. offsetHeight
+				];
+				
+				if(!!firstAncestor){
+					h.push(absBoundingClientRect(firstAncestor).bottom);
+				}
+				
+				h.filter( (g)=>{return g>0} );
+				
+			if(h.length>0){
+				if(mx){
+					return Math.max(...h);
+				}else{
+					return Math.min(...h);
+				}
+			}else{
+				return 0;
+			}
 }
 
 
 
-function setScrollY(y){	
+function setScrollY(y,dlt){	
 						let t = [		window?.pageYOffset,
 											window?.scrollY,
 											document?.documentElement?.scrollTop,
 											document?.body?.parentNode?.scrollTop,
 											document?.body?.scrollTop,
-											document?.head?.scrollTop
-										].filter( (p)=>{return p>0} );
+											document?.head?.scrollTop,
+											0
+										].filter( (p)=>{return p>=0} );
 										
 	let mx=Math.max(...t);
 	let ix = t.indexOf(mx);
-	let dfy=y-mx;
+	let dfy=(dlt)?y:y-mx;
 	
 	if(ix<2){
 		window.scrollBy(0,dfy);
@@ -88,14 +132,15 @@ function setScrollY(y){
 }	
 
 function getScrollY(){					
-						let t = [		window?.pageYOffset,
+	let t = [		window?.pageYOffset,
 											window?.scrollY,
 											document?.documentElement?.scrollTop,
 											document?.body?.parentNode?.scrollTop,
 											document?.body?.scrollTop,
-											document?.head?.scrollTop
-										].filter( (p)=>{return p>0} );
-	
+											document?.head?.scrollTop,
+											0
+										].filter( (p)=>{return p>=0} );
+										
 	return Math.max(...t);
 }
 
@@ -367,7 +412,7 @@ ifrm2.style.setProperty( 'display', 'flex', 'important' );
 ifrm2.style.setProperty( 'visibility', 'visible', 'important' );
 ifrm2.style.setProperty( 'background', '#121212', 'important' );
 ifrm2.style.setProperty( 'transform', 'translateY(0px)', 'important' );
-ifrm2.style.setProperty( 'transform-origin', 'left center', 'important' );
+ifrm2.style.setProperty( 'transform-origin', 'left top', 'important' );
 
 let ifrm3=document.createElement('iframe');
 ifrm3.style.setProperty( 'position', 'absolute', 'important' );
@@ -381,7 +426,7 @@ ifrm3.style.setProperty( 'padding', 0, 'important' );
 ifrm3.style.setProperty( 'display', 'flex', 'important' );
 ifrm3.style.setProperty( 'visibility', 'visible', 'important' );
 ifrm3.style.setProperty( 'transform', 'translateY(0px)', 'important' );
-ifrm3.style.setProperty( 'transform-origin', 'left center', 'important' );
+ifrm3.style.setProperty( 'transform-origin', 'left top', 'important' );
 
 let ht_a=`
 <style>
@@ -487,7 +532,7 @@ var ifrmRsz=()=>{
 	ifrm3.style.maxHeight=bSectR.height+'px';
 
 	let ifrm3R=absBoundingClientRect(ifrm3);
-	let wd=getScreenWidth();
+	let wd=getScreenWidth(false);
 	let i2w=wd-ifrm3R.width;
 	ifrm3.style.left=i2w+'px';
 	
@@ -498,18 +543,11 @@ var ifrmRsz=()=>{
 	ifrm2.style.minWidth=i2w+'px';
 	ifrm2.style.width=i2w+'px';
 	ifrm2.style.maxWidth=i2w+'px';
-
+	
 	let ifrm2R=absBoundingClientRect(ifrm2);
 	if(!vfr){
 		ifrm3.style.left=ifrm2R.right+'px';
 	}
-
-	ifrm3R=absBoundingClientRect(ifrm3);
-	let hg=Math.max(scR.bottom,ifrm3R.bottom);
-
-	ifrm2.style.minHeight=hg+'px';
-	ifrm2.style.height=hg+'px';
-	ifrm2.style.maxHeight=hg+'px';
 	
 	let td=(typeof thumbs!=='undefined')?true:false;
 	
@@ -535,10 +573,21 @@ var ifrmRsz=()=>{
 				scts[j].style.zoom=fPrp_f;
 			}
 	}
-	
+		
 	if(shiftBtns2!==null){
 		shiftBtns2();
 	}
+	
+	
+	let sc1R=absBoundingClientRect(sc1);
+	ifrm2R=absBoundingClientRect(sc1);
+	let h=getScreenHeight(true);
+	h=h-ifrm2R.top;
+	h=(h<0 ||  h<sc1R.height)?sc1R.height:h;
+	
+	ifrm2.style.minHeight=h+'px';
+	ifrm2.style.height=h+'px';
+	ifrm2.style.maxHeight=h+'px';
 
 }
 
@@ -570,6 +619,7 @@ ifrm.contentWindow.document.documentElement.style.setProperty( 'display', 'inlin
 ifrm2.contentWindow.document.body.style.setProperty( 'margin', 0, 'important' );
 ifrm2.contentWindow.document.body.style.setProperty( 'border', 0, 'important' );
 ifrm2.contentWindow.document.body.style.setProperty( 'padding', 0, 'important' );
+ifrm2.contentWindow.document.body.style.setProperty( 'overflow', 'hidden', 'important' );
 
 ifrm3.contentWindow.document.body.style.setProperty( 'margin', 0, 'important' );
 ifrm3.contentWindow.document.body.style.setProperty( 'border', 0, 'important' );
@@ -999,7 +1049,7 @@ captions[curr_thumb].parentElement.parentElement.scrollIntoView();
 
 
 scrv.onclick=function(){
-	setScrollY(absBoundingClientRect(myVdo).top);
+	setScrollY(absBoundingClientRect(myVdo).top,false);
 };
 
 mxsp.onwheel= (event) => {
@@ -1685,24 +1735,28 @@ function thumbseek(bool){
 		function figSkipper(event){
 			try{
 						if(!figSk){
-							figSk=true;
-							if(event.composedPath().filter((p)=>{return p.tagName==='FIGURE';}).length>0){
+							figSk=true;							
+							//if(event.composedPath().filter((p)=>{return p.tagName==='FIGURE';}).length>0){
 								skip(event);						
-								captions[curr_thumb].parentElement.parentElement.scrollIntoView();
-							}
+								let t=captions[curr_thumb].parentElement.parentElement;
+								t.scrollIntoView();
+							//}
 							figSk=false;
 						}
 			}catch(e){figSk=false;}
 		}
 					
-		
-					ifrm2.contentDocument.addEventListener("wheel", (event) => {
-						shiftBtns2();
+		function if2w(event){
+						event.preventDefault();
+						event.stopPropagation();
 						figSkipper(event);
+		}
+					ifrm2.contentDocument.addEventListener("wheel", (event) => {
+						if2w(event);
 					}, {capture: false, passive:false});
+					
 					ifrm2.contentDocument.addEventListener("wheel", (event) => {
-						shiftBtns2();
-						figSkipper(event);
+						if2w(event);
 					}, {capture: true, passive:false});
 					
 					ifrm2.contentDocument.addEventListener("scroll", (event) => {
@@ -1714,11 +1768,9 @@ function thumbseek(bool){
 
 					ifrm3.contentDocument.addEventListener("wheel", (event) => {
 						shiftBtns2();
-						figSkipper(event);
 					}, {capture: false, passive:false});
 					ifrm3.contentDocument.addEventListener("wheel", (event) => {
 						shiftBtns2();
-						figSkipper(event);
 					}, {capture: true, passive:false});
 					
 					ifrm3.contentDocument.addEventListener("scroll", (event) => {
@@ -1808,7 +1860,7 @@ c.setAttribute('timestamp_fmt', format_time);
 
 ctx.drawImage(myVdo, 0, 0, v_width, v_height);
 
-let ifw=getScreenWidth();
+let ifw=getScreenWidth(false);
 ifrm2.style.setProperty=('min-width',ifw+'px','important');
 ifrm2.style.setProperty=('width',ifw+'px','important');
 ifrm2.style.setProperty=('max-width',ifw+'px','important');
@@ -1867,8 +1919,10 @@ ct.style.setProperty( 'transform', 'scale('+((f.scrollWidth/ct.clientWidth)*0.2)
 	nowFlag=index;
 	cap=index;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
-if(!myVdo.ownerDocument.pictureInPictureElement){
-		myVdo.scrollIntoView();
+if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
+			setScrollY(absBoundingClientRect(myVdo).top,false);
+}else{
+	this.scrollIntoView();
 }
 	  }
 } 
@@ -1879,8 +1933,10 @@ if(!myVdo.ownerDocument.pictureInPictureElement){
 	nowFlag=index;
 	cap=index;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
-if(!myVdo.ownerDocument.pictureInPictureElement){
-		myVdo.scrollIntoView();
+if(!myVdo.ownerDocument.pictureInPictureElement && vfr){
+			setScrollY(absBoundingClientRect(myVdo).top,false);
+}else{
+	this.scrollIntoView();
 }
 	  }
 	  window.getSelection().removeAllRanges();
