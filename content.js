@@ -482,7 +482,7 @@ progress {
 `;
 
 let ht_d=`
-<section id="bSec" style="display: inline-flex !important;position: fixed !important; width: min-content !important; top: 0px !important; left: 0px !important; flex-direction: column !important;">	
+<section id="bSec" mxw="0" style="display: inline-flex !important;position: fixed !important; width: min-content !important; top: 0px !important; left: 0px !important; flex-direction: column !important;">	
 <button id="scroll_curr" style="background-color: buttonface !important;">Scroll to current thumb</button>
 <button id="scroll_vid" style="background-color: buttonface !important;">Scroll to video</button>
 <button id="spdt" style="background-color: buttonface !important;">Speed through video</button>
@@ -522,9 +522,16 @@ var ifrmRsz=()=>{
 	 let scR=absBoundingClientRect(sc1);
 
 	let bSectR=absBoundingClientRect(bSect);
-	ifrm3.style.minWidth=bSectR.width+'px';
-	ifrm3.style.width=bSectR.width+'px';
-	ifrm3.style.maxWidth=bSectR.width+'px';
+
+	let mxwb=parseFloat(bSect.getAttribute('mxw'));
+	if(bSectR.width>mxwb){
+		bSect.setAttribute('mxw',bSectR.width);
+		mxwb=bSectR.width;
+	}
+	
+	ifrm3.style.minWidth=mxwb+'px';
+	ifrm3.style.width=mxwb+'px';
+	ifrm3.style.maxWidth=mxwb+'px';
 
 	ifrm3.style.minHeight=bSectR.height+'px';
 	ifrm3.style.height=bSectR.height+'px';
