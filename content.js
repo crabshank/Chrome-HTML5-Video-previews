@@ -515,7 +515,6 @@ var mx=-3000;
 var perc_r;
 var perc;
 var tbG=false;
-var mgLft=0.9975;
 var gapVid=9;
 var shiftBtns2=null;
 var ifrmRsz=()=>{
@@ -532,7 +531,7 @@ var ifrmRsz=()=>{
 	ifrm3.style.maxHeight=bSectR.height+'px';
 
 	let ifrm3R=absBoundingClientRect(ifrm3);
-	let wd=getScreenWidth(true)*mgLft;
+	let wd=getScreenWidth(false);
 	
 	let i2w=wd-ifrm3R.width;
 	ifrm3.style.left=i2w+'px';
@@ -1861,7 +1860,7 @@ c.setAttribute('timestamp_fmt', format_time);
 
 ctx.drawImage(myVdo, 0, 0, v_width, v_height);
 
-let ifw=getScreenWidth(true)*mgLft;
+let ifw=getScreenWidth(false);
 ifrm2.style.setProperty=('min-width',ifw+'px','important');
 ifrm2.style.setProperty=('width',ifw+'px','important');
 ifrm2.style.setProperty=('max-width',ifw+'px','important');
