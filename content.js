@@ -786,14 +786,15 @@ var shiftVid=(force_default_place)=>{
 							}
 							
 							let p=ifrm2.style.cssText.split(/transform\s*\:\s*[^\!]*/);
-							ifrm2.style.cssText=p.join('transform: scale(calc(2/3)) ');
+							ifrm2.style.cssText=p.join('transform: scale(calc(95/150)) ');
 							scrollHdl();
 							let ifrm2R=absBoundingClientRect(ifrm2);
 							let ifrm3R=absBoundingClientRect(ifrm3);
 							//let wdt=getScreenWidth();
 
 							let vw=ifrm3R.left-ifrm2R.right;
-							let s=vw/myVdo.clientWidth;
+							let vw2=vw*0.0375;
+							let s=(vw-vw2)/myVdo.clientWidth;
 							
 							firstAncestor.style.cssText='';
 							firstAncestor.style.setProperty('position','fixed', 'important' );	
@@ -802,7 +803,7 @@ var shiftVid=(force_default_place)=>{
 							firstAncestor.style.setProperty('transform-origin','top left', 'important' );	
 							firstAncestor.style.setProperty('transform','scale('+s+')','important' );
 							let myVdoR=absBoundingClientRect(myVdo);
-							firstAncestor.style.setProperty('transform','scale('+s+') translateX('+((ifrm2R.right-myVdoR.left)/s)+'px) translateY('+((ifrm3R.top-myVdoR.top)/s)+'px)', 'important' );
+							firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(((ifrm2R.right+vw2)-myVdoR.left)/s)+'px) translateY('+((ifrm3R.top-myVdoR.top)/s)+'px)', 'important' );
 		}
 }
 
