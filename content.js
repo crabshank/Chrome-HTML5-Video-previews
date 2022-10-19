@@ -88,7 +88,7 @@ function getScreenHeight(mx){
 					h.push(absBoundingClientRect(firstAncestor).bottom);
 				}
 				
-				h.filter( (g)=>{return g>0} );
+				h=h.filter( (g)=>{return g>0} );
 				
 			if(h.length>0){
 				if(mx){
