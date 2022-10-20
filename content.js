@@ -587,9 +587,8 @@ var ifrmRsz=()=>{
 	
 	
 	let sc1R=absBoundingClientRect(sc1);
-	ifrm2R=absBoundingClientRect(sc1);
-	let h=getScreenHeight(true);
-	h=h-ifrm2R.top;
+	let h=getScreenHeight(false);
+	h=h-sc1R.top;
 	h=(h<0 ||  h<sc1R.height)?sc1R.height:h;
 	
 	ifrm2.style.minHeight=h+'px';
@@ -1026,6 +1025,7 @@ if (event.deltaY<0){
 
 window.addEventListener('resize', function () {
 	rsz();
+	rsz_ifrm();
 	shiftBtns(true);
 });
 
@@ -1805,8 +1805,12 @@ function thumbseek(bool){
 });  
 
 myVdo.addEventListener("seeking", (event) => {
-	if((aseek==1)&&(myVdo.readyState>=2)&&(myVdo.currentTime>time_track)){  
-		thumbseek(true);
+	if((aseek==1)&&(myVdo.readyState>=2)){
+		if(myVdo.currentTime>time_track){
+			thumbseek(true);
+		}else{
+			myVdo.currentTime=ttmp*(myVdo.duration/t);
+		}
 	}else{
 		thumbseek(false);
 	}
@@ -1814,8 +1818,12 @@ myVdo.addEventListener("seeking", (event) => {
 
 myVdo.addEventListener("wating", (event) => {
 myVdo.playbackRate=1;
-	if((aseek==1)&&(myVdo.readyState>=2)&&(myVdo.currentTime>time_track)){  
-		thumbseek(true);
+	if((aseek==1)&&(myVdo.readyState>=2)){
+		if(myVdo.currentTime>time_track){
+			thumbseek(true);
+		}else{
+			myVdo.currentTime=ttmp*(myVdo.duration/t);
+		}
 	}else{
 		thumbseek(false);
 	}
@@ -1829,8 +1837,12 @@ myVdo.addEventListener("seeked", (event) => {
 	myVdo.playbackRate=1;
 	}
 
-	if((aseek==1)&&(myVdo.currentTime>time_track)){  
-		thumbseek(true);
+	if((aseek==1)&&(myVdo.readyState>=2)){
+		if(myVdo.currentTime>time_track){
+			thumbseek(true);
+		}else{
+			myVdo.currentTime=ttmp*(myVdo.duration/t);
+		}
 	}else{
 		thumbseek(false);
 	}
