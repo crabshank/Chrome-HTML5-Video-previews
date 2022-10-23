@@ -10,31 +10,62 @@ var firstAncestor=null;
 var firstParent=null;
 var vfr=false;
 
-function getTagNameShadow(docm, tgn){
+function keepMatchesShadow(els,slc,isNodeName){
+   if(slc===false){
+      return els;
+   }else{
+      let out=[];
+   for(let i=0, len=els.length; i<len; i++){
+      let n=els[i];
+           if(isNodeName){
+	            if((n.nodeName.toLocaleLowerCase())===slc){
+	                out.push(n);
+	            }
+           }else{ //selector
+	               if(!!n.matches && typeof n.matches!=='undefined' && n.matches(slc)){
+	                  out.push(n);
+	               }
+           }
+   	}
+   	return out;
+   	}
+}
+
+function getMatchingNodesShadow(docm, slc, isNodeName, onlyShadowRoots){
+slc=(isNodeName && slc!==false)?(slc.toLocaleLowerCase()):slc;
 var shrc=[docm];
 var shrc_l=1;
-
+var out=[];
 let srCnt=0;
 
 while(srCnt<shrc_l){
-	allNodes=[shrc[srCnt],...shrc[srCnt].querySelectorAll('*')];
-	for(let i=0, len=allNodes.length; i<len; i++){
-		if(!!allNodes[i] && typeof allNodes[i] !=='undefined' && allNodes[i].tagName===tgn && i>0){
-			shrc.push(allNodes[i]);
-		}
-
-		if(!!allNodes[i].shadowRoot && typeof allNodes[i].shadowRoot !=='undefined'){
-			let c=allNodes[i].shadowRoot.children;
-			shrc.push(...c);
-		}
+	let curr=shrc[srCnt];
+	let sh=(!!curr.shadowRoot && typeof curr.shadowRoot !=='undefined')?true:false;
+	let nk=keepMatchesShadow([curr],slc,isNodeName);
+	let nk_l=nk.length;
+	
+	if( !onlyShadowRoots && nk_l>0){  
+		out.push(...nk);
 	}
+	
+	shrc.push(...curr.childNodes);
+	
+	if(sh){
+		   let cs=curr.shadowRoot;
+		   let csc=[...cs.childNodes];
+			   if(onlyShadowRoots){
+			      if(nk_l>0){
+			       out.push({root:nk[0], childNodes:csc});
+			      }
+			   }
+			   shrc.push(...csc);
+	}
+
 	srCnt++;
 	shrc_l=shrc.length;
 }
-	shrc=shrc.slice(1);
-	let out=shrc.filter((c)=>{return c.tagName===tgn;});
-	
-	return out;
+
+return out;
 }
 
 function getScreenWidth(mx){
@@ -287,7 +318,7 @@ function messageHdl(request, sender, sendResponse) {
 		
 		if(!xfr){
 			
-					let ifrs=getTagNameShadow(document,'IFRAME');
+					let ifrs=getMatchingNodesShadow(document,'IFRAME',true,false);
 		for(let i=0; i<ifrs.length; i++){
 			if (ifrs[i].src===request.message || ifrs[i].getAttribute('data-src')===request.message){
 				fr=ifrs[i];
@@ -302,7 +333,7 @@ function messageHdl(request, sender, sendResponse) {
 		}else{
 			
 			
-		let ifrs=getTagNameShadow(document,'IFRAME');
+		let ifrs=getMatchingNodesShadow(document,'IFRAME',true,false);
 		let fr=null;
 		for(let i=0; i<ifrs.length; i++){
 			if (ifrs[i].src===request.message || ifrs[i].getAttribute('data-src')===request.message){
@@ -375,7 +406,7 @@ function convertEmbeds(){
 	}
 	
 	
-	let embeds=getTagNameShadow(document,'EMBED');
+	let embeds=getMatchingNodesShadow(document,'EMBED',true,false);
 
 emb_to_ifr(embeds);
 
@@ -1183,13 +1214,13 @@ gnrB.value='Select video';
 		let gene=0;
 
 
-		let vids0=getTagNameShadow(document,'VIDEO');
+		let vids0=getMatchingNodesShadow(document,'VIDEO',true,false);
 		for (let k=0; k<vids0.length; k++){
 			vids.push([vids0[k],'']);
 		}
 
 
-	let frms=getTagNameShadow(document,'IFRAME'); 
+	let frms=getMatchingNodesShadow(document,'IFRAME',true,false);
 	
 		if(!!frms && frms.length>0){
 		for (let k=0; k<frms.length; k++){
@@ -1218,10 +1249,10 @@ if(allFrames.length>0){
 		let vids1=[];
 		
 		try{
-					vids1=getTagNameShadow(allFrames[j][0].document,'VIDEO');
+					vids1=getMatchingNodesShadow(allFrames[j][0].document,'VIDEO',true,false);
 		}catch(e){
 			try{
-				vids1=getTagNameShadow(allFrames[j][0].contentDocument,'VIDEO');
+				vids1=getMatchingNodesShadow(allFrames[j][0].contentDocument,'VIDEO',true,false);
 			}catch(e){;}
 		}	
 		
@@ -1725,22 +1756,6 @@ function thumbseek(bool){
 						shiftBtns2();
 					}, {capture: true, passive:false});
 					ifrm2.ownerDocument.addEventListener("scroll", (event) => {
-						shiftBtns2();
-					}, {capture: false, passive:false});
-
-					ifrm3.ownerDocument.addEventListener("wheel", (event) => {
-						wnd_wheel(event);
-						shiftBtns2();
-					}, {capture: true, passive:false});
-					ifrm3.ownerDocument.addEventListener("wheel", (event) => {
-						wnd_wheel(event);
-						shiftBtns2();
-					}, {capture: false, passive:false});
-
-					ifrm3.ownerDocument.addEventListener("scroll", (event) => {
-						shiftBtns2();
-					}, {capture: true, passive:false});
-					ifrm3.ownerDocument.addEventListener("scroll", (event) => {
 						shiftBtns2();
 					}, {capture: false, passive:false});
 					

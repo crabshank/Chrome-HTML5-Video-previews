@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "HTML5 Video previews page",
-  "version": "2022.9",
+  "version": "2022.10",
     "content_scripts": [
     {
 	      "all_frames": true,
