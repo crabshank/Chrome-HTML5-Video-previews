@@ -175,6 +175,19 @@ function getScrollY(){
 	return Math.max(...t);
 }
 
+function getScrollX(){					
+	let t = [		window?.pageXOffset,
+											window?.scrollX,
+											document?.documentElement?.scrollLeft,
+											document?.body?.parentNode?.scrollLeft,
+											document?.body?.scrollLeft,
+											document?.head?.scrollLeft,
+											0
+										].filter( (p)=>{return p>=0} );
+										
+	return Math.max(...t);
+}
+
 function absBoundingClientRect(el){
 	let st = [window?.scrollY,
 					window?.pageYOffset,
@@ -1044,7 +1057,7 @@ calcSp();
 function skip(event) {
 event=(event.originalEvent)?event.originalEvent:event;
 event.preventDefault();
-event.stopPropagation();
+//event.stopPropagation();
 if(event.deltaY>0){
    myVdo.currentTime -= (myVdo.duration/t)*0.05;
 }
@@ -1736,7 +1749,10 @@ function thumbseek(bool){
 					function wnd_wheel(event){
 							if(!wndWh){
 								wndWh=true;
-								if(event.composedPath().includes(myVdo)){
+								let vr=absBoundingClientRect(myVdo);
+								let esx=event.pageX+getScrollX();
+								let esy=event.pageY+getScrollY();
+								if(esx >= vr.left && esx <= vr.right && esy >= vr.top && esy <= vr.bottom){
 									skip(event);
 								}
 								wndWh=false;
