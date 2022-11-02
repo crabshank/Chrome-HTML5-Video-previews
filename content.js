@@ -1750,8 +1750,8 @@ function thumbseek(bool){
 							if(!wndWh){
 								wndWh=true;
 								let vr=absBoundingClientRect(myVdo);
-								let esx=event.pageX+getScrollX();
-								let esy=event.pageY+getScrollY();
+								let esx=event.clientX+getScrollX();
+								let esy=event.clientY+getScrollY();
 								if(esx >= vr.left && esx <= vr.right && esy >= vr.top && esy <= vr.bottom){
 									skip(event);
 								}
