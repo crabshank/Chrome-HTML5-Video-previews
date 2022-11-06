@@ -1057,7 +1057,9 @@ calcSp();
 function skip(event) {
 event=(event.originalEvent)?event.originalEvent:event;
 event.preventDefault();
-//event.stopPropagation();
+if(event.composedPath().includes(myVdo){
+	event.stopPropagation();
+}
 if(event.deltaY>0){
    myVdo.currentTime -= (myVdo.duration/t)*0.05;
 }
