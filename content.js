@@ -1057,7 +1057,7 @@ calcSp();
 function skip(event) {
 event=(event.originalEvent)?event.originalEvent:event;
 event.preventDefault();
-if(event.composedPath().includes(myVdo){
+if(event.composedPath().includes(myVdo)){
 	event.stopPropagation();
 }
 if(event.deltaY>0){
