@@ -132,8 +132,6 @@ function getScreenHeight(mx){
 			}
 }
 
-
-
 function setScrollY(y,dlt){	
 						let t = [		window?.pageYOffset,
 											window?.scrollY,
@@ -242,36 +240,64 @@ function removeEls(d, array) {
     return newArray;
 }
 
-function getAncestors(el, elementsOnly, elToHTML, notInShadow){
-	firstParent=el;
-	let ancestors=[el];
-	let outAncestors=[];
-	let end=false;
-	while(!end){
-		if(!!firstParent.parentElement && typeof firstParent.parentElement!=='undefined'){
-			if(firstParent.parentElement.tagName==='BODY' || firstParent.parentElement.tagName==='HEAD' || firstParent.parentElement.tagName==='HTML'){
-				end=true;
+function getParent(el,elementsOnly,doc_head_body){
+	if(!!el && typeof el!=='undefined'){
+		let out=null;
+		let curr=el;
+		let end=false;
+		
+		while(!end){
+			if(!!curr.parentNode && typeof curr.parentNode!=='undefined'){
+				out=curr.parentNode;
+				curr=out;
+				end=(elementsOnly && out.nodeType!=1)?false:true;
+			}else if(!!curr.parentElement && typeof curr.parentElement!=='undefined'){
+					out=curr.parentElement;
+					end=true;
+					curr=out;
+			}else if(!!curr.host && typeof curr.host!=='undefined'){
+					out=curr.host;
+					end=(elementsOnly && out.nodeType!=1)?false:true;
+					curr=out;
 			}else{
-				firstParent=firstParent.parentElement;
+				out=null;
+				end=true;
 			}
-		}else if(!!firstParent.parentNode && typeof firstParent.parentNode!=='undefined'){
-				firstParent=firstParent.parentNode;
-		}else if(!!firstParent.host && typeof firstParent.host!=='undefined'){
-				firstParent=firstParent.host;
-		}else{
-			end=true;
 		}
-		if(!end){
-			if(!elementsOnly || (elementsOnly && firstParent.nodeType==1)){
-				if(elToHTML){
-					ancestors.push(firstParent);
-				}else{
-					ancestors.unshift(firstParent);
+		
+		if(out!==null){
+			if(!doc_head_body){
+				if(out.nodeName==='BODY' || out.nodeName==='HEAD' || out.nodeName==='HTML'){
+					out=null;
 				}
 			}
 		}
+		
+		return out;
+	}else{
+		return null;
 	}
+}
+
+function getAncestors(el, elementsOnly, elToHTML, doc_head_body, notInShadow){
+	let curr=el;
+	let ancestors=[el];
+	let outAncestors=[];
+	let end=false;
 	
+	while(!end){
+		let p=getParent(curr,elementsOnly,doc_head_body);
+		if(p!==null){
+			if(elToHTML){
+				ancestors.push(p);
+			}else{
+				ancestors.unshift(p)
+			}
+			curr=p;
+		}else{
+			end=true;
+		}
+	}
 	if(notInShadow){
 		if(elToHTML){
 			for(let i=ancestors.length-1; i>=0; i--){
@@ -292,6 +318,23 @@ function getAncestors(el, elementsOnly, elToHTML, notInShadow){
 		outAncestors=ancestors;
 	}
 	return outAncestors;
+}
+
+function hasAncestor(el,p){
+	let out=false;
+	let curr=el;
+	let end=false;
+	while(!end){
+		let r=getParent(curr,false,true);
+		curr=r;
+		if(r===null){
+			end=true;
+		}else if(r===p){
+			out=true;
+			end=true;
+		}
+	}
+	return out;
 }
 
 function expandFrame(fr){
@@ -774,7 +817,7 @@ var allFrames=[];
 
 var ancsRsz= ()=>{
 	
-	g_ancestors=getAncestors(myVdo,true,true,true);
+	g_ancestors=getAncestors(myVdo,true,true,false,true);
 	firstParent=g_ancestors[((g_ancestors.length==1)?0:1)];
 	firstAncestor=g_ancestors[g_ancestors.length-1];
 	vfr=false;
@@ -1055,17 +1098,14 @@ calcSp();
 }
 
 function skip(event) {
-event=(event.originalEvent)?event.originalEvent:event;
-event.preventDefault();
-if(event.composedPath().includes(myVdo)){
-	event.stopPropagation();
-}
-if(event.deltaY>0){
-   myVdo.currentTime -= (myVdo.duration/t)*0.05;
-}
-if (event.deltaY<0){
-	myVdo.currentTime +=  (myVdo.duration/t)*0.05;
-}
+	event.preventDefault();
+	//event.stopPropagation();
+	if(event.deltaY>0){
+	   myVdo.currentTime -= (myVdo.duration/t)*0.05;
+	}
+	if (event.deltaY<0){
+		myVdo.currentTime +=  (myVdo.duration/t)*0.05;
+	}
 }
 
 
@@ -1754,10 +1794,16 @@ function thumbseek(bool){
 					function wnd_wheel(event){
 							if(!wndWh){
 								wndWh=true;
-								let vr=absBoundingClientRect(myVdo);
-								let esx=event.clientX+getScrollX();
-								let esy=event.clientY+getScrollY();
-								if(esx >= vr.left && esx <= vr.right && esy >= vr.top && esy <= vr.bottom){
+								let sk=false;
+								if( event.composedPath().includes(myVdo) ){
+									sk=true;
+								}else{
+									let vr=absBoundingClientRect(myVdo);
+									let esx=event.clientX+getScrollX();
+									let esy=event.clientY+getScrollY();
+									sk=(esx >= vr.left && esx <= vr.right && esy >= vr.top && esy <= vr.bottom && hasAncestor(myVdo,event.target) )?true:sk;
+								}
+								if(sk){
 									skip(event);
 								}
 								wndWh=false;
