@@ -1746,6 +1746,9 @@ function thumbseek(bool){
 					vfr=!vfr;
 					shb2=false;
 					shiftBtns2(false);
+					if(vfr){
+						captions[curr_thumb].parentElement.parentElement.scrollIntoView();
+					}
 				};
 									
 					function wnd_wheel(event){
