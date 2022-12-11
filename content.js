@@ -10,9 +10,8 @@ var firstAncestor=null;
 var firstParent=null;
 var vfr=false;
 
-function scrollFigureMiddle(f){
-	f.scrollIntoView({behavior: "auto", block: "center", inline: "start"});
-	//let vph=window.innerHeight*window.devicePixelRatio; //viewport height 
+function scrollElMidPage(el){
+	el.scrollIntoView({behavior: "auto", block: "center", inline: "start"});
 }
 
 function keepMatchesShadow(els,slc,isNodeName){
@@ -1143,12 +1142,12 @@ secs=(secs==10)?" "+(floorSecs+1)+".0s":" "+floorSecs+"."+Math.max(0,secs).toLoc
   }
 
 scrl.onclick=function(){
-	scrollFigureMiddle(captions[curr_thumb].parentElement.parentElement);
+	scrollElMidPage(captions[curr_thumb].parentElement.parentElement);
 };
 
 
 scrv.onclick=function(){
-	scrollFigureMiddle(myVdo);
+	scrollElMidPage(myVdo);
 };
 
 mxsp.onwheel= (event) => {
@@ -1792,7 +1791,7 @@ function thumbseek(bool){
 					shb2=false;
 					shiftBtns2(false);
 					if(vfr){
-						scrollFigureMiddle(captions[curr_thumb].parentElement.parentElement);
+						scrollElMidPage(captions[curr_thumb].parentElement.parentElement);
 					}
 				};
 									
@@ -1838,7 +1837,7 @@ function thumbseek(bool){
 							//if(event.composedPath().filter((p)=>{return p.tagName==='FIGURE';}).length>0){
 								skip(event);						
 								let t=captions[curr_thumb].parentElement.parentElement;
-								scrollFigureMiddle(t);
+								scrollElMidPage(t);
 							//}
 							figSk=false;
 						}
@@ -2031,9 +2030,9 @@ ct.style.setProperty( 'transform', 'scale('+((f.scrollWidth/ct.clientWidth)*0.2)
 	cap=index;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
 if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
-			scrollFigureMiddle(myVdo);
+			scrollElMidPage(myVdo);
 }else{
-	scrollFigureMiddle(this);
+	scrollElMidPage(this);
 }
 	  }
 } 
@@ -2045,9 +2044,9 @@ if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
 	cap=index;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
 if(!myVdo.ownerDocument.pictureInPictureElement && vfr){
-			scrollFigureMiddle(myVdo);
+			scrollElMidPage(myVdo);
 }else{
-	scrollFigureMiddle(this);
+	scrollElMidPage(this);
 }
 	  }
 	  window.getSelection().removeAllRanges();
