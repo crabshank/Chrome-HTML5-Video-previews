@@ -10,6 +10,11 @@ var firstAncestor=null;
 var firstParent=null;
 var vfr=false;
 
+function scrollFigureMiddle(f){
+	f.scrollIntoView({behavior: "auto", block: "center", inline: "start"});
+	//let vph=window.innerHeight*window.devicePixelRatio; //viewport height 
+}
+
 function keepMatchesShadow(els,slc,isNodeName){
    if(slc===false){
       return els;
@@ -132,7 +137,7 @@ function getScreenHeight(mx){
 			}
 }
 
-function setScrollY(y,dlt){	
+/*function setScrollY(y,dlt){	
 						let t = [		window?.pageYOffset,
 											window?.scrollY,
 											document?.documentElement?.scrollTop,
@@ -158,7 +163,7 @@ function setScrollY(y,dlt){
 		document.head.scrollBy(0,dfy);
 	}
 
-}	
+}	*/
 
 function getScrollY(){					
 	let t = [		window?.pageYOffset,
@@ -1138,12 +1143,12 @@ secs=(secs==10)?" "+(floorSecs+1)+".0s":" "+floorSecs+"."+Math.max(0,secs).toLoc
   }
 
 scrl.onclick=function(){
-captions[curr_thumb].parentElement.parentElement.scrollIntoView();
+	scrollFigureMiddle(captions[curr_thumb].parentElement.parentElement);
 };
 
 
 scrv.onclick=function(){
-	setScrollY(absBoundingClientRect(myVdo).top,false);
+	scrollFigureMiddle(myVdo);
 };
 
 mxsp.onwheel= (event) => {
@@ -1787,7 +1792,7 @@ function thumbseek(bool){
 					shb2=false;
 					shiftBtns2(false);
 					if(vfr){
-						captions[curr_thumb].parentElement.parentElement.scrollIntoView();
+						scrollFigureMiddle(captions[curr_thumb].parentElement.parentElement);
 					}
 				};
 									
@@ -1833,7 +1838,7 @@ function thumbseek(bool){
 							//if(event.composedPath().filter((p)=>{return p.tagName==='FIGURE';}).length>0){
 								skip(event);						
 								let t=captions[curr_thumb].parentElement.parentElement;
-								t.scrollIntoView();
+								scrollFigureMiddle(t);
 							//}
 							figSk=false;
 						}
@@ -2026,9 +2031,9 @@ ct.style.setProperty( 'transform', 'scale('+((f.scrollWidth/ct.clientWidth)*0.2)
 	cap=index;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
 if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
-			setScrollY(absBoundingClientRect(myVdo).top,false);
+			scrollFigureMiddle(myVdo);
 }else{
-	this.scrollIntoView();
+	scrollFigureMiddle(this);
 }
 	  }
 } 
@@ -2040,9 +2045,9 @@ if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
 	cap=index;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
 if(!myVdo.ownerDocument.pictureInPictureElement && vfr){
-			setScrollY(absBoundingClientRect(myVdo).top,false);
+			scrollFigureMiddle(myVdo);
 }else{
-	this.scrollIntoView();
+	scrollFigureMiddle(this);
 }
 	  }
 	  window.getSelection().removeAllRanges();
