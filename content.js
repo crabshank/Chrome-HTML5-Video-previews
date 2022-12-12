@@ -10,10 +10,6 @@ var firstAncestor=null;
 var firstParent=null;
 var vfr=false;
 
-function scrollElMidPage(el){
-	el.scrollIntoView({behavior: "auto", block: "center", inline: "start"});
-}
-
 function keepMatchesShadow(els,slc,isNodeName){
    if(slc===false){
       return els;
@@ -788,6 +784,20 @@ var threeSct=thumbs.firstChild;
 thumbs.style.setProperty( 'margin', 0, 'important' );
 thumbs.style.setProperty( 'border', 0, 'important' );
 thumbs.style.setProperty( 'padding', 0, 'important' );
+
+function scrollElMidPage(el){
+	let vpos='center';
+	let epp=el.parentElement.parentElement;
+	let elp=el.parentElement;
+	if(epp===thumbs){
+		if(epp.firstElementChild===elp){
+			vpos='start';
+		}else if(epp.lastElementChild===elp){
+			vpos='end';
+		}
+	}
+	el.scrollIntoView({behavior: "auto", block: vpos, inline: "start"});
+}
 
 var scrl= [...ifrm3.contentWindow.document.querySelectorAll("button#scroll_curr")][0];
 var scrv= [...ifrm3.contentWindow.document.querySelectorAll("button#scroll_vid")][0];
@@ -2023,7 +2033,7 @@ rsz();
 
 ct.style.setProperty( 'transform', 'scale('+((f.scrollWidth/ct.clientWidth)*0.2).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+')', 'important' );
 
-  f.onclick= function(){
+  f.onclick= function(e){
     var index = captions.indexOf(this.lastElementChild.lastElementChild);
 	  if(window.getComputedStyle(progresses[index]).display==='none'){
 	nowFlag=index;
