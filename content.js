@@ -795,8 +795,11 @@ function scrollElMidPage(el){
 		}else if(epp.lastElementChild===elp){
 			vpos='end';
 		}
+		elp.scrollIntoView({behavior: "auto", block: vpos, inline: "start"});
+	}else{
+	   el.scrollIntoView({behavior: "auto", block: vpos, inline: "start"});
 	}
-	elp.scrollIntoView({behavior: "auto", block: vpos, inline: "start"});
+	
 }
 
 var scrl= [...ifrm3.contentWindow.document.querySelectorAll("button#scroll_curr")][0];
