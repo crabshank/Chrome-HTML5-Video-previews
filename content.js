@@ -796,7 +796,7 @@ function scrollElMidPage(el){
 			vpos='end';
 		}
 	}
-	el.scrollIntoView({behavior: "auto", block: vpos, inline: "start"});
+	elp.scrollIntoView({behavior: "auto", block: vpos, inline: "start"});
 }
 
 var scrl= [...ifrm3.contentWindow.document.querySelectorAll("button#scroll_curr")][0];
