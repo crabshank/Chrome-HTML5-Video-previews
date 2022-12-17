@@ -789,17 +789,16 @@ function scrollElMidPage(el){
 	let vpos='center';
 	let epp=el.parentElement.parentElement;
 	let elp=el.parentElement;
+	let t=el;
 	if(epp===thumbs){
+		t=elp;
 		if(epp.firstElementChild===elp){
 			vpos='start';
 		}else if(epp.lastElementChild===elp){
 			vpos='end';
 		}
-		elp.scrollIntoView({behavior: "auto", block: vpos, inline: "start"});
-	}else{
-	   el.scrollIntoView({behavior: "auto", block: vpos, inline: "start"});
 	}
-	
+	t.scrollIntoView({behavior: "auto", block: vpos, inline: "start"});
 }
 
 var scrl= [...ifrm3.contentWindow.document.querySelectorAll("button#scroll_curr")][0];
