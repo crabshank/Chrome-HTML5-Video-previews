@@ -2077,7 +2077,7 @@ alert('Video not loaded!');
 }
 
 document.documentElement.style.setProperty('overflow','scroll','important');
-document.body.style.setProperty('overflow','scroll','important');
+//document.body.style.setProperty('overflow','scroll','important');
 
 document.body.insertAdjacentElement('afterbegin',ifrm);
 
