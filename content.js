@@ -76,14 +76,10 @@ function getScreenWidth(mx){
 					//document?.head?.scrollWidth,
 					//window.screen.availWidth,
 					//window.screen.width,
-					document?.documentElement?. clientWidth,
-					document?.body?.parentNode?. clientWidth,
-					document?.body?. clientWidth,
-					document?.head?. clientWidth,
-					document?.documentElement?. offsetWidth,
-					document?.body?.parentNode?. offsetWidth,
-					document?.body?. offsetWidth,
-					document?.head?. offsetWidth
+					document?.documentElement?.clientWidth,
+					document?.body?.parentNode?.clientWidth,
+					document?.body?.clientWidth,
+					document?.head?.clientWidth
 				].filter( (d)=>{return d>0} );
 				
 		if(w.length>0){
@@ -569,7 +565,7 @@ progress {
 `;
 
 let ht_d=`
-<section id="bSec" mxw="0" style="display: inline-flex !important;position: fixed !important; width: min-content !important; top: 0px !important; left: 0px !important; flex-direction: column !important;">	
+<section id="bSec" style="display: inline-flex !important;position: fixed !important; width: min-content !important; top: 0px !important; left: 0px !important; flex-direction: column !important;">	
 <button id="scroll_curr" style="background-color: buttonface !important;">Scroll to current thumb</button>
 <button id="scroll_vid" style="background-color: buttonface !important;">Scroll to video</button>
 <button id="spdt" style="background-color: buttonface !important;">Speed through video</button>
@@ -610,11 +606,7 @@ var ifrmRsz=()=>{
 
 	let bSectR=absBoundingClientRect(bSect);
 
-	let mxwb=parseFloat(bSect.getAttribute('mxw'));
-	if(bSectR.width>mxwb){
-		bSect.setAttribute('mxw',bSectR.width);
-		mxwb=bSectR.width;
-	}
+	let mxwb=bSectR.width;
 	
 	ifrm3.style.minWidth=mxwb+'px';
 	ifrm3.style.width=mxwb+'px';
@@ -629,7 +621,8 @@ var ifrmRsz=()=>{
 	
 	let i2w=wd-ifrm3R.width;
 	ifrm3.style.left=i2w+'px';
-	
+	let ifrm2R=absBoundingClientRect(ifrm2);
+	i2w=i2w-ifrm2R.left;
 	sc1.style.minWidth=i2w+'px';
 	sc1.style.width=i2w+'px';
 	sc1.style.maxWidth=i2w+'px';
@@ -637,11 +630,6 @@ var ifrmRsz=()=>{
 	ifrm2.style.minWidth=i2w+'px';
 	ifrm2.style.width=i2w+'px';
 	ifrm2.style.maxWidth=i2w+'px';
-	
-	let ifrm2R=absBoundingClientRect(ifrm2);
-	if(!vfr){
-		ifrm3.style.left=ifrm2R.right+'px';
-	}
 	
 	let td=(typeof thumbs!=='undefined')?true:false;
 	
