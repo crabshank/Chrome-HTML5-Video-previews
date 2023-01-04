@@ -749,11 +749,20 @@ var three_Neg=[...ifrm.contentWindow.document.querySelectorAll("button#three_neg
 var clrr=[...ifrm.contentWindow.document.querySelectorAll("button#clear_er")][0];
 var mxsp=[...ifrm.contentWindow.document.querySelectorAll("input#mxs")][0];
 
+
 var myVdo;
+var vMut=null;
 var wndWh=false;
 var shb2=false;
 var figSk=false;
 var myVdo_el=[];
+
+function revForceMute(){
+	if(vMut!==null){ // if force muted
+		myVdo.muted =vMut; //set to og mute status
+		vMut=null;
+	}
+}
 
 var bSect=[...ifrm3.contentWindow.document.querySelectorAll("section#bSec")][0];
 var mvdb=[...ifrm3.contentWindow.document.querySelectorAll("button#mvvb")][0];
@@ -994,8 +1003,8 @@ var checkDur = function() {
 			ev_t=t;
 			}
 	}
-	
 	myVdo.pause();
+	revForceMute();
 	myVdo.currentTime=0;
 
 	if(!tTrkFlg){
@@ -1340,7 +1349,7 @@ if(allFrames.length>0){
 			 
 			 try{
 				 
-				 if(!vwg && !!frame[0].src && frame[0].src!='' && frame[0].src!='about:blank' && frame[0].src!='javascript:false'&& frame[0].src!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2){
+				 if(!vwg && !!frame[0].src && frame[0].src!='' && frame[0].src!='about:blank' && frame[0].src!='javascript:false'&& frame[0].src!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2 && frame[0]!=ifrm3){
 					 	frame[0].style.setProperty( 'visibility', 'visible', 'important' );
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].src;
@@ -1354,7 +1363,7 @@ if(allFrames.length>0){
 				}catch(e){;}			
 
 				try{
-				 if(!vwg && !!frame[0].getAttribute('data-src') && frame[0].getAttribute('data-src')!='' && frame[0].getAttribute('data-src')!='about:blank' && frame[0].getAttribute('data-src')!='javascript:false'&& frame[0].getAttribute('data-src')!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2){
+				 if(!vwg && !!frame[0].getAttribute('data-src') && frame[0].getAttribute('data-src')!='' && frame[0].getAttribute('data-src')!='about:blank' && frame[0].getAttribute('data-src')!='javascript:false'&& frame[0].getAttribute('data-src')!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2 && frame[0]!=ifrm3){
 					 	frame[0].style.setProperty( 'visibility', 'visible', 'important' );
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].getAttribute('data-src');
@@ -1508,7 +1517,7 @@ myVdo.addEventListener("ratechange", (event) => {
 });		
 
 		 allFrames.forEach((frame,index) => {
-			if(!myVdo_el[1].includes(frame[2]) && myVdo_el[1]!='' && frame[0]!==ifrm && frame[0]!==ifrm2 && typeof frame[0].style!=='undefined'){
+			if(!myVdo_el[1].includes(frame[2]) && myVdo_el[1]!='' && frame[0]!==ifrm && frame[0]!==ifrm2 && frame[0]!==ifrm3 && typeof frame[0].style!=='undefined'){
 				if(typeof frame[0].style.setProperty!=='undefined'){
 					frame[0].style.setProperty( 'display', 'none', 'important' );
 				}else{
@@ -1562,6 +1571,7 @@ progresses=[];
 	thumbs.innerHTML =  '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;"></section>';
 	threeSct=thumbs.firstChild;
 	myVdo.pause();
+	revForceMute();
 	myVdo.currentTime = 0;
 
 aseek=1;
@@ -1720,6 +1730,8 @@ myVdo.addEventListener("playing", (event)=>{
 		let p_n=performance.now();
 		let df=p_n-t_b;
 		if(df>mx){
+			vMut=video.muted;
+			video.muted = true;
 			myVdo.play();
 			t_a=p_n;
 			t_b=p_n;
@@ -1736,7 +1748,8 @@ function thumbseek(bool){
 		if(!((ttmp==0)&&(myVdo.readyState<2))){
 			t_a=performance.now();
 			if(!myVdo.paused){
-			myVdo.pause();
+				myVdo.pause();
+				revForceMute();
 			}
 			time_track =ttmp*(myVdo.duration/t);
 			vhw.h=myVdo.videoHeight;
