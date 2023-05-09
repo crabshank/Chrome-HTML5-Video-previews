@@ -1772,9 +1772,6 @@ myVdo.addEventListener("playing", (event)=>{
 	tu2(event);
 });		
 
-
-	let gtmv = setInterval(getMoving, (Math.abs(mx)+1));
-	
 	function getMoving(){
 		let p_n=performance.now();
 		let df=p_n-t_b;
@@ -1787,6 +1784,8 @@ myVdo.addEventListener("playing", (event)=>{
 			mx=df;
 		}
 	}
+	
+	let gtmv = setInterval(getMoving, (Math.abs(mx)+1));
 	
 function endGtMv() {
   clearInterval(gtmv);
