@@ -608,15 +608,16 @@ var ifrmRsz=()=>{
 
 	let bSectR=absBoundingClientRect(bSect);
 
-	let mxwb=bSectR.width;
+	//let mxwb=bSectR.width;
+	let mxhb=bSectR.height;
 	
-	ifrm3.style.minWidth=mxwb+'px';
-	ifrm3.style.width=mxwb+'px';
-	ifrm3.style.maxWidth=mxwb+'px';
+	ifrm3.style.minWidth=bsw+'px';
+	ifrm3.style.width=bsw+'px';
+	ifrm3.style.maxWidth=bsw+'px';
 
-	ifrm3.style.minHeight=bSectR.height+'px';
-	ifrm3.style.height=bSectR.height+'px';
-	ifrm3.style.maxHeight=bSectR.height+'px';
+	ifrm3.style.minHeight=mxhb+'px';
+	ifrm3.style.height=mxhb+'px';
+	ifrm3.style.maxHeight=mxhb+'px';
 
 	let ifrm3R=absBoundingClientRect(ifrm3);
 	let wd=getScreenWidth(false);
@@ -768,6 +769,7 @@ function revForceMute(){
 
 var bSect=[...ifrm3.contentWindow.document.querySelectorAll("section#bSec")][0];
 var mvdb=[...ifrm3.contentWindow.document.querySelectorAll("button#mvvb")][0];
+var bsw=0;
 
 ifrmRsz();
 
@@ -1010,7 +1012,16 @@ var checkDur = function() {
 	myVdo.currentTime=0;
 
 	if(!tTrkFlg){
+	bSect.style.width='min-content';
+	bSect.style.minWidth='';
+	bSect.style.maxWidth='';
 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
+	let bSectR=absBoundingClientRect(bSect);
+	let bsrw=bSectR.width
+	bsw=(bsrw>bsw)?bsrw:bsw;
+	bSect.style.width=bsw+'px';
+	bSect.style.minWidth=bsw+'px';
+	bSect.style.maxWidth=bsw+'px';
 	ifrmRsz();
 	}
 }
@@ -1494,7 +1505,16 @@ myVdo.playbackRate=1;
 		
 myVdo.addEventListener("timeupdate", (event) => {
 	if(!tTrkFlg){
+	bSect.style.width='min-content';
+	bSect.style.minWidth='';
+	bSect.style.maxWidth='';
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
+	let bSectR=absBoundingClientRect(bSect);
+	let bsrw=bSectR.width
+	bsw=(bsrw>bsw)?bsrw:bsw;
+	bSect.style.width=bsw+'px';
+	bSect.style.minWidth=bsw+'px';
+	bSect.style.maxWidth=bsw+'px';
 	ifrmRsz();
 	}
 });		
@@ -1510,7 +1530,16 @@ myVdo.addEventListener("loadedmetadata", (event) => {
 
 myVdo.addEventListener("ratechange", (event) => {
 	if(!tTrkFlg){
+	bSect.style.width='min-content';
+	bSect.style.minWidth='';
+	bSect.style.maxWidth='';
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
+	let bSectR=absBoundingClientRect(bSect);
+	let bsrw=bSectR.width
+	bsw=(bsrw>bsw)?bsrw:bsw;
+	bSect.style.width=bsw+'px';
+	bSect.style.minWidth=bsw+'px';
+	bSect.style.maxWidth=bsw+'px';
 	ifrmRsz();
 	}
 	if(myVdo.readyState>2){
@@ -1579,14 +1608,32 @@ progresses=[];
 aseek=1;
 
 if(!tTrkFlg){
-curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
-ifrmRsz();
+	bSect.style.width='min-content';
+	bSect.style.minWidth='';
+	bSect.style.maxWidth='';
+	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
+	let bSectR=absBoundingClientRect(bSect);
+	let bsrw=bSectR.width
+	bsw=(bsrw>bsw)?bsrw:bsw;
+	bSect.style.width=bsw+'px';
+	bSect.style.minWidth=bsw+'px';
+	bSect.style.maxWidth=bsw+'px';
+	ifrmRsz();
 }
 
 var tu2=(event) => {
-		if(!tTrkFlg){
- 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
-	ifrmRsz();
+	if(!tTrkFlg){
+		bSect.style.width='min-content';
+		bSect.style.minWidth='';
+		bSect.style.maxWidth='';
+		curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
+		let bSectR=absBoundingClientRect(bSect);
+		let bsrw=bSectR.width
+		bsw=(bsrw>bsw)?bsrw:bsw;
+		bSect.style.width=bsw+'px';
+		bSect.style.minWidth=bsw+'px';
+		bSect.style.maxWidth=bsw+'px';
+		ifrmRsz();
 	}
  if(aseek==0){
 	for(let i=0;i<captions.length;i++){
@@ -1732,8 +1779,8 @@ myVdo.addEventListener("playing", (event)=>{
 		let p_n=performance.now();
 		let df=p_n-t_b;
 		if(df>mx){
-			vMut=video.muted;
-			video.muted = true;
+			vMut=myVdo.muted;
+			myVdo.muted = true;
 			myVdo.play();
 			t_a=p_n;
 			t_b=p_n;
@@ -1765,7 +1812,16 @@ function thumbseek(bool){
 			let tm=t_b-t_a;
 			mx=(tm>mx)?tm:mx;
 			tTrkFlg=true;
+			bSect.style.width='min-content';
+			bSect.style.minWidth='';
+			bSect.style.maxWidth='';
 			curr.innerText= formatTime(myVdo.currentTime)+"\n"+ttmp+"/"+done_t;
+			let bSectR=absBoundingClientRect(bSect);
+			let bsrw=bSectR.width
+			bsw=(bsrw>bsw)?bsrw:bsw;
+			bSect.style.width=bsw+'px';
+			bSect.style.minWidth=bsw+'px';
+			bSect.style.maxWidth=bsw+'px';
 			ifrmRsz();
 			if(ttmp===1){
 				ifrm2.scrollIntoView();
