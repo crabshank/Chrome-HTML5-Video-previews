@@ -1011,7 +1011,7 @@ var checkDur = function() {
 	revForceMute();
 	myVdo.currentTime=0;
 
-	if(!tTrkFlg){
+	//if(!tTrkFlg){
 	bSect.style.width='min-content';
 	bSect.style.minWidth='';
 	bSect.style.maxWidth='';
@@ -1023,7 +1023,7 @@ var checkDur = function() {
 	bSect.style.minWidth=bsw+'px';
 	bSect.style.maxWidth=bsw+'px';*/
 	ifrmRsz();
-	}
+	//}
 }
 
 
@@ -1504,7 +1504,7 @@ myVdo.playbackRate=1;
 });
 		
 myVdo.addEventListener("timeupdate", (event) => {
-	if(!tTrkFlg){
+	//if(!tTrkFlg){
 	bSect.style.width='min-content';
 	bSect.style.minWidth='';
 	bSect.style.maxWidth='';
@@ -1516,7 +1516,7 @@ myVdo.addEventListener("timeupdate", (event) => {
 	bSect.style.minWidth=bsw+'px';
 	bSect.style.maxWidth=bsw+'px';
 	ifrmRsz();
-	}
+	//}
 });		
 
 myVdo.addEventListener("durationchange", (event) => {
@@ -1607,7 +1607,7 @@ progresses=[];
 
 aseek=1;
 
-if(!tTrkFlg){
+//if(!tTrkFlg){
 	bSect.style.width='min-content';
 	bSect.style.minWidth='';
 	bSect.style.maxWidth='';
@@ -1619,7 +1619,7 @@ if(!tTrkFlg){
 	bSect.style.minWidth=bsw+'px';
 	bSect.style.maxWidth=bsw+'px';*/
 	ifrmRsz();
-}
+//}
 
 var tu2=(event) => {
 	if(!tTrkFlg){
@@ -1834,9 +1834,6 @@ function thumbseek(bool){
 				time_track=-1;
 				ttmp=0;
 				myVdo.currentTime=0;
-				bSect.style.width='min-content';
-				bSect.style.minWidth='';
-				bSect.style.maxWidth='';
 				mvdb.style.display='block';
 				shiftBtns(false);
 				scrl.style.display='';
