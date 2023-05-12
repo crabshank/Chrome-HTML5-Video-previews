@@ -608,12 +608,12 @@ var ifrmRsz=()=>{
 
 	let bSectR=absBoundingClientRect(bSect);
 
-	let mxwb=bSectR.width;
+	//let mxwb=bSectR.width;
 	let mxhb=bSectR.height;
 	
-	ifrm3.style.minWidth=mxwb+'px';
-	ifrm3.style.width=mxwb+'px';
-	ifrm3.style.maxWidth=mxwb+'px';
+	ifrm3.style.minWidth=bsw+'px';
+	ifrm3.style.width=bsw+'px';
+	ifrm3.style.maxWidth=bsw+'px';
 
 	ifrm3.style.minHeight=mxhb+'px';
 	ifrm3.style.height=mxhb+'px';
@@ -1010,20 +1010,21 @@ var checkDur = function() {
 	myVdo.pause();
 	revForceMute();
 	myVdo.currentTime=0;
+	bsw=0;
 
-	//if(!tTrkFlg){
+	if(!tTrkFlg){
 	bSect.style.width='min-content';
 	bSect.style.minWidth='';
 	bSect.style.maxWidth='';
 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
-	/*let bSectR=absBoundingClientRect(bSect);
+	let bSectR=absBoundingClientRect(bSect);
 	let bsrw=bSectR.width
 	bsw=(bsrw>bsw)?bsrw:bsw;
 	bSect.style.width=bsw+'px';
 	bSect.style.minWidth=bsw+'px';
-	bSect.style.maxWidth=bsw+'px';*/
+	bSect.style.maxWidth=bsw+'px';
 	ifrmRsz();
-	//}
+	}
 }
 
 
@@ -1504,7 +1505,7 @@ myVdo.playbackRate=1;
 });
 		
 myVdo.addEventListener("timeupdate", (event) => {
-	//if(!tTrkFlg){
+	if(!tTrkFlg){
 	bSect.style.width='min-content';
 	bSect.style.minWidth='';
 	bSect.style.maxWidth='';
@@ -1516,7 +1517,7 @@ myVdo.addEventListener("timeupdate", (event) => {
 	bSect.style.minWidth=bsw+'px';
 	bSect.style.maxWidth=bsw+'px';
 	ifrmRsz();
-	//}
+	}
 });		
 
 myVdo.addEventListener("durationchange", (event) => {
@@ -1604,22 +1605,23 @@ progresses=[];
 	myVdo.pause();
 	revForceMute();
 	myVdo.currentTime = 0;
+	bsw=0;
 
 aseek=1;
 
-//if(!tTrkFlg){
+if(!tTrkFlg){
 	bSect.style.width='min-content';
 	bSect.style.minWidth='';
 	bSect.style.maxWidth='';
 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
-	/*let bSectR=absBoundingClientRect(bSect);
+	let bSectR=absBoundingClientRect(bSect);
 	let bsrw=bSectR.width
 	bsw=(bsrw>bsw)?bsrw:bsw;
 	bSect.style.width=bsw+'px';
 	bSect.style.minWidth=bsw+'px';
-	bSect.style.maxWidth=bsw+'px';*/
+	bSect.style.maxWidth=bsw+'px';
 	ifrmRsz();
-//}
+}
 
 var tu2=(event) => {
 	if(!tTrkFlg){
@@ -1833,6 +1835,7 @@ function thumbseek(bool){
 				tTrkFlg=false;
 				time_track=-1;
 				ttmp=0;
+				bsw=0;
 				myVdo.currentTime=0;
 				mvdb.style.display='block';
 				shiftBtns(false);
