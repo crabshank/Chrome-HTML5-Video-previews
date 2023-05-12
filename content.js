@@ -1016,12 +1016,12 @@ var checkDur = function() {
 	bSect.style.minWidth='';
 	bSect.style.maxWidth='';
 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
-	let bSectR=absBoundingClientRect(bSect);
+	/*let bSectR=absBoundingClientRect(bSect);
 	let bsrw=bSectR.width
 	bsw=(bsrw>bsw)?bsrw:bsw;
 	bSect.style.width=bsw+'px';
 	bSect.style.minWidth=bsw+'px';
-	bSect.style.maxWidth=bsw+'px';
+	bSect.style.maxWidth=bsw+'px';*/
 	ifrmRsz();
 	}
 }
@@ -1612,12 +1612,12 @@ if(!tTrkFlg){
 	bSect.style.minWidth='';
 	bSect.style.maxWidth='';
 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
-	let bSectR=absBoundingClientRect(bSect);
+	/*let bSectR=absBoundingClientRect(bSect);
 	let bsrw=bSectR.width
 	bsw=(bsrw>bsw)?bsrw:bsw;
 	bSect.style.width=bsw+'px';
 	bSect.style.minWidth=bsw+'px';
-	bSect.style.maxWidth=bsw+'px';
+	bSect.style.maxWidth=bsw+'px';*/
 	ifrmRsz();
 }
 
