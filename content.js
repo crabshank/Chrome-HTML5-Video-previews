@@ -1834,6 +1834,9 @@ function thumbseek(bool){
 				time_track=-1;
 				ttmp=0;
 				myVdo.currentTime=0;
+				bSect.style.width='min-content';
+				bSect.style.minWidth='';
+				bSect.style.maxWidth='';
 				mvdb.style.display='block';
 				shiftBtns(false);
 				scrl.style.display='';
