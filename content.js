@@ -608,12 +608,12 @@ var ifrmRsz=()=>{
 
 	let bSectR=absBoundingClientRect(bSect);
 
-	//let mxwb=bSectR.width;
+	let mxwb=bSectR.width;
 	let mxhb=bSectR.height;
 	
-	ifrm3.style.minWidth=bsw+'px';
-	ifrm3.style.width=bsw+'px';
-	ifrm3.style.maxWidth=bsw+'px';
+	ifrm3.style.minWidth=mxwb+'px';
+	ifrm3.style.width=mxwb+'px';
+	ifrm3.style.maxWidth=mxwb+'px';
 
 	ifrm3.style.minHeight=mxhb+'px';
 	ifrm3.style.height=mxhb+'px';
