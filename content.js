@@ -1009,8 +1009,8 @@ var checkDur = function() {
 	}
 	myVdo.pause();
 	revForceMute();
-	myVdo.currentTime=0;
 	bsw=0;
+	myVdo.currentTime=0;
 
 	if(!tTrkFlg){
 	bSect.style.width='min-content';
@@ -1604,8 +1604,8 @@ progresses=[];
 	threeSct=thumbs.firstChild;
 	myVdo.pause();
 	revForceMute();
-	myVdo.currentTime = 0;
 	bsw=0;
+	myVdo.currentTime = 0;
 
 aseek=1;
 
