@@ -9,6 +9,8 @@ var g_ancestors=[];
 var firstAncestor=null;
 var firstParent=null;
 var vfr=false;
+var jBack=false;
+
 
 function keepMatchesShadow(els,slc,isNodeName){
    if(slc===false){
@@ -593,7 +595,7 @@ var progresses=[];
 var ttmp=0;
 var cap=-1;
 var cap_el;
-var time_track=-1;
+var time_track=[-1,0];
 var tTrkFlg=false;
 var ev_t=-1;
 var mx=-3000;
@@ -759,13 +761,6 @@ var wndWh=false;
 var shb2=false;
 var figSk=false;
 var myVdo_el=[];
-
-function revForceMute(){
-	if(vMut!==null){ // if force muted
-		myVdo.muted =vMut; //set to og mute status
-		vMut=null;
-	}
-}
 
 var bSect=[...ifrm3.contentWindow.document.querySelectorAll("section#bSec")][0];
 var mvdb=[...ifrm3.contentWindow.document.querySelectorAll("button#mvvb")][0];
@@ -1007,8 +1002,11 @@ var checkDur = function() {
 			ev_t=t;
 			}
 	}
-	myVdo.pause();
-	revForceMute();
+	if(vMut!==null){
+		myVdo.pause();
+		myVdo.muted =vMut; //set to og mute status
+		vMut=null;
+	}
 	bsw=0;
 	myVdo.currentTime=0;
 
@@ -1602,8 +1600,11 @@ progresses=[];
 	ttmp=0;
 	thumbs.innerHTML =  '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;"></section>';
 	threeSct=thumbs.firstChild;
-	myVdo.pause();
-	revForceMute();
+	if(vMut!==null){
+		myVdo.pause();
+		myVdo.muted =vMut; //set to og mute status
+		vMut=null;
+	}
 	bsw=0;
 	myVdo.currentTime = 0;
 
@@ -1778,9 +1779,15 @@ myVdo.addEventListener("playing", (event)=>{
 		let p_n=performance.now();
 		let df=p_n-t_b;
 		if(df>mx){
-			vMut=myVdo.muted;
-			myVdo.muted = true;
-			myVdo.play();
+			if(time_track[1]<1 || jBack===true){
+				vMut=myVdo.muted;
+				myVdo.muted = true;
+				myVdo.play();
+				jBack=(jBack===true)?false:jBack;
+			}else{
+				myVdo.currentTime=time_track[0];
+				jBack=true;
+			}
 			t_a=p_n;
 			t_b=p_n;
 			mx=df;
@@ -1797,11 +1804,14 @@ function thumbseek(bool){
 	if(bool){
 		if(!((ttmp==0)&&(myVdo.readyState<2))){
 			t_a=performance.now();
-			if(!myVdo.paused){
+			if(vMut!==null){
 				myVdo.pause();
-				revForceMute();
+				myVdo.muted =vMut; //set to og mute status
+				vMut=null;
+			}else if(!myVdo.paused){
+				myVdo.pause();
 			}
-			time_track =ttmp*(myVdo.duration/t);
+			time_track =[ttmp*(myVdo.duration/t),ttmp];
 			vhw.h=myVdo.videoHeight;
 			vhw.w=myVdo.videoWidth;
 			//myVdo.style.height=(10000*(vhw.h/(vhw.w+vhw.h))/80).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"vw";
@@ -1833,7 +1843,7 @@ function thumbseek(bool){
 				aseek=0;
 				gnrB.value='Generate thumbs';
 				tTrkFlg=false;
-				time_track=-1;
+				time_track=[-1,0];
 				ttmp=0;
 				bsw=0;
 				myVdo.currentTime=0;
@@ -1969,7 +1979,7 @@ function thumbseek(bool){
 
 myVdo.addEventListener("seeking", (event) => {
 	if((aseek==1)&&(myVdo.readyState>=2)){
-		if(myVdo.currentTime>time_track){
+		if(myVdo.currentTime>time_track[0]){
 			thumbseek(true);
 		}else{
 			myVdo.currentTime=ttmp*(myVdo.duration/t);
@@ -1982,7 +1992,7 @@ myVdo.addEventListener("seeking", (event) => {
 myVdo.addEventListener("wating", (event) => {
 myVdo.playbackRate=1;
 	if((aseek==1)&&(myVdo.readyState>=2)){
-		if(myVdo.currentTime>time_track){
+		if(myVdo.currentTime>time_track[0]){
 			thumbseek(true);
 		}else{
 			myVdo.currentTime=ttmp*(myVdo.duration/t);
@@ -2001,7 +2011,7 @@ myVdo.addEventListener("seeked", (event) => {
 	}
 
 	if((aseek==1)&&(myVdo.readyState>=2)){
-		if(myVdo.currentTime>time_track){
+		if(myVdo.currentTime>time_track[0]){
 			thumbseek(true);
 		}else{
 			myVdo.currentTime=ttmp*(myVdo.duration/t);
