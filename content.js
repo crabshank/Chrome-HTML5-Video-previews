@@ -915,17 +915,19 @@ clrr.onclick=()=>{
 }
 
 evry.onclick=()=>{
-	if(evry.intrv!==null){
-		if(evry.intrv<0){
-				evry.intrv=-0.5;
-				evry.innerText='At most every 0.5 secs';
-		}else{
-				evry.intrv=30;
-				evry.innerText=evry.innerText='At least every 30 secs';
+	if (aseek==0){
+		if(evry.intrv!==null){
+			if(evry.intrv<0){
+					evry.intrv=-0.5;
+					evry.innerText='At most every 0.5 secs';
+			}else{
+					evry.intrv=30;
+					evry.innerText=evry.innerText='At least every 30 secs';
+			}
 		}
+		rsz_ifrm();
+		setEveryFrames();
 	}
-	rsz_ifrm();
-	setEveryFrames();
 }
 
 evry.onwheel=()=>{
@@ -1298,7 +1300,6 @@ rsz_ifrm();
 	}	
 	
 	function setEveryFrames() {
-		if (aseek==0){
 			if(myVdo.duration>=270){
 				t=Math.round(Math.ceil(((myVdo.duration)/(evry.intrv*3)))*3);
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;			
@@ -1314,7 +1315,6 @@ rsz_ifrm();
 			}else{
 				evry.style.display='none';
 			}*/
-		}
 	}
 
 function clr(){
