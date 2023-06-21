@@ -524,7 +524,7 @@ input::-webkit-textfield-decoration-container {
 <main style="margin: 0px !important; border: 0px !important; padding: 0px !important; background-color: black !important;">
 <button style="background-color: buttonface !important; visibility: initial !important;" id="three_plus" type="button">+ 3 thumbs</button>
 <button style="background-color: buttonface !important; visibility: initial !important;" id="three_neg" type="button">- 3 thumbs</button>
-<button style="background-color: buttonface !important; display: none; visibility: initial !important;" type="button" id="every"></button>
+<button title="Click to reset to default" style="background-color: buttonface !important; display: none; visibility: initial !important;" type="button" id="every"></button>
 <button style="background-color: buttonface !important; visibility: initial !important;" id="clear_er" type="button">Clear</button>
 <select style="width: 46.6vw; color: black; background-color: buttonface; visibility: initial !important;" name="txt_Bx" id="txt_Bx"></select>
 
@@ -915,8 +915,50 @@ clrr.onclick=()=>{
 }
 
 evry.onclick=()=>{
+	if(evry.intrv!==null){
+		if(evry.intrv<0){
+				evry.intrv=-0.5;
+				evry.innerText='At most every 0.5 secs';
+		}else{
+				evry.intrv=30;
+				evry.innerText=evry.innerText='At least every 30 secs';
+		}
+	}
 	rsz_ifrm();
 	setEveryFrames();
+}
+
+evry.onwheel=()=>{
+	event.preventDefault();
+	event.stopPropagation();
+	if(evry.intrv===null){
+		return
+	}
+	
+	if (event.deltaY>0){
+		if(evry.intrv<0){
+			evry.intrv=(evry.intrv<=-0.2)?evry.intrv-0.1:evry.intrv;
+			evry.innerText='At most every '+(	Math.abs(evry.intrv).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1})	)+' secs';
+		}else{
+			if(evry.intrv>=2){
+				evry.intrv-=1;
+			}
+			evry.innerText='At least every '+(evry.intrv)+((evry.intrv===1)?' sec':' secs');
+		}
+	}
+	
+	if(event.deltaY<0){
+		if(evry.intrv<0){
+			evry.intrv+=0.1;
+			evry.innerText='At most every '+(	Math.abs(evry.intrv).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1})	)+' secs';
+		}else{
+			evry.intrv+=1;
+			evry.innerText='At least every '+(evry.intrv)+((evry.intrv===1)?' sec':' secs');
+		}
+	}
+		
+	setEveryFrames();
+
 }
 
 three_Plus.onclick=()=>{
@@ -987,19 +1029,23 @@ var checkDur = function() {
 	shiftBtns(true);
 			if(ev_t==-1){
 			if(myVdo.duration>=270){
-			t=Math.round(Math.ceil(myVdo.duration/90)*3);
-			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
-			evry.innerText='At least every 30 secs';
+				evry.intrv=30;
+				t=Math.round(Math.ceil(myVdo.duration/90)*3);
+				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+				evry.innerText='At least every 30 secs';
 			}else if(myVdo.duration<4.5){
-				t=Math.round(Math.Max(1,Math.floor((myVdo.duration*2)/3))*3);
+				evry.intrv=-0.5;
+				t=Math.round(Math.max(1,Math.floor((myVdo.duration*2)/3))*3); // 2 => (1/*0.5)
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
 				evry.innerText='At most every 0.5 secs';
-			}else{
-			t=9;
-			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
-			evry.innerText='9 frames';
+			}else{ //>=4.5 && <270
+				evry.intrv=null;
+				t=9;
+				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+				evry.innerText='9 frames';
 			}
 			ev_t=t;
+			evry.style.display='initial';
 			}
 	}
 	if(vMut!==null){
@@ -1227,49 +1273,47 @@ rsz_ifrm();
 
 }
 
-
-
 	function setPlusFrames() {
-	if (aseek==0){
-			t += 3;
-			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
-			if(ev_t>-1 && t!=ev_t){
-				evry.style.display='initial';
-			}else{
-				evry.style.display='none';
-			}
-			}
+		if (aseek==0){
+				t += 3;
+				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+				/*if(ev_t>-1 && t!=ev_t){
+					evry.style.display='initial';
+				}else{
+					evry.style.display='none';
+				}*/
+		}
 	}
 
 	function setMinusFrames() {
 		if (aseek==0){
 		t=(t<6)?3:t-3;
 		frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
-			if(ev_t>-1 && t!=ev_t){
+			/*if(ev_t>-1 && t!=ev_t){
 				evry.style.display='initial';
 			}else{
 				evry.style.display='none';
-			}
+			}*/
 		}
 	}	
 	
 	function setEveryFrames() {
 		if (aseek==0){
 			if(myVdo.duration>=270){
-			t=Math.round(Math.ceil(myVdo.duration/90)*3);
-			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;			
+				t=Math.round(Math.ceil(((myVdo.duration)/(evry.intrv*3)))*3);
+				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;			
 			}else if(myVdo.duration<4.5){
-				t=Math.round(Math.Max(1,Math.floor((myVdo.duration*2)/3))*3);
+				t=Math.round(Math.max(1,Math.floor((myVdo.duration*(1/Math.abs(evry.intrv)))/3))*3);
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
 			}else{
-			t=9;
-			frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+				t=9;
+				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
 			}
-			if(ev_t>-1 && t!=ev_t){
+			/*if(ev_t>-1 && t!=ev_t){
 				evry.style.display='initial';
 			}else{
 				evry.style.display='none';
-			}
+			}*/
 		}
 	}
 
@@ -1383,8 +1427,8 @@ if(allFrames.length>0){
 						opt.setAttribute("link", frame[0].getAttribute('data-src'));
 						opt.style.cssText='color: black !important;';
 						txtBx.appendChild(opt);	
-			tbG=false;
-		   gnrB.value='Select video';
+						tbG=false;
+						gnrB.value='Select video';
 				 }
 				}catch(e){;}
 
