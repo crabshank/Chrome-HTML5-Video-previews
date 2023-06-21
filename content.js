@@ -937,7 +937,7 @@ evry.onwheel=()=>{
 	
 	if (event.deltaY>0){
 		if(evry.intrv<0){
-			evry.intrv=(evry.intrv<=-0.2)?evry.intrv-0.1:evry.intrv;
+			evry.intrv=(evry.intrv<=-0.2)?evry.intrv+0.1:evry.intrv;
 			evry.innerText='At most every '+(	Math.abs(evry.intrv).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1})	)+' secs';
 		}else{
 			if(evry.intrv>=2){
@@ -949,7 +949,7 @@ evry.onwheel=()=>{
 	
 	if(event.deltaY<0){
 		if(evry.intrv<0){
-			evry.intrv+=0.1;
+			evry.intrv-=0.1;
 			evry.innerText='At most every '+(	Math.abs(evry.intrv).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1})	)+' secs';
 		}else{
 			evry.intrv+=1;
