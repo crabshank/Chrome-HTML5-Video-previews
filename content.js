@@ -931,7 +931,7 @@ evry.onclick=()=>{
 evry.onwheel=()=>{
 	event.preventDefault();
 	event.stopPropagation();
-	if(evry.intrv===null){
+	if(evry.intrv===null || aseek!=0){
 		return
 	}
 	
