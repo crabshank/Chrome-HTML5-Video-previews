@@ -525,7 +525,6 @@ input::-webkit-textfield-decoration-container {
 <button style="background-color: buttonface !important; visibility: initial !important;" id="three_plus" type="button">+ 3 thumbs</button>
 <button style="background-color: buttonface !important; visibility: initial !important;" id="three_neg" type="button">- 3 thumbs</button>
 <button title="Click to reset to default" style="background-color: buttonface !important; display: none; visibility: initial !important;" type="button" id="every"></button>
-<button style="background-color: buttonface !important; visibility: initial !important;" id="clear_er" type="button">Clear</button>
 <select style="width: 46.6vw; color: black; background-color: buttonface; visibility: initial !important;" name="txt_Bx" id="txt_Bx"></select>
 
 <input style="background-color: buttonface !important; visibility: initial !important;" id="scnB" type="button" Value="Scan for video">
@@ -751,7 +750,6 @@ sc1.style.setProperty( 'width', '100%', 'important' );
 var frame_btn=[...ifrm.contentWindow.document.querySelectorAll("span#frames")][0];
 var three_Plus=[...ifrm.contentWindow.document.querySelectorAll("button#three_plus")][0];
 var three_Neg=[...ifrm.contentWindow.document.querySelectorAll("button#three_neg")][0];
-var clrr=[...ifrm.contentWindow.document.querySelectorAll("button#clear_er")][0];
 var mxsp=[...ifrm.contentWindow.document.querySelectorAll("input#mxs")][0];
 
 
@@ -907,11 +905,6 @@ var shiftVid=(force_default_place)=>{
 
 var rsz= ()=>{
 	ifrmRsz();
-}
-
-clrr.onclick=()=>{
-	rsz_ifrm();
-	clr();
 }
 
 evry.onclick=()=>{
@@ -1316,10 +1309,6 @@ rsz_ifrm();
 				evry.style.display='none';
 			}*/
 	}
-
-function clr(){
-document.getElementById('txtBx').value="";
-}
 
 function ifrScan()
 {	
