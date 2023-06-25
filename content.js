@@ -960,7 +960,7 @@ evry.onwheel=()=>{
 	}
 		
 	setEveryFrames();
-
+	rsz_ifrm();
 }
 
 three_Plus.onclick=()=>{
@@ -1623,6 +1623,7 @@ myVdo.addEventListener("ratechange", (event) => {
 		checkDur();
 		tbG=true;
 		gnrB.value='Generate thumbs';
+		rsz_ifrm();
 		}else{
 		tbG=false;
 		doThumbs();
@@ -1894,6 +1895,7 @@ function thumbseek(bool){
 				mvdb.style.display='block';
 				shiftBtns(false);
 				scrl.style.display='';
+				rsz_ifrm();
 				rsz();
 				ifrm2.scrollIntoView();
 
