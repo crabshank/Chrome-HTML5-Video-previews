@@ -900,7 +900,7 @@ var shiftVid=(force_default_place)=>{
 							//let wdt=getScreenWidth();
 
 							let vw=ifrm3R.left-ifrm2R.right;
-							let vw2=vw*0.0071;
+							let vw2=vw*0.034;
 							let s=(vw-vw2)/myVdo.clientWidth;
 							
 							firstAncestor.style.cssText='';
