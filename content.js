@@ -10,7 +10,8 @@ var firstAncestor=null;
 var firstParent=null;
 var vfr=false;
 var jBack=false;
-
+var relocScale=0.45;
+var doc_minHeight=null;
 
 function keepMatchesShadow(els,slc,isNodeName){
    if(slc===false){
@@ -574,6 +575,7 @@ let ht_d=`
 <button id="spdt" style="background-color: buttonface !important;">Speed through video</button>
 <button id="pnp" style="background-color: buttonface !important;">Toggle picture-in-picture</button>
 <button id="mvvb" style="background-color: buttonface !important;">Toggle relocate video</button>
+<div contenteditable="true" id="rszr" title="Scaling factor of the thumbs' iframe." style="display: none; text-align: center;border-width: 0px 1px 1px 1px;border-color: buttonface;border-style: outset;"></div>
 
 <div id="currTime" style="color: white !important;background-color: black !important;font-size: 185% !important;font-weight: bold !important;text-align: center !important;"></div>
 </section>
@@ -603,6 +605,8 @@ var perc;
 var tbG=false;
 var gapVid=9;
 var shiftBtns2=null;
+
+
 var ifrmRsz=()=>{
 
 	 let scR=absBoundingClientRect(sc1);
@@ -710,7 +714,7 @@ ifrm3.contentWindow.document.body.style.setProperty( 'margin', 0, 'important' );
 ifrm3.contentWindow.document.body.style.setProperty( 'border', 0, 'important' );
 ifrm3.contentWindow.document.body.style.setProperty( 'padding', 0, 'important' );
 
-var main=[...ifrm.contentWindow.document.getElementsByTagName("main")][0];
+var main=ifrm.contentWindow.document.getElementsByTagName("main")[0];
 let mainRct=absBoundingClientRect(main);
 
 ifrm.style.setProperty( 'min-height', (mainRct.height)+'px', 'important' );
@@ -744,13 +748,13 @@ ifrm2.style.setProperty( 'top', maxBtm+'px', 'important' );
 ifrm3.style.setProperty( 'top', maxBtm+'px', 'important' );
 ifrm.scrollIntoView();
 
-var sc1=[...ifrm2.contentWindow.document.getElementsByTagName("section")][0];
+var sc1=ifrm2.contentWindow.document.getElementsByTagName("section")[0];
 sc1.style.setProperty( 'min-width', '100%', 'important' );
 sc1.style.setProperty( 'width', '100%', 'important' );
-var frame_btn=[...ifrm.contentWindow.document.querySelectorAll("span#frames")][0];
-var three_Plus=[...ifrm.contentWindow.document.querySelectorAll("button#three_plus")][0];
-var three_Neg=[...ifrm.contentWindow.document.querySelectorAll("button#three_neg")][0];
-var mxsp=[...ifrm.contentWindow.document.querySelectorAll("input#mxs")][0];
+var frame_btn=ifrm.contentWindow.document.querySelectorAll("span#frames")[0];
+var three_Plus=ifrm.contentWindow.document.querySelectorAll("button#three_plus")[0];
+var three_Neg=ifrm.contentWindow.document.querySelectorAll("button#three_neg")[0];
+var mxsp=ifrm.contentWindow.document.querySelectorAll("input#mxs")[0];
 
 
 var myVdo;
@@ -760,8 +764,15 @@ var shb2=false;
 var figSk=false;
 var myVdo_el=[];
 
-var bSect=[...ifrm3.contentWindow.document.querySelectorAll("section#bSec")][0];
-var mvdb=[...ifrm3.contentWindow.document.querySelectorAll("button#mvvb")][0];
+var bSect=ifrm3.contentWindow.document.querySelectorAll("section#bSec")[0];
+var mvdb=ifrm3.contentWindow.document.querySelectorAll("button#mvvb")[0];
+var rlcRsz=ifrm3.contentWindow.document.querySelectorAll("div#rszr")[0];
+rlcRsz.innerText=relocScale.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 15});
+rlcRsz.oninput=(e)=>{
+	relocScale=rlcRsz.innerText;
+	shb2=false;
+	shiftBtns2();
+};
 var bsw=0;
 
 ifrmRsz();
@@ -772,7 +783,7 @@ ifrmRsz();
  sc1.style.width=sc1w+'px';
  sc1.style.maxWidth=sc1w+'px';*/
 
-var thumbs=[...ifrm2.contentWindow.document.querySelectorAll("div#thumbs")][0];
+var thumbs=ifrm2.contentWindow.document.querySelectorAll("div#thumbs")[0];
 thumbs.style.setProperty('transform-origin','top left', 'important' );
 var threeSct=thumbs.firstChild;
 thumbs.style.setProperty( 'margin', 0, 'important' );
@@ -795,21 +806,21 @@ function scrollElMidPage(el){
 	t.scrollIntoView({behavior: "auto", block: vpos, inline: "start"});
 }
 
-var scrl= [...ifrm3.contentWindow.document.querySelectorAll("button#scroll_curr")][0];
-var scrv= [...ifrm3.contentWindow.document.querySelectorAll("button#scroll_vid")][0];
-var spb= [...ifrm3.contentWindow.document.querySelectorAll("button#spdt")][0];
-var pip= [...ifrm3.contentWindow.document.querySelectorAll("button#pnp")][0];
-var curr  =[...ifrm3.contentWindow.document.querySelectorAll("div#currTime")][0];
+var scrl=ifrm3.contentWindow.document.querySelectorAll("button#scroll_curr")[0];
+var scrv= ifrm3.contentWindow.document.querySelectorAll("button#scroll_vid")[0];
+var spb= ifrm3.contentWindow.document.querySelectorAll("button#spdt")[0];
+var pip= ifrm3.contentWindow.document.querySelectorAll("button#pnp")[0];
+var curr  =ifrm3.contentWindow.document.querySelectorAll("div#currTime")[0];
 
-var evry= [...ifrm.contentWindow.document.querySelectorAll("button#every")][0];
-var scanB= [...ifrm.contentWindow.document.querySelectorAll("input#scnB")][0];
-var gnrB= [...ifrm.contentWindow.document.querySelectorAll("input#genB")][0];
+var evry= ifrm.contentWindow.document.querySelectorAll("button#every")[0];
+var scanB= ifrm.contentWindow.document.querySelectorAll("input#scnB")[0];
+var gnrB= ifrm.contentWindow.document.querySelectorAll("input#genB")[0];
 
-var opnr= [...ifrm.contentWindow.document.querySelectorAll("input#opnVd")][0];
+var opnr= ifrm.contentWindow.document.querySelectorAll("input#opnVd")[0];
 var clse;
 
 try{
-	clse=[...ifrm.contentWindow.document.querySelectorAll("input#rstD")][0];
+	clse=ifrm.contentWindow.document.querySelectorAll("input#rstD")[0];
 	clse.onclick=()=>{
 					exBool=(exBool)?false:true;
 					chrome.runtime.sendMessage({msg: clse.ownerDocument.URL, left: parseFloat(clse.attributes.lft.value), right: parseFloat(clse.attributes.rgt.value), top: parseFloat(clse.attributes.tp.value), bottom: parseFloat(clse.attributes.btm.value), type:'close', boolMrk:exBool}, function(response){
@@ -819,8 +830,8 @@ try{
 
 var sp_swtch=0;
 
-var txtBx = [...ifrm.contentWindow.document.querySelectorAll('select#txt_Bx')][0];
-//var pgrCSS = [...ifrm2.contentWindow.document.querySelectorAll('style#pgrB')][0];
+var txtBx = ifrm.contentWindow.document.querySelectorAll('select#txt_Bx')[0];
+//var pgrCSS = ifrm2.contentWindow.document.querySelectorAll('style#pgrB')[0];
 var vids=[];
 var vhw={w:0,h:0};
 var allFrames=[];
@@ -882,14 +893,14 @@ var shiftVid=(force_default_place)=>{
 							}
 							
 							let p=ifrm2.style.cssText.split(/transform\s*\:\s*[^\!]*/);
-							ifrm2.style.cssText=p.join('transform: scale(calc(95/150)) ');
+							ifrm2.style.cssText=(p.length<2)?p[0]+' transform: scale(calc('+relocScale+')) !important;':p.join('transform: scale(calc('+relocScale+')) ');
 							scrollHdl();
 							let ifrm2R=absBoundingClientRect(ifrm2);
 							let ifrm3R=absBoundingClientRect(ifrm3);
 							//let wdt=getScreenWidth();
 
 							let vw=ifrm3R.left-ifrm2R.right;
-							let vw2=vw*0.0375;
+							let vw2=vw*0.0071;
 							let s=(vw-vw2)/myVdo.clientWidth;
 							
 							firstAncestor.style.cssText='';
@@ -900,6 +911,9 @@ var shiftVid=(force_default_place)=>{
 							firstAncestor.style.setProperty('transform','scale('+s+')','important' );
 							let myVdoR=absBoundingClientRect(myVdo);
 							firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(((ifrm2R.right+vw2)-myVdoR.left)/s)+'px) translateY('+((ifrm3R.top-myVdoR.top)/s)+'px)', 'important' );
+							myVdoR=absBoundingClientRect(myVdo);
+							let firstAncestorR=absBoundingClientRect(firstAncestor);
+							document.documentElement.style.setProperty('min-height',`${Math.max(myVdoR.bottom,firstAncestorR.bottom,ifrm2R.bottom,ifrm3R.bottom)+ifrm2R.left}px`,'important');
 		}
 }
 
@@ -1492,6 +1506,7 @@ function LnkOp()
 		loadFlag=false;
 		ttmp=0;
 		ev_t=-1;
+		document.documentElement.style.setProperty('min-height',doc_minHeight,'important');
 		/*let txtVal=txtBx.value;
 		alert(txtVal);  
 		vid.src = txtVal;      
@@ -1608,7 +1623,9 @@ myVdo.addEventListener("ratechange", (event) => {
 		threeSct=thumbs.firstChild;
 		scrl.style.display='none';
 		shiftBtns(true);
+		rlcRsz.style.display='none';
 		mvdb.style.display='none';
+		document.documentElement.style.setProperty('min-height',doc_minHeight,'important');
 		checkDur();
 		tbG=true;
 		gnrB.value='Generate thumbs';
@@ -1906,10 +1923,17 @@ function thumbseek(bool){
 				
 				mvdb.onclick=function(){
 					vfr=!vfr;
+					doc_minHeight=(doc_minHeight===null)?window.getComputedStyle(document.documentElement)['min-height']:doc_minHeight;
+					doc_minHeight=(doc_minHeight===null)?'':doc_minHeight;
+					rlcRsz.style.setProperty('max-width',`${bSect.clientWidth}px`,'important');
+					rlcRsz.style.display=(vfr)?'block':'none';
+					ifrmRsz();
 					shb2=false;
 					shiftBtns2(false);
 					if(vfr){
 						scrollElMidPage(captions[curr_thumb].parentElement.parentElement);
+					}else{
+						document.documentElement.style.setProperty('min-height',doc_minHeight,'important');
 					}
 				};
 									
