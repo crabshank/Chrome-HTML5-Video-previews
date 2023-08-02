@@ -575,7 +575,7 @@ let ht_d=`
 <button id="spdt" style="background-color: buttonface !important;">Speed through video</button>
 <button id="pnp" style="background-color: buttonface !important;">Toggle picture-in-picture</button>
 <button id="mvvb" style="background-color: buttonface !important;">Toggle relocate video</button>
-<div contenteditable="true" id="rszr" title="Scaling factor of the thumbs' iframe." style="display: none; text-align: center;border-width: 0px 1px 1px 1px;border-color: buttonface;border-style: outset;"></div>
+<div contenteditable="true" id="rszr" title="Scaling factor of the thumbs' iframe. Can take fractions, arithmetic etc. (uses CSS' calc function)" style="display: none; text-align: center;border-width: 0px 1px 1px 1px;border-color: buttonface;border-style: outset;"></div>
 
 <div id="currTime" style="color: white !important;background-color: black !important;font-size: 185% !important;font-weight: bold !important;text-align: center !important;"></div>
 </section>
@@ -893,7 +893,12 @@ var shiftVid=(force_default_place)=>{
 							}
 							
 							let p=ifrm2.style.cssText.split(/transform\s*\:\s*[^\!]*/);
-							ifrm2.style.cssText=(p.length<2)?p[0]+' transform: scale(calc('+relocScale+')) !important;':p.join('transform: scale(calc('+relocScale+')) ');
+							if(p.length<2){
+								let x=p[0]+' transform: scale(calc('+relocScale+')) !important;';
+								ifrm2.style.cssText=(p[0].trim().endsWith(';'))?x:`;${x}`;
+							}else{
+								ifrm2.style.cssText=p.join('transform: scale(calc('+relocScale+')) ');
+							}
 							scrollHdl();
 							let ifrm2R=absBoundingClientRect(ifrm2);
 							let ifrm3R=absBoundingClientRect(ifrm3);
