@@ -10,7 +10,7 @@ var firstAncestor=null;
 var firstParent=null;
 var vfr=false;
 var jBack=false;
-var relocScale=0.45;
+var relocScale=0.65;
 var doc_minHeight=null;
 
 function keepMatchesShadow(els,slc,isNodeName){
@@ -575,7 +575,7 @@ let ht_d=`
 <button id="spdt" style="background-color: buttonface !important;">Speed through video</button>
 <button id="pnp" style="background-color: buttonface !important;">Toggle picture-in-picture</button>
 <button id="mvvb" style="background-color: buttonface !important;">Toggle relocate video</button>
-<div contenteditable="true" id="rszr" title="Scaling factor of the thumbs' iframe. Can take fractions, arithmetic etc. (uses CSS' calc function)" style="display: none; text-align: center;border-width: 0px 1px 1px 1px;border-color: buttonface;border-style: outset;"></div>
+<div contenteditable="true" id="rszr" title="Scaling factor of the thumbs' iframe. Can take fractions, arithmetic etc. (uses CSS' calc function). Wheel over to adjust (if in decimal format) (tip: don't scroll all the way to the bottom of the page before wheeling over)." style="display: none; text-align: center;border-width: 0px 0px 0px 1px;background-color: buttonface;border-style: outset;"></div>
 
 <div id="currTime" style="color: white !important;background-color: black !important;font-size: 185% !important;font-weight: bold !important;text-align: center !important;"></div>
 </section>
@@ -768,6 +768,21 @@ var bSect=ifrm3.contentWindow.document.querySelectorAll("section#bSec")[0];
 var mvdb=ifrm3.contentWindow.document.querySelectorAll("button#mvvb")[0];
 var rlcRsz=ifrm3.contentWindow.document.querySelectorAll("div#rszr")[0];
 rlcRsz.innerText=relocScale.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 15});
+rlcRsz.onwheel=(e)=>{
+	e.preventDefault();
+	e.stopPropagation();
+	let dec=(rlcRsz.innerText.match(/^\d*(\.\d*)?$/)!==null)?true:false;
+	if(dec===true){
+		let fl=parseFloat(rlcRsz.innerText);
+		if(e.deltaY>0){
+			rlcRsz.innerText=(Math.max(0,Math.min(1,fl-0.01))).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 15});
+		}
+		if (e.deltaY<0){
+			rlcRsz.innerText=(Math.max(0,Math.min(1,fl+0.01))).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 15});
+		}
+	}
+	relocScale=rlcRsz.innerText;
+};
 rlcRsz.oninput=(e)=>{
 	relocScale=rlcRsz.innerText;
 	shb2=false;
