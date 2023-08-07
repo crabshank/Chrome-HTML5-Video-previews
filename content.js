@@ -12,6 +12,7 @@ var vfr=false;
 var jBack=false;
 var relocScale=0.65;
 var doc_minHeight=null;
+var suppressTU=false;
 
 function keepMatchesShadow(els,slc,isNodeName){
    if(slc===false){
@@ -1749,8 +1750,9 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			progresses[nowFlag].title=perc+"%";
 			curr_thumb=nowFlag;
 			captions[nowFlag].style.backgroundColor="#0004ff99";
-			
-			progresses[nowFlag].value=perc_r;
+			if(suppressTU===false){
+				progresses[nowFlag].value=perc_r;
+			}
 			captions[nowFlag].parentElement.parentElement.onmousemove=function (e) {
 			pgBar(nowFlag,progresses[nowFlag],e,attr,attr_next.timestamp.nodeValue);
 			}
@@ -1763,7 +1765,9 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			progresses[cap_el].title=perc+"%";
 			curr_thumb=cap_el;
 			captions[cap_el].style.backgroundColor="#0004ff99";
+			if(suppressTU===false){
 			progresses[cap_el].value=perc_r;
+			}
 			captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
 			pgBar(cap_el,progresses[cap_el],e,attr,attr_next.timestamp.nodeValue);
 			}
@@ -1777,7 +1781,9 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			progresses[cap_el].title=perc+"%";
 			curr_thumb=cap_el;
 			captions[cap_el].style.backgroundColor="#006115c7";
+			if(suppressTU===false){
 			progresses[cap_el].value=perc_r;
+			}
 			captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
 			pgBar(cap_el,progresses[cap_el],e,attr,attr_next.timestamp.nodeValue);
 			}
@@ -1791,7 +1797,9 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			progresses[nowFlag].title=perc+"%";
 			curr_thumb=nowFlag;
 			captions[nowFlag].style.backgroundColor="#0004ff99";
+			if(suppressTU===false){
 					progresses[nowFlag].value=perc_r;
+			}
 			captions[nowFlag].parentElement.parentElement.onmousemove=function (e) {
 			pgBar(nowFlag,progresses[nowFlag],e,attr,myVdo.duration);
 			}
@@ -1803,7 +1811,9 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			progresses[captions.length-1].title="100.0%";
 			curr_thumb=captions.length-1;
 			captions[captions.length-1].style.backgroundColor="#006115c7";	
+			if(suppressTU===false){
 			progresses[captions.length-1].value=1;
+			}
 			captions[captions.length-1].parentElement.parentElement.onmousemove=function (e) {
 			pgBar(captions.length-1,progresses[captions.length-1].value,e,attr,myVdo.duration);
 			}
@@ -1814,7 +1824,9 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 		progresses[cap_el].title=perc+"%";
 		curr_thumb=cap_el;
 		captions[cap_el].style.backgroundColor="#0004ff99";
+		if(suppressTU===false){
 		progresses[cap_el].value=perc_r;
+		}
 			captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
 			pgBar(cap_el,progresses[cap_el],e,attr,myVdo.duration);
 			}
@@ -1826,7 +1838,9 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			progresses[captions.length-1].title=perc+"%";
 			curr_thumb=captions.length-1;
 			captions[captions.length-1].style.backgroundColor="#006115c7";
+			if(suppressTU===false){
 			progresses[captions.length-1].value=perc_r;
+			}
 			captions[captions.length-1].parentElement.parentElement.onmousemove=function(e) {
 			pgBar(captions.length-1,progresses[captions.length-1],e,attr,myVdo.duration);
 			}
@@ -1840,7 +1854,8 @@ cap=-1;
 }
 
 myVdo.addEventListener("timeupdate", (event)=>{
-	tu2(event);
+		tu2(event);
+		suppressTU=(suppressTU===true)?false:suppressTU;
 });	
 
 myVdo.addEventListener("playing", (event)=>{
@@ -2196,6 +2211,27 @@ if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
 }else{
 	scrollElMidPage(this);
 }
+	  }else{
+			let t,cvs;
+			if(e.target.tagName==='CANVAS'){
+				cvs=e.target;
+				t=cvs.parentElement;
+			}else{ //FIGURE
+				t=e.target;
+				cvs=t.firstElementChild;
+			} //t=figure
+			let prg=t.lastElementChild.firstElementChild;
+			index = progresses.indexOf(prg);
+			nowFlag=index;
+			cap=index;
+			let cur=parseFloat(cvs.getAttribute('timestamp'));
+			let rct=absBoundingClientRect(prg);
+			let fct=parseFloat(t.parentElement.style.zoom);
+			let pv=(e.offsetX / ((rct.right-rct.left)*fct));
+			prg.value=pv;
+			let nxt=(index===captions.length-1)?myVdo.duration:parseFloat(captions[index+1].parentElement.previousElementSibling.getAttribute('timestamp'));
+			suppressTU=true;
+			myVdo.currentTime=(1-pv)*cur+pv*nxt;
 	  }
 } 
 
