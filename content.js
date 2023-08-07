@@ -1284,6 +1284,7 @@ sp_swtch=0;
 spb.innerText="Speed through video";
 lddArr=[];
 }
+ifrmRsz();
 };
 
 frame_btn.onwheel= (event) => {
