@@ -575,7 +575,7 @@ let ht_d=`
 <button id="spdt" style="background-color: buttonface !important;">Speed through video</button>
 <button id="pnp" style="background-color: buttonface !important;">Toggle picture-in-picture</button>
 <button id="mvvb" style="background-color: buttonface !important;">Toggle relocate video</button>
-<div contenteditable="true" id="rszr" title="Scaling factor of the thumbs' iframe. Can take fractions, arithmetic etc. (uses CSS' calc function). Wheel over to adjust (if in decimal format) (tip: don't scroll all the way to the bottom of the page before wheeling over)." style="display: none; text-align: center;border-width: 0px 0px 0px 1px;background-color: buttonface;border-style: outset;"></div>
+<div contenteditable="true" id="rszr" title="Scaling factor of the thumbs' iframe. Can take fractions, arithmetic etc. (uses CSS' calc function). Wheel over to adjust (if in decimal format) (tip: don't scroll all the way to the bottom of the page before wheeling over)." style="width: -webkit-fill-available;display: none; text-align: center;border-width: 0px 0px 0px 1px;background-color: buttonface;border-style: outset;"></div>
 
 <div id="currTime" style="color: white !important;background-color: black !important;font-size: 185% !important;font-weight: bold !important;text-align: center !important;"></div>
 </section>
@@ -1946,7 +1946,6 @@ function thumbseek(bool){
 					vfr=!vfr;
 					doc_minHeight=(doc_minHeight===null)?window.getComputedStyle(document.documentElement)['min-height']:doc_minHeight;
 					doc_minHeight=(doc_minHeight===null)?'':doc_minHeight;
-					rlcRsz.style.setProperty('max-width',`${bSect.clientWidth}px`,'important');
 					rlcRsz.style.display=(vfr)?'block':'none';
 					ifrmRsz();
 					shb2=false;
