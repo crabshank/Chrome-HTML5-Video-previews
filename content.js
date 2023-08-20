@@ -798,6 +798,22 @@ ifrmRsz();
  sc1.style.width=sc1w+'px';
  sc1.style.maxWidth=sc1w+'px';*/
 
+function scrollElMidPage(el){
+	let vpos='center';
+	let epp=el.parentElement.parentElement;
+	let elp=el.parentElement;
+	let t=el;
+	if(epp===thumbs){
+		t=elp;
+		if(epp.firstElementChild===elp){
+			vpos='start';
+		}else if(epp.lastElementChild===elp){
+			vpos='end';
+		}
+	}
+	t.scrollIntoView({behavior: "auto", block: vpos, inline: "start"});
+}
+
 var thumbs=ifrm2.contentWindow.document.querySelectorAll("div#thumbs")[0];
 
 function figSize(f){ //figure, reset
@@ -820,7 +836,12 @@ function figSize(f){ //figure, reset
 					fi.style.zoom="75%";
 				}
 			}
-		}
+		}	
+		if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
+			scrollElMidPage(myVdo);
+		}else{
+			scrollElMidPage(f);
+		}	
 	}
 }
 
@@ -829,22 +850,6 @@ var threeSct=thumbs.firstChild;
 thumbs.style.setProperty( 'margin', 0, 'important' );
 thumbs.style.setProperty( 'border', 0, 'important' );
 thumbs.style.setProperty( 'padding', 0, 'important' );
-
-function scrollElMidPage(el){
-	let vpos='center';
-	let epp=el.parentElement.parentElement;
-	let elp=el.parentElement;
-	let t=el;
-	if(epp===thumbs){
-		t=elp;
-		if(epp.firstElementChild===elp){
-			vpos='start';
-		}else if(epp.lastElementChild===elp){
-			vpos='end';
-		}
-	}
-	t.scrollIntoView({behavior: "auto", block: vpos, inline: "start"});
-}
 
 var scrl=ifrm3.contentWindow.document.querySelectorAll("button#scroll_curr")[0];
 var scrv= ifrm3.contentWindow.document.querySelectorAll("button#scroll_vid")[0];
