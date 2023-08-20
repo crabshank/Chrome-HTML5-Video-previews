@@ -836,12 +836,7 @@ function figSize(f){ //figure, reset
 					fi.style.zoom="75%";
 				}
 			}
-		}	
-		if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
-			scrollElMidPage(myVdo);
-		}else{
-			scrollElMidPage(f);
-		}	
+		}
 	}
 }
 
