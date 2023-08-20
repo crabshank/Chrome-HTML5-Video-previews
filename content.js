@@ -1070,7 +1070,10 @@ function pgBar(ix,ths,ev,attr,nxt){
 			let rct=absBoundingClientRect(ths);
 			let fg=captions[ix].parentElement.parentElement;
 			let sct=fg.parentElement;
-			let fct=(0.01*parseFloat(fg.style.zoom))*parseFloat(sct.style.zoom);
+			let fz=fg.style.zoom;
+			let pfz=parseFloat(fz);
+			let z=( isNaN(pfz) )?1:0.01*pfz;
+			let fct=z*parseFloat(sct.style.zoom);
 			 progresses[ix].value=(ev.offsetX / (rct.width*fct));
 			 myVdo.currentTime=(progresses[ix].value)*(nxt-cur)+cur;
 			 curr_thumb=ix;
@@ -2276,7 +2279,10 @@ if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
 			cap=index;
 			let cur=parseFloat(cvs.getAttribute('timestamp'));
 			let rct=absBoundingClientRect(prg);
-			let fct=(0.01*parseFloat(t.style.zoom))*parseFloat(t.parentElement.style.zoom);
+			let fz=t.style.zoom;
+			let pfz=parseFloat(fz);
+			let z=( isNaN(pfz) )?1:0.01*pfz;
+			let fct=z*parseFloat(t.parentElement.style.zoom);
 			let pv=(e.offsetX / (rct.width*fct));
 			prg.value=pv;
 			let nxt=(index===captions.length-1)?myVdo.duration:parseFloat(captions[index+1].parentElement.previousElementSibling.getAttribute('timestamp'));
