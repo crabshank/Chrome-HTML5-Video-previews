@@ -607,7 +607,6 @@ var tbG=false;
 var gapVid=9;
 var shiftBtns2=null;
 
-
 var ifrmRsz=()=>{
 
 	 let scR=absBoundingClientRect(sc1);
@@ -800,6 +799,31 @@ ifrmRsz();
  sc1.style.maxWidth=sc1w+'px';*/
 
 var thumbs=ifrm2.contentWindow.document.querySelectorAll("div#thumbs")[0];
+
+function figSize(f){ //figure, reset
+	if(f===null){
+		let allFigs=thumbs.getElementsByTagName('FIGURE');
+		for(let i=0, len=allFigs.length; i<len; i++){
+			allFigs[i].style.zoom="";
+		}
+	}else{
+		let sct=f.parentElement;
+		let allFigs=thumbs.getElementsByTagName('FIGURE');
+		for(let i=0, len=allFigs.length; i<len; i++){
+			let fi=allFigs[i];
+			if(fi.parentElement!==sct){
+					fi.style.zoom="";
+			}else{
+				if(f===fi){
+					fi.style.zoom="150%";
+				}else{
+					fi.style.zoom="75%";
+				}
+			}
+		}
+	}
+}
+
 thumbs.style.setProperty('transform-origin','top left', 'important' );
 var threeSct=thumbs.firstChild;
 thumbs.style.setProperty( 'margin', 0, 'important' );
@@ -1044,8 +1068,10 @@ function pgBar(ix,ths,ev,attr,nxt){
 			nowFlag=ix;
 			let cur=parseFloat(attr.timestamp.nodeValue);
 			let rct=absBoundingClientRect(ths);
-			let fct=parseFloat(captions[ix].parentElement.parentElement.parentElement.style.zoom);
-			 progresses[ix].value=(ev.offsetX / ((rct.right-rct.left)*fct));
+			let fg=captions[ix].parentElement.parentElement;
+			let sct=fg.parentElement;
+			let fct=(0.01*parseFloat(fg.style.zoom))*parseFloat(sct.style.zoom);
+			 progresses[ix].value=(ev.offsetX / (rct.width*fct));
 			 myVdo.currentTime=(progresses[ix].value)*(nxt-cur)+cur;
 			 curr_thumb=ix;
 }
@@ -1641,7 +1667,7 @@ myVdo.addEventListener("ratechange", (event) => {
 		captions=[];
 		progresses=[];
 		curr_thumb=0;
-		thumbs.innerHTML = '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;"></section>';
+		thumbs.innerHTML = '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;align-items: flex-end !important;"></section>';
 		threeSct=thumbs.firstChild;
 		scrl.style.display='none';
 		shiftBtns(true);
@@ -1671,7 +1697,7 @@ captions=[];
 progresses=[];
 
 	ttmp=0;
-	thumbs.innerHTML =  '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;"></section>';
+	thumbs.innerHTML =  '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;align-items: flex-end !important;"></section>';
 	threeSct=thumbs.firstChild;
 	if(vMut!==null){
 		myVdo.pause();
@@ -1990,6 +2016,30 @@ function thumbseek(bool){
 								wndWh=false;
 							}
 					}
+					
+					ifrm2.contentWindow.document.documentElement.addEventListener('pointermove',(e)=>{
+						let ecp=e.composedPath();
+						let ix=ecp.findIndex((p)=>{let pp=p.parentElement; return (p.tagName==='FIGURE' && pp.tagName==='SECTION' && pp.parentElement.id==="thumbs");});
+						if(ix>=0){
+							let pix=ecp[ix];
+							figSize(pix);
+						}
+					});
+					
+					ifrm3.contentWindow.document.documentElement.addEventListener('pointermove',(e)=>{
+						figSize(null);
+					});
+					
+					ifrm.contentWindow.document.documentElement.addEventListener('pointermove',(e)=>{
+						figSize(null);
+					});
+					
+					window.addEventListener('pointermove',(e)=>{
+						let ecp=e.composedPath();
+						if(!ecp.includes( ifrm2.contentWindow.document.documentElement)){
+							figSize(null);
+						}
+					});
 							
 					ifrm2.ownerDocument.addEventListener("wheel", (event) => {
 						wnd_wheel(event);
@@ -2173,9 +2223,9 @@ shiftBtns(true);
 if (threeSct.children.length==3){
 	threeSct=ifrm2.contentWindow.document.createElement("section");
 	thumbs.appendChild(threeSct);
-	threeSct.style.cssText="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;";
-	
+	threeSct.style.cssText="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;align-items: flex-end !important;";
 }
+
 threeSct.appendChild(f);
 
 f.style.setProperty( 'margin', 0, 'important' );
@@ -2226,8 +2276,8 @@ if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
 			cap=index;
 			let cur=parseFloat(cvs.getAttribute('timestamp'));
 			let rct=absBoundingClientRect(prg);
-			let fct=parseFloat(t.parentElement.style.zoom);
-			let pv=(e.offsetX / ((rct.right-rct.left)*fct));
+			let fct=(0.01*parseFloat(t.style.zoom))*parseFloat(t.parentElement.style.zoom);
+			let pv=(e.offsetX / (rct.width*fct));
 			prg.value=pv;
 			let nxt=(index===captions.length-1)?myVdo.duration:parseFloat(captions[index+1].parentElement.previousElementSibling.getAttribute('timestamp'));
 			suppressTU=true;
