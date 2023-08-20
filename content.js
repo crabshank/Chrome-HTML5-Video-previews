@@ -798,6 +798,7 @@ ifrmRsz();
  sc1.style.width=sc1w+'px';
  sc1.style.maxWidth=sc1w+'px';*/
 let suppressScr=false;
+let zeroRsz=false;
 function scrollElMidPage(el){
 	let vpos='center';
 	let epp=el.parentElement.parentElement;
@@ -844,6 +845,10 @@ function figSize(f){ //figure, reset
 			}else{
 				scrollElMidPage(f);
 			}	
+		}
+		if(zeroRsz===true){
+			zeroRsz=false;
+			ifrmRsz();
 		}
 	}
 }
@@ -1979,6 +1984,7 @@ function thumbseek(bool){
 				ttmp=0;
 				bsw=0;
 				myVdo.currentTime=0;
+				zeroRsz=true;
 				mvdb.style.display='block';
 				shiftBtns(false);
 				scrl.style.display='';
