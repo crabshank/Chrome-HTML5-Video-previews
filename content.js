@@ -797,7 +797,7 @@ ifrmRsz();
  sc1.style.minWidth=sc1w+'px';
  sc1.style.width=sc1w+'px';
  sc1.style.maxWidth=sc1w+'px';*/
-
+let suppressScr=false;
 function scrollElMidPage(el){
 	let vpos='center';
 	let epp=el.parentElement.parentElement;
@@ -836,6 +836,14 @@ function figSize(f){ //figure, reset
 					fi.style.zoom="75%";
 				}
 			}
+		}
+		if(suppressScr===true){
+			suppressScr=false;
+			if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
+				scrollElMidPage(myVdo);
+			}else{
+				scrollElMidPage(f);
+			}	
 		}
 	}
 }
@@ -2051,7 +2059,8 @@ function thumbseek(bool){
 							//if(event.composedPath().filter((p)=>{return p.tagName==='FIGURE';}).length>0){
 								skip(event);						
 								let t=captions[curr_thumb].parentElement.parentElement;
-								scrollElMidPage(t);
+								suppressScr=true;
+								//scrollElMidPage(t);
 							//}
 							figSk=false;
 						}
@@ -2243,11 +2252,12 @@ ct.style.setProperty( 'transform', 'scale('+((f.scrollWidth/ct.clientWidth)*0.2)
 	nowFlag=index;
 	cap=index;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
-if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
+/*if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
 			scrollElMidPage(myVdo);
 }else{
 	scrollElMidPage(this);
-}
+}*/
+suppressScr=true;
 	  }else{
 			let t,cvs;
 			if(e.target.tagName==='CANVAS'){
@@ -2281,11 +2291,12 @@ if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
 	nowFlag=index;
 	cap=index;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
-if(!myVdo.ownerDocument.pictureInPictureElement && vfr){
+/*if(!myVdo.ownerDocument.pictureInPictureElement && vfr){
 			scrollElMidPage(myVdo);
 }else{
 	scrollElMidPage(this);
-}
+}*/
+suppressScr=true;
 	  }
 	  window.getSelection().removeAllRanges();
 } 
