@@ -1750,6 +1750,7 @@ var tu2=(event) => {
 		for(let i=0;i<progresses.length;i++){
 		progresses[i].style.display='none';
 		}
+		figSize(null);
 		
 if(myVdo.readyState>0){
 	cap=(cap!=-1)?cap:myVdo.currentTime*(done_t)/myVdo.duration;
@@ -1776,6 +1777,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			//captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
 			captions[nowFlag].style.display="none";
 			progresses[nowFlag].style.display="";
+			figSize(progresses[nowFlag].parentElement.parentElement);
 			progresses[nowFlag].title=perc+"%";
 			curr_thumb=nowFlag;
 			captions[nowFlag].style.backgroundColor="#0004ff99";
@@ -1791,6 +1793,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
 			captions[cap_el].style.display="none";
 			progresses[cap_el].style.display="";
+			figSize(progresses[cap_el].parentElement.parentElement);
 			progresses[cap_el].title=perc+"%";
 			curr_thumb=cap_el;
 			captions[cap_el].style.backgroundColor="#0004ff99";
@@ -1807,6 +1810,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
 			captions[cap_el].style.display="none";
 			progresses[cap_el].style.display="";
+			figSize(progresses[cap_el].parentElement.parentElement);
 			progresses[cap_el].title=perc+"%";
 			curr_thumb=cap_el;
 			captions[cap_el].style.backgroundColor="#006115c7";
@@ -1823,6 +1827,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			//captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
 			captions[nowFlag].style.display="none";
 			progresses[nowFlag].style.display="";
+			figSize(progresses[nowFlag].parentElement.parentElement);
 			progresses[nowFlag].title=perc+"%";
 			curr_thumb=nowFlag;
 			captions[nowFlag].style.backgroundColor="#0004ff99";
@@ -1835,8 +1840,9 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 	}else if (cap==cap_el){
 		if(cap_el>=captions.length){
 			//captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+100+".0%]";
-			captions[captions.length-1].style.display="none";
-			progresses[captions.length-1].style.display="";
+			captions.at(-1).style.display="none";
+			progresses.at(-1).style.display="";
+			figSize(progresses.at(-1).parentElement.parentElement);
 			progresses[captions.length-1].title="100.0%";
 			curr_thumb=captions.length-1;
 			captions[captions.length-1].style.backgroundColor="#006115c7";	
@@ -1850,6 +1856,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 		//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
 		captions[cap_el].style.display="none";
 		progresses[cap_el].style.display="";
+		figSize(progresses[cap_el].parentElement.parentElement);
 		progresses[cap_el].title=perc+"%";
 		curr_thumb=cap_el;
 		captions[cap_el].style.backgroundColor="#0004ff99";
@@ -1862,8 +1869,9 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 		}
 	}else{
 			//captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
-			captions[captions.length-1].style.display="none";
-			progresses[captions.length-1].style.display="";
+			captions.at(-1).style.display="none";
+			progresses.at(-1).style.display="";
+			figSize(progresses.at(-1).parentElement.parentElement);
 			progresses[captions.length-1].title=perc+"%";
 			curr_thumb=captions.length-1;
 			captions[captions.length-1].style.backgroundColor="#006115c7";
@@ -2019,31 +2027,7 @@ function thumbseek(bool){
 								wndWh=false;
 							}
 					}
-					
-					ifrm2.contentWindow.document.documentElement.addEventListener('pointermove',(e)=>{
-						let ecp=e.composedPath();
-						let ix=ecp.findIndex((p)=>{let pp=p.parentElement; return (p.tagName==='FIGURE' && pp.tagName==='SECTION' && pp.parentElement.id==="thumbs");});
-						if(ix>=0){
-							let pix=ecp[ix];
-							figSize(pix);
-						}
-					});
-					
-					ifrm3.contentWindow.document.documentElement.addEventListener('pointermove',(e)=>{
-						figSize(null);
-					});
-					
-					ifrm.contentWindow.document.documentElement.addEventListener('pointermove',(e)=>{
-						figSize(null);
-					});
-					
-					window.addEventListener('pointermove',(e)=>{
-						let ecp=e.composedPath();
-						if(!ecp.includes( ifrm2.contentWindow.document.documentElement)){
-							figSize(null);
-						}
-					});
-							
+			
 					ifrm2.ownerDocument.addEventListener("wheel", (event) => {
 						wnd_wheel(event);
 						shiftBtns2();
