@@ -821,20 +821,23 @@ function figSize(f){ //figure, reset
 	if(f===null){
 		let allFigs=thumbs.getElementsByTagName('FIGURE');
 		for(let i=0, len=allFigs.length; i<len; i++){
-			allFigs[i].style.zoom="";
+			let fi=allFigs[i];
+			fi.style.zoom="";
+			fi.style.height="";
 		}
 	}else{
 		let sct=f.parentElement;
 		let allFigs=thumbs.getElementsByTagName('FIGURE');
+		f.style.zoom="150%";
+		let nh=(f.getBoundingClientRect().height)*2; //*1.5*(1/0.75)
 		for(let i=0, len=allFigs.length; i<len; i++){
 			let fi=allFigs[i];
 			if(fi.parentElement!==sct){
 					fi.style.zoom="";
 			}else{
-				if(f===fi){
-					fi.style.zoom="150%";
-				}else{
+				if(f!==fi){
 					fi.style.zoom="75%";
+					fi.style.height=nh+'px';
 				}
 			}
 		}
@@ -2181,6 +2184,7 @@ pgs.style.display='contents';
 pgs.style.width='inherit';
 pgs.style.position='absolute';
 var c = ifrm2.contentWindow.document.createElement("canvas");
+c.style.alignSelf='end';
 
 var ctx = c.getContext("2d");
 
