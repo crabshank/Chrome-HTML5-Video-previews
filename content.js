@@ -895,26 +895,24 @@ var allFrames=[];
 var ancsRsz= ()=>{
 	
 	g_ancestors=getAncestors(myVdo,true,true,false,true);
-	firstParent=g_ancestors[((g_ancestors.length==1)?0:1)];
-	firstAncestor=g_ancestors[g_ancestors.length-1];
-	vfr=false;
-	let ifrc=absBoundingClientRect(main);
-			
-	if(!firstParent.ownerDocument.documentElement.contains(ifrm)){
-		
-		firstParent=document.documentElement;
-		let mxBtm2=maxBtm;
-		for(let i=0; i<allFrames.length; i++){
-			if(myVdo_el[1].includes(allFrames[i][2]) && myVdo_el[1]!='' && document.documentElement.contains(allFrames[i][0])){
-				let frRc=absBoundingClientRect(allFrames[i][0].contentWindow.document.documentElement);
-					if(frRc.bottom>mxBtm2){
-						firstParent=allFrames[i][0].contentWindow.document.documentElement;
-						mxBtm2=frRc.bottom;
-					}
+	let fa=g_ancestors.at(-1);
+	if(fa.ownerDocument!==document){
+		for(let i=0, len=allFrames.length; i<len; i++){
+			let fri=allFrames[i][0]
+			if(myVdo_el[1].includes(allFrames[i][2]) && myVdo_el[1]!='' && document.documentElement.contains(fri)){
+				g_ancestors=getAncestors(fri,true,true,false,true);
+				fa=g_ancestors.at(-1);
+				break
 			}
 		}
-		
 	}
+	if(fa.ownerDocument===document){
+		firstParent=g_ancestors[((g_ancestors.length==1)?0:1)];
+		firstAncestor=fa;
+		
+		vfr=false;
+		let ifrc=absBoundingClientRect(main);
+	
 		firstAncestor.style.setProperty( 'transform-origin','left bottom','important'  );
 		firstAncestor.style.setProperty( 'transform', 'scale(0.97) translateY('+ifrc.height+'px)','important'  );
 	
@@ -926,6 +924,10 @@ var ancsRsz= ()=>{
 		ifrm3.style.top=tp+'px';
 		ifrm2.style.left='0.22%';
 		ifrmRsz();
+	}else{
+		firstParent=null;
+		firstAncestor=null;
+	}
 }
 
 function scrollHdl(){
@@ -937,14 +939,14 @@ function scrollHdl(){
 			
 var shiftVid=(force_default_place)=>{
 		if(force_default_place){ //put video back in original location
-			if(firstAncestor.getAttribute('css_txt')!==null){
+			if(!!firstAncestor && firstAncestor.getAttribute('css_txt')!==null){
 				firstAncestor.style.cssText=firstAncestor.getAttribute('css_txt');
 			}
 
 			let p=ifrm2.style.cssText.split(/transform\s*\:\s*[^\!]*/);
 						 ifrm2.style.cssText=p.join('transform: translateY(0px) ');
 		}else{
-							if(firstAncestor.getAttribute('css_txt')===null){
+							if(!!firstAncestor && firstAncestor.getAttribute('css_txt')===null){
 								firstAncestor.setAttribute('css_txt',firstAncestor.style.cssText);
 							}
 							
@@ -964,17 +966,19 @@ var shiftVid=(force_default_place)=>{
 							let vw2=vw*0.034;
 							let s=(vw-vw2)/myVdo.clientWidth;
 							
-							firstAncestor.style.cssText='';
-							firstAncestor.style.setProperty('position','fixed', 'important' );	
-							firstAncestor.style.setProperty('top','0px', 'important' );	
-							firstAncestor.style.setProperty('left','0px', 'important' );	
-							firstAncestor.style.setProperty('transform-origin','top left', 'important' );	
-							firstAncestor.style.setProperty('transform','scale('+s+')','important' );
-							let myVdoR=absBoundingClientRect(myVdo);
-							firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(((ifrm2R.right+vw2)-myVdoR.left)/s)+'px) translateY('+((ifrm3R.top-myVdoR.top)/s)+'px)', 'important' );
-							myVdoR=absBoundingClientRect(myVdo);
-							let firstAncestorR=absBoundingClientRect(firstAncestor);
-							document.documentElement.style.setProperty('min-height',`${Math.max(myVdoR.bottom,firstAncestorR.bottom,ifrm2R.bottom,ifrm3R.bottom)+ifrm2R.left}px`,'important');
+							if(!!firstAncestor){
+								firstAncestor.style.cssText='';
+								firstAncestor.style.setProperty('position','fixed', 'important' );	
+								firstAncestor.style.setProperty('top','0px', 'important' );	
+								firstAncestor.style.setProperty('left','0px', 'important' );	
+								firstAncestor.style.setProperty('transform-origin','top left', 'important' );	
+								firstAncestor.style.setProperty('transform','scale('+s+')','important' );
+								let myVdoR=absBoundingClientRect(myVdo);
+								firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(((ifrm2R.right+vw2)-myVdoR.left)/s)+'px) translateY('+((ifrm3R.top-myVdoR.top)/s)+'px)', 'important' );
+								myVdoR=absBoundingClientRect(myVdo);
+								let firstAncestorR=absBoundingClientRect(firstAncestor);
+								document.documentElement.style.setProperty('min-height',`${Math.max(myVdoR.bottom,firstAncestorR.bottom,ifrm2R.bottom,ifrm3R.bottom)+ifrm2R.left}px`,'important');
+							}
 		}
 }
 
