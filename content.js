@@ -967,7 +967,14 @@ var shiftVid=(force_default_place)=>{
 							let s=(vw-vw2)/myVdo.clientWidth;
 							
 							if(!!firstAncestor){
+								let wcs1=window.getComputedStyle(firstAncestor);
 								firstAncestor.style.cssText='';
+								firstAncestor.style.setProperty('width',wcs1['width'], 'important' );
+								firstAncestor.style.setProperty('min-width',wcs1['min-width'], 'important' );
+								firstAncestor.style.setProperty('max-width',wcs1['max-width'], 'important' );
+								firstAncestor.style.setProperty('height',wcs1['height'], 'important' );
+								firstAncestor.style.setProperty('min-height',wcs1['min-height'], 'important' );
+								firstAncestor.style.setProperty('max-height',wcs1['max-height'], 'important' );
 								firstAncestor.style.setProperty('position','fixed', 'important' );	
 								firstAncestor.style.setProperty('top','0px', 'important' );	
 								firstAncestor.style.setProperty('left','0px', 'important' );	
