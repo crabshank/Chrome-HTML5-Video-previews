@@ -7,12 +7,30 @@ let init=true;
 
 var g_ancestors=[];
 var firstAncestor=null;
+var firstAncestor_wh={};
 var firstParent=null;
 var vfr=false;
 var jBack=false;
 var relocScale=0.65;
 var doc_minHeight=null;
 var suppressTU=false;
+
+function setFA_wh(wcs,setWH){
+	firstAncestor.style.setProperty('width',wcs['width'], 'important' );
+	firstAncestor.style.setProperty('min-width',wcs['min-width'], 'important' );
+	firstAncestor.style.setProperty('max-width',wcs['max-width'], 'important' );
+	firstAncestor.style.setProperty('height',wcs['height'], 'important' );
+	firstAncestor.style.setProperty('min-height',wcs['min-height'], 'important' );
+	firstAncestor.style.setProperty('max-height',wcs['max-height'], 'important' );
+	if(setWH===true){
+		firstAncestor_wh['width']=wcs['width'];
+		firstAncestor_wh['min-width']=wcs['min-width'];
+		firstAncestor_wh['max-width']=wcs['max-width'];
+		firstAncestor_wh['height']=wcs['height'];
+		firstAncestor_wh['min-height']=wcs['min-height'];
+		firstAncestor_wh['max-height']=wcs['max-height'];
+	}
+}
 
 function keepMatchesShadow(els,slc,isNodeName){
    if(slc===false){
@@ -967,14 +985,10 @@ var shiftVid=(force_default_place)=>{
 							let s=(vw-vw2)/myVdo.clientWidth;
 							
 							if(!!firstAncestor){
-								let wcs1=window.getComputedStyle(firstAncestor);
 								firstAncestor.style.cssText='';
-								firstAncestor.style.setProperty('width',wcs1['width'], 'important' );
-								firstAncestor.style.setProperty('min-width',wcs1['min-width'], 'important' );
-								firstAncestor.style.setProperty('max-width',wcs1['max-width'], 'important' );
-								firstAncestor.style.setProperty('height',wcs1['height'], 'important' );
-								firstAncestor.style.setProperty('min-height',wcs1['min-height'], 'important' );
-								firstAncestor.style.setProperty('max-height',wcs1['max-height'], 'important' );
+								if(typeof(firstAncestor_wh['width']!=='undefined')){
+									setFA_wh(firstAncestor_wh);
+								}
 								firstAncestor.style.setProperty('position','fixed', 'important' );	
 								firstAncestor.style.setProperty('top','0px', 'important' );	
 								firstAncestor.style.setProperty('left','0px', 'important' );	
@@ -2024,6 +2038,11 @@ function thumbseek(bool){
 				
 				mvdb.onclick=function(){
 					vfr=!vfr;
+					firstAncestor_wh={};
+					if(vfr){
+						let w1=window.getComputedStyle(firstAncestor);
+						setFA_wh(w1,true);
+					}
 					doc_minHeight=(doc_minHeight===null)?window.getComputedStyle(document.documentElement)['min-height']:doc_minHeight;
 					doc_minHeight=(doc_minHeight===null)?'':doc_minHeight;
 					rlcRsz.style.display=(vfr)?'block':'none';
