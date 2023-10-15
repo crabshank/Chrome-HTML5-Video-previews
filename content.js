@@ -846,16 +846,22 @@ function figSize(f){ //figure, reset
 	}else{
 		let sct=f.parentElement;
 		let allFigs=thumbs.getElementsByTagName('FIGURE');
-		f.style.zoom="150%";
-		let nh=(f.getBoundingClientRect().height)*2; //*1.5*(1/0.75)
+		let sctFigs=sct.getElementsByTagName('FIGURE');
+		let sumW=0;
+		for(let i=0, len=sctFigs.length; i<len; i++){
+			sumW+=parseFloat(sctFigs[i].firstElementChild.getAttribute('width'));
+		}
+		let z=(0.5/(parseFloat(f.firstElementChild.getAttribute('width'))/sumW))*100;
+		f.style.zoom=z+"%";
 		for(let i=0, len=allFigs.length; i<len; i++){
 			let fi=allFigs[i];
 			if(fi.parentElement!==sct){
 					fi.style.zoom="";
 			}else{
 				if(f!==fi){
-					fi.style.zoom="75%";
-					fi.style.height=nh+'px';
+					z=(0.25/(parseFloat(fi.firstElementChild.getAttribute('width'))/sumW))*100;
+					fi.style.zoom=z+"%";
+					fi.style.height=(fi.getBoundingClientRect().height*2)+'px'; //*1.5*(1/0.75)
 				}
 			}
 		}
