@@ -958,7 +958,7 @@ function scrollHdl(){
 	let scrollTop=getScrollY();
 	let ifrm2R=absBoundingClientRect(ifrm2);
 	scrollTop=( (scrollTop>ifrm2R.top)? scrollTop : ifrm2R.top );
-	ifrm3.style.top=scrollTop+'px';
+	ifrm3.style.top=(scrollTop+1)+'px';
 }
 			
 var shiftVid=(force_default_place)=>{
@@ -988,7 +988,7 @@ var shiftVid=(force_default_place)=>{
 
 							let vw=ifrm3R.left-ifrm2R.right;
 							let vw2=vw*0.034;
-							let s=(vw-vw2)/myVdo.clientWidth;
+							let s=(vw-vw2-2)/myVdo.clientWidth;
 							
 							if(!!firstAncestor){
 								firstAncestor.style.cssText='';
@@ -996,8 +996,8 @@ var shiftVid=(force_default_place)=>{
 									setFA_wh(firstAncestor_wh);
 								}
 								firstAncestor.style.setProperty('position','fixed', 'important' );	
-								firstAncestor.style.setProperty('top','0px', 'important' );	
-								firstAncestor.style.setProperty('left','0px', 'important' );	
+								firstAncestor.style.setProperty('top','1px', 'important' );	
+								firstAncestor.style.setProperty('left','-2px', 'important' );	
 								firstAncestor.style.setProperty('transform-origin','top left', 'important' );	
 								firstAncestor.style.setProperty('transform','scale('+s+')','important' );
 								let myVdoR=absBoundingClientRect(myVdo);
@@ -2251,7 +2251,7 @@ try{
 	if(parseFloat(ifrm2.style.top)<parseFloat(btm+gapVid)){
 		let tp=btm+gapVid;
 		ifrm2.style.setProperty( 'top', tp+'px', 'important' );
-		ifrm3.style.setProperty( 'top', tp+'px', 'important' );
+		ifrm3.style.setProperty( 'top', (tp)+'px', 'important' );
 	}
 }catch(e){
 							
