@@ -10,6 +10,8 @@ var firstAncestor=null;
 var firstAncestor_wh={};
 var firstParent=null;
 var vfr=false;
+var tHidden=false;
+var tHidden_vfr=false;
 var jBack=false;
 var relocScale=0.65;
 var doc_minHeight=null;
@@ -568,6 +570,7 @@ input::-webkit-textfield-decoration-container {
 <input style="background-color: buttonface !important; visibility: initial !important;" id="scnB" type="button" Value="Scan for video">
 <input style="background-color: buttonface !important; visibility: initial !important;" id="genB" type="button" Value="Select video">
 <input style="background-color: buttonface !important; visibility: initial !important;" id="opnVd" type="button" Value="Open link">
+<input style="background-color: buttonface !important; visibility: initial !important;" id="hideThumbs" type="button" Value="Hide thumbs">
 `;
 
 if(typeof bgMsg.top !=='undefined'){
@@ -915,6 +918,37 @@ var scanB= ifrm.contentWindow.document.querySelectorAll("input#scnB")[0];
 var gnrB= ifrm.contentWindow.document.querySelectorAll("input#genB")[0];
 
 var opnr= ifrm.contentWindow.document.querySelectorAll("input#opnVd")[0];
+var hide_thumbs= ifrm.contentWindow.document.querySelectorAll("input#hideThumbs")[0];
+
+hide_thumbs.onclick=()=>{
+	let og_vfr=vfr;
+	if(vfr){
+		mvdb.click();
+	}
+	let s=false;
+	let d='none';
+	let t='Show thumbs'
+	if(tHidden===true){
+		d='flex';
+		s=true;
+		t='Hide thumbs'
+	}else{
+		tHidden_vfr=og_vfr;
+	}
+	tHidden=!tHidden;
+	hide_thumbs.value=t;
+	ifrm2.style.display=d;
+	ifrm3.style.display=d;
+	if(s===true){
+		ifrm2.scrollIntoView();
+		if(tHidden_vfr===true){
+			vfr=false;
+			mvdb.click();
+		}
+		rsz();
+	}
+};
+
 var clse;
 
 try{
