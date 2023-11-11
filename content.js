@@ -669,7 +669,8 @@ var ifrmRsz=()=>{
 	let i2w=wd-ifrm3R.width;
 	ifrm3.style.left=i2w+'px';
 	let ifrm2R=absBoundingClientRect(ifrm2);
-	i2w=i2w-ifrm2R.left-1;
+	let lbd=(typeof(scrv)!=='undefined')?parseFloat(window.getComputedStyle(scrv)['border-left-width'])-1:0;
+	i2w=i2w-ifrm2R.left-lbd;
 	sc1.style.minWidth=i2w+'px';
 	sc1.style.width=i2w+'px';
 	sc1.style.maxWidth=i2w+'px';
