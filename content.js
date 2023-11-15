@@ -869,35 +869,36 @@ function scrollElMidPage(el){
 var thumbs=ifrm2.contentWindow.document.querySelectorAll("div#thumbs")[0];
 
 function figSize(f){ //figure, reset
-	if(isOneCol){
-		return
-	}
 	if(f===null){
-		let allFigs=thumbs.getElementsByTagName('FIGURE');
-		for(let i=0, len=allFigs.length; i<len; i++){
-			let fi=allFigs[i];
-			fi.style.zoom="";
-			fi.style.height="";
+		if(!isOneCol){
+			let allFigs=thumbs.getElementsByTagName('FIGURE');
+			for(let i=0, len=allFigs.length; i<len; i++){
+				let fi=allFigs[i];
+				fi.style.zoom="";
+				fi.style.height="";
+			}
 		}
 	}else{
-		let sct=f.parentElement;
-		let allFigs=thumbs.getElementsByTagName('FIGURE');
-		let sctFigs=sct.getElementsByTagName('FIGURE');
-		let sumW=0;
-		for(let i=0, len=sctFigs.length; i<len; i++){
-			sumW+=parseFloat(sctFigs[i].firstElementChild.getAttribute('width'));
-		}
-		let z=(0.5/(parseFloat(f.firstElementChild.getAttribute('width'))/sumW))*100;
-		f.style.zoom=z+"%";
-		for(let i=0, len=allFigs.length; i<len; i++){
-			let fi=allFigs[i];
-			if(fi.parentElement!==sct){
-					fi.style.zoom="";
-			}else{
-				if(f!==fi){
-					z=(0.25/(parseFloat(fi.firstElementChild.getAttribute('width'))/sumW))*100;
-					fi.style.zoom=z+"%";
-					fi.style.height=(fi.getBoundingClientRect().height*2)+'px'; //*1.5*(1/0.75)
+		if(!isOneCol){
+			let sct=f.parentElement;
+			let allFigs=thumbs.getElementsByTagName('FIGURE');
+			let sctFigs=sct.getElementsByTagName('FIGURE');
+			let sumW=0;
+			for(let i=0, len=sctFigs.length; i<len; i++){
+				sumW+=parseFloat(sctFigs[i].firstElementChild.getAttribute('width'));
+			}
+			let z=(0.5/(parseFloat(f.firstElementChild.getAttribute('width'))/sumW))*100;
+			f.style.zoom=z+"%";
+			for(let i=0, len=allFigs.length; i<len; i++){
+				let fi=allFigs[i];
+				if(fi.parentElement!==sct){
+						fi.style.zoom="";
+				}else{
+					if(f!==fi){
+						z=(0.25/(parseFloat(fi.firstElementChild.getAttribute('width'))/sumW))*100;
+						fi.style.zoom=z+"%";
+						fi.style.height=(fi.getBoundingClientRect().height*2)+'px'; //*1.5*(1/0.75)
+					}
 				}
 			}
 		}
@@ -1787,6 +1788,7 @@ myVdo.addEventListener("ratechange", (event) => {
 		shiftBtns(true);
 		rlcRsz.style.display='none';
 		mvdb.style.display='none';
+		oneCol.style.display='none';
 		document.documentElement.style.setProperty('min-height',doc_minHeight,'important');
 		checkDur();
 		tbG=true;
@@ -2084,6 +2086,7 @@ function thumbseek(bool){
 				myVdo.currentTime=0;
 				zeroRsz=true;
 				mvdb.style.display='block';
+				oneCol.style.display='block';
 				shiftBtns(false);
 				scrl.style.display='';
 				rsz_ifrm();
