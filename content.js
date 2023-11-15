@@ -4,7 +4,7 @@ try {
 	let exBool=true;
 
 let init=true;
-
+var isOneCol=false;
 var g_ancestors=[];
 var firstAncestor=null;
 var firstAncestor_wh={};
@@ -31,6 +31,14 @@ function setFA_wh(wcs,setWH){
 		firstAncestor_wh['height']=wcs['height'];
 		firstAncestor_wh['min-height']=wcs['min-height'];
 		firstAncestor_wh['max-height']=wcs['max-height'];
+	}
+}
+
+function elRemover(el){
+	if(typeof el!=='undefined' && !!el){
+	if(typeof el.parentNode!=='undefined' && !!el.parentNode){
+		el.parentNode.removeChild(el);
+	}
 	}
 }
 
@@ -614,6 +622,7 @@ let ht_d=`
 <button id="scroll_vid" style="background-color: buttonface !important;">Scroll to video</button>
 <button id="spdt" style="background-color: buttonface !important;">Speed through video</button>
 <button id="pnp" style="background-color: buttonface !important;">Toggle picture-in-picture</button>
+<button id="one_col" style="background-color: buttonface !important;">Toggle one column</button>
 <button id="mvvb" style="background-color: buttonface !important;">Toggle relocate video</button>
 <div contenteditable="true" id="rszr" title="Scaling factor of the thumbs' iframe. Can take fractions, arithmetic etc. (uses CSS' calc function). Wheel over to adjust (if in decimal format) (tip: don't scroll all the way to the bottom of the page before wheeling over)." style="width: -webkit-fill-available;display: none; text-align: center;border-width: 0px 0px 0px 1px;background-color: buttonface;border-style: outset;"></div>
 
@@ -693,14 +702,15 @@ var ifrmRsz=()=>{
 
 				sctPrp=(figs.length==0)?i2w:i2w/figs.length;
 				sctPrp_f=sctPrp.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
-
-				let sctW=0;
-				for (let i = 0; i < figs.length; i++) {
-					sctW+=figs[i].scrollWidth;
+				if(!isOneCol){
+					let sctW=0;
+					for (let i = 0; i < figs.length; i++) {
+						sctW+=figs[i].scrollWidth;
+					}
+					fPrp=(sctW==0)?1:(i2w/(sctW/figs.length))* (isOneCol?1:(1/3));
+					fPrp_f=fPrp.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+					scts[j].style.zoom=fPrp_f;
 				}
-				fPrp=(sctW==0)?1:(i2w/(sctW/figs.length))*(1/3);
-				fPrp_f=fPrp.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
-				scts[j].style.zoom=fPrp_f;
 			}
 	}
 		
@@ -806,6 +816,7 @@ var myVdo_el=[];
 
 var bSect=ifrm3.contentWindow.document.querySelectorAll("section#bSec")[0];
 var mvdb=ifrm3.contentWindow.document.querySelectorAll("button#mvvb")[0];
+var oneCol=ifrm3.contentWindow.document.querySelectorAll("button#one_col")[0];
 var rlcRsz=ifrm3.contentWindow.document.querySelectorAll("div#rszr")[0];
 rlcRsz.innerText=relocScale.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 15});
 rlcRsz.onwheel=(e)=>{
@@ -858,6 +869,9 @@ function scrollElMidPage(el){
 var thumbs=ifrm2.contentWindow.document.querySelectorAll("div#thumbs")[0];
 
 function figSize(f){ //figure, reset
+	if(isOneCol){
+		return
+	}
 	if(f===null){
 		let allFigs=thumbs.getElementsByTagName('FIGURE');
 		for(let i=0, len=allFigs.length; i<len; i++){
@@ -1172,7 +1186,7 @@ function pgBar(ix,ths,ev,attr,nxt){
 			let sct=fg.parentElement;
 			let fz=fg.style.zoom;
 			let pfz=parseFloat(fz);
-			let z=( isNaN(pfz) )?1:0.01*pfz;
+			let z=( isNaN(pfz) || isOneCol)?1:0.01*pfz;
 			let fct=z*parseFloat(sct.style.zoom);
 			 progresses[ix].value=(ev.offsetX / (rct.width*fct));
 			 myVdo.currentTime=(progresses[ix].value)*(nxt-cur)+cur;
@@ -1230,26 +1244,23 @@ var checkDur = function() {
 	}
 }
 
-
 function shiftBtns(bool){
 	try{
 	//curr.style.top=(parseFloat(pip.style.top)+4)+'px';
-	if(bool){
-	let r=absBoundingClientRect(mvdb);
-	pip.style.top=(r.top-r.height-2)+'px';
-	r=absBoundingClientRect(pip);
-	spb.style.top=(r.top-r.height-2)+'px';
-	r=absBoundingClientRect(spb);
-	scrv.style.top=(r.top-r.height-2)+'px';
-	r=absBoundingClientRect(scrv);
-	scrl.style.top=(r.top-r.height-2)+'px';
-	}
+		if(bool){
+			let r=absBoundingClientRect(mvdb);
+			pip.style.top=(r.top-r.height-2)+'px';
+			r=absBoundingClientRect(oneCol);
+			oneCol.style.top=(r.top-r.height-2)+'px';
+			r=absBoundingClientRect(pip);
+			spb.style.top=(r.top-r.height-2)+'px';
+			r=absBoundingClientRect(spb);
+			scrv.style.top=(r.top-r.height-2)+'px';
+			r=absBoundingClientRect(scrv);
+			scrl.style.top=(r.top-r.height-2)+'px';
+		}
 	}catch(e){;}
 }
-
-//shiftBtns(true);
-
-
 
 function calcSp(){
 if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1){ 
@@ -1950,7 +1961,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			progresses[captions.length-1].value=1;
 			}
 			captions[captions.length-1].parentElement.parentElement.onmousemove=function (e) {
-			pgBar(captions.length-1,progresses[captions.length-1].value,e,attr,myVdo.duration);
+			pgBar(captions.length-1,progresses[captions.length-1],e,attr,myVdo.duration);
 			}
 		}else{
 		//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
@@ -2094,6 +2105,58 @@ function thumbseek(bool){
 						shb2=false;
 					}
 				};
+				
+				oneCol.onclick=function(){
+					isOneCol=!isOneCol;
+					let scts=[...thumbs.children];
+					if(isOneCol){
+							for(let i=0, len_i=scts.length; i<len_i; i++){
+								let si=scts[i];
+								let fgs=[...si.children];
+								let ls=si;
+								let fg0=fgs[0];
+								fg0.style.height='';
+								fg0.style.zoom=1;
+								let sz=parseFloat(si.style.zoom)*3;
+								si.style.zoom=sz;
+							for(let j=1, len_j=fgs.length; j<len_j; j++){
+								let fj=fgs[j];
+								fj.style.height='';
+								fj.style.zoom=1;
+								let ns=document.createElement('section');
+								ls.insertAdjacentElement('afterend',ns);
+								ns.style.cssText=si.style.cssText;
+								ns.style.zoom=sz;
+								ns.insertAdjacentElement('afterbegin',fj);
+								ls=ns;
+							}
+						}
+					}else{
+						let rem=[];
+						for(let i=0, len_i=scts.length; i<len_i; i+=3){
+							let si=scts[i];
+							let si1=scts[i+1];
+							let si2=scts[i+2];
+							rem.push(si1);
+							rem.push(si2);
+							si.insertAdjacentElement('beforeend',si1.firstElementChild);
+							si.insertAdjacentElement('beforeend',si2.firstElementChild);
+							si.style.zoom=1;
+							si.style.zoom=thumbs.getBoundingClientRect().width/si.getBoundingClientRect().width;
+						}
+						for(let i=0, len_i=rem.length; i<len_i; i++){
+							elRemover(rem[i]);
+						}
+					}
+					
+					let sh=thumbs.scrollHeight;
+					
+					ifrm2.style.minHeight=sh+'px';
+					ifrm2.style.height=sh+'px';
+					ifrm2.style.maxHeight=sh+'px';
+					
+					scrollElMidPage(captions[curr_thumb].parentElement.parentElement);
+				}
 				
 				mvdb.onclick=function(){
 					vfr=!vfr;
@@ -2374,7 +2437,7 @@ suppressScr=true;
 			let rct=absBoundingClientRect(prg);
 			let fz=t.style.zoom;
 			let pfz=parseFloat(fz);
-			let z=( isNaN(pfz) )?1:0.01*pfz;
+			let z=( isNaN(pfz) || isOneCol )?1:0.01*pfz;
 			let fct=z*parseFloat(t.parentElement.style.zoom);
 			let pv=(e.offsetX / (rct.width*fct));
 			prg.value=pv;
