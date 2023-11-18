@@ -1,0 +1,66 @@
+<html>
+<head>
+<style>
+input[type="checkbox"] {
+	background: buttonface;
+    margin-bottom: 2px;
+    margin-left: 3px;
+    vertical-align: bottom;
+}
+select option {
+	color: black;
+}
+label{
+    vertical-align: top;
+}
+button#save {
+	width: 116px;
+	color: #000000;
+	font-size: 19px;
+	background: buttonface;
+	padding: 5px 10px 5px 10px;
+}
+div#relocScale {
+    width: 7ch;
+    -webkit-appearance: textfield;
+    background-color: white;
+    -webkit-rtl-ordering: logical;
+    cursor: text;
+    padding: 1px;
+    border-width: 1px;
+    border-style: inset;
+    border-color: initial;
+    border-image: initial;
+    text-rendering: auto;
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+    margin: 0em;
+    font: 400 13.3333px Arial;
+    -webkit-writing-mode: horizontal-tb !important;
+}
+</style>
+</head>
+<body>
+
+Default "Speed through video" playback rate: <input type="number" id="plRate" min="1" max="16" step="0.01" value="6" style="width: 9ch;"></input><br>
+"At least every x seconds": <input type="number" id="everyX" min="1" step="1" value="30" style="width: 9ch;"></input><br>
+Relocate video scale factor: <div contenteditable="true" id="relocScale">0.65</div><br>
+	<label for="oneCol">One column by default?:</label>
+	<input type="checkbox" id="oneCol"></input><br>
+	
+	<label for="relocVid">Relocate video by default?:</label>
+	<input type="checkbox" id="relocVid"></input><br>
+	
+	<label for="spdDef">Speed through video by default?:</label>
+	<input type="checkbox" id="spdDef"></input><br><br>
+<div id="stats"></div>
+<button id="save">Save</button>
+<script src="options.js"></script>
+</body>
+</html>

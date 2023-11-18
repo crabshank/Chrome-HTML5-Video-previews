@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "HTML5 Video previews page",
   "version": "2023.11",
+  "options_page":  "options.html",
     "content_scripts": [
     {
 	      "all_frames": true,
@@ -11,7 +12,7 @@
       "js": ["content.js"]
     }
   ],
-  "permissions": ["tabs","activeTab"],
+  "permissions": ["tabs","activeTab","storage"],
   "background": {
     "service_worker": "background.js"
   },

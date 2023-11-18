@@ -1,10 +1,79 @@
 try {
 	//console.log(window.location.href+" - 'HTML5 Video previews page' has access");
+	
+	var plRate_var= 6;
+	var everyX_var= 30;
+	var relocScale_var="0.65";
+	var oneCol_var=false;
+	
+	var relocVid_var= false;
+	var spdDef_var= false;
+	
+	function restore_options(){
+	if(typeof chrome.storage==='undefined'){
+		restore_options();
+	}else{
+	chrome.storage.sync.get(null, function(items)
+	{
+		if (Object.keys(items).length != 0)
+		{
+			//console.log(items);
+			if(typeof(items.plRate_sett)!=='undefined'){
+				plRate_var=parseFloat(items.plRate_sett);
+			}		
+			if(typeof(items.everyX_sett)!=='undefined'){
+				everyX_var=parseFloat(items.everyX_sett);
+			}
+			
+			if(typeof(items.relocScale_sett)!=='undefined'){
+				relocScale_var=items.relocScale_sett;
+			}
+			
+			if(typeof(items.oneCol_sett)!=='undefined'){
+				oneCol_var=items.oneCol_sett;
+			}
+			
+			if(typeof(items.relocVid_sett)!=='undefined'){
+				relocVid_var=items.relocVid_sett;
+			}
+
+			if(typeof(items.spdDef_sett)!=='undefined'){
+				spdDef_var=items.spdDef_sett;
+			}
+		}
+		else
+		{
+			save_options();
+		}
+	});
+	}
+}
+
+function save_options(){
+	
+		chrome.storage.sync.clear(function() {
+	chrome.storage.sync.set(
+	{
+		plRate_sett: "6",
+		everyX_sett: "30",
+		relocScale_sett: "0.65",
+		oneCol_sett: false,
+		relocVid_sett: false,
+		pipDef_sett: false,
+		spdDef_sett: false
+	}, function()
+	{
+		console.log('Default options saved.');
+		restore_options();
+	});
+		});
+}
+	restore_options();
+	
 	let expnd=[];
 	let exBool=true;
 
 let init=true;
-var isOneCol=false;
 var g_ancestors=[];
 var firstAncestor=null;
 var firstAncestor_wh={};
@@ -12,8 +81,8 @@ var firstParent=null;
 var vfr=false;
 var tHidden=false;
 var tHidden_vfr=false;
+var isOneCol=false;
 var jBack=false;
-var relocScale=0.65;
 var doc_minHeight=null;
 var suppressTU=false;
 
@@ -589,7 +658,7 @@ ht_a+=`
 <br>
 <span style="color: #dfdfdf !important;font-size: 1.83ch !important;visibility: initial !important;background-color: #f0f0f0d4 !important;" id="frames" title="Scroll here to change number of frames.">24</span>
 <span style="color: #dfdfdf !important; font-size: 1.83ch !important; margin-inline-start: 4.4ch !important; visibility: initial !important;background-color: #000000b5 !important;" title="Maximum speed when speeding through; scroll to change.">Max speed: </span>
-<input title="Maximum speed when speeding through; scroll to change." type="number" id="mxs" min="1" max="16" step="0.5" value="6" style="width: 9ch !important; background-color: buttonface !important; border-width: 0px !important; visibility: initial !important;"></input>
+<input title="Maximum speed when speeding through; scroll to change." type="number" id="mxs" min="1" max="16" step="0.5" value="${plRate_var}" style="width: 9ch !important; background-color: buttonface !important; border-width: 0px !important; visibility: initial !important;"></input>
 </main>
 `
 
@@ -818,7 +887,7 @@ var bSect=ifrm3.contentWindow.document.querySelectorAll("section#bSec")[0];
 var mvdb=ifrm3.contentWindow.document.querySelectorAll("button#mvvb")[0];
 var oneCol=ifrm3.contentWindow.document.querySelectorAll("button#one_col")[0];
 var rlcRsz=ifrm3.contentWindow.document.querySelectorAll("div#rszr")[0];
-rlcRsz.innerText=relocScale.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 15});
+rlcRsz.innerText=relocScale_var.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 15});
 rlcRsz.onwheel=(e)=>{
 	e.preventDefault();
 	e.stopPropagation();
@@ -832,10 +901,10 @@ rlcRsz.onwheel=(e)=>{
 			rlcRsz.innerText=(Math.max(0,Math.min(1,fl+0.01))).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 15});
 		}
 	}
-	relocScale=rlcRsz.innerText;
+	relocScale_var=rlcRsz.innerText;
 };
 rlcRsz.oninput=(e)=>{
-	relocScale=rlcRsz.innerText;
+	relocScale_var=rlcRsz.innerText;
 	shb2=false;
 	shiftBtns2();
 };
@@ -1044,10 +1113,10 @@ var shiftVid=(force_default_place)=>{
 							
 							let p=ifrm2.style.cssText.split(/transform\s*\:\s*[^\!]*/);
 							if(p.length<2){
-								let x=p[0]+' transform: scale(calc('+relocScale+')) !important;';
+								let x=p[0]+' transform: scale(calc('+relocScale_var+')) !important;';
 								ifrm2.style.cssText=(p[0].trim().endsWith(';'))?x:`;${x}`;
 							}else{
-								ifrm2.style.cssText=p.join('transform: scale(calc('+relocScale+')) ');
+								ifrm2.style.cssText=p.join('transform: scale(calc('+relocScale_var+')) ');
 							}
 							scrollHdl();
 							let ifrm2R=absBoundingClientRect(ifrm2);
@@ -1088,8 +1157,8 @@ evry.onclick=()=>{
 					evry.intrv=-0.5;
 					evry.innerText='At most every 0.5 secs';
 			}else{
-					evry.intrv=30;
-					evry.innerText=evry.innerText='At least every 30 secs';
+					evry.intrv=everyX_var;
+					evry.innerText=evry.innerText=`At least every ${everyX_var} secs`;
 			}
 		}
 		rsz_ifrm();
@@ -1203,10 +1272,10 @@ var checkDur = function() {
 	shiftBtns(true);
 			if(ev_t==-1){
 			if(myVdo.duration>=270){
-				evry.intrv=30;
-				t=Math.round(Math.ceil(myVdo.duration/90)*3);
+				evry.intrv=everyX_var;
+				t=Math.round(Math.ceil(((myVdo.duration)/(everyX_var*3)))*3);
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
-				evry.innerText='At least every 30 secs';
+				evry.innerText=`At least every ${everyX_var} secs`;
 			}else if(myVdo.duration<4.5){
 				evry.intrv=-0.5;
 				t=Math.round(Math.max(1,Math.floor((myVdo.duration*2)/3))*3); // 2 => (1/*0.5)
@@ -2265,7 +2334,15 @@ function thumbseek(bool){
 						shiftBtns2();
 					}, {capture: true, passive:false});				
 
-				
+				if(oneCol_var===true){
+					oneCol.click();
+				}
+				if(relocVid_var===true){
+					mvdb.click();
+				}
+				if(spdDef_var===true){
+					spb.click();
+				}
 			}
 		}
 		 
@@ -2381,7 +2458,7 @@ ancsRsz();
 
 shiftBtns(true);
 
-if (threeSct.children.length==3){
+if (threeSct.children.length===3){
 	threeSct=ifrm2.contentWindow.document.createElement("section");
 	thumbs.appendChild(threeSct);
 	threeSct.style.cssText="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;align-items: flex-end !important;";
