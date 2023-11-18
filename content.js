@@ -2205,6 +2205,7 @@ function thumbseek(bool){
 						}
 					}else{
 						let rem=[];
+						let tw=thumbs.getBoundingClientRect().width;
 						for(let i=0, len_i=scts.length; i<len_i; i+=3){
 							let si=scts[i];
 							let si1=scts[i+1];
@@ -2214,7 +2215,7 @@ function thumbseek(bool){
 							si.insertAdjacentElement('beforeend',si1.firstElementChild);
 							si.insertAdjacentElement('beforeend',si2.firstElementChild);
 							si.style.zoom=1;
-							si.style.zoom=thumbs.getBoundingClientRect().width/si.getBoundingClientRect().width;
+							si.style.zoom=tw/si.getBoundingClientRect().width;
 						}
 						for(let i=0, len_i=rem.length; i<len_i; i++){
 							elRemover(rem[i]);
