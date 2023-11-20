@@ -895,6 +895,14 @@ var mvdb=ifrm3.contentWindow.document.querySelectorAll("button#mvvb")[0];
 var oneCol=ifrm3.contentWindow.document.querySelectorAll("button#one_col")[0];
 var rlcRsz=ifrm3.contentWindow.document.querySelectorAll("div#rszr")[0];
 rlcRsz.innerText=relocScale_var.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 15});
+
+rlcRsz.oninput=(e)=>{
+	relocScale_var=rlcRsz.innerText;
+	shb2=false;
+	shiftBtns2();
+	//postRsz=true;
+};
+
 rlcRsz.onwheel=(e)=>{
 	e.preventDefault();
 	e.stopPropagation();
@@ -908,15 +916,11 @@ rlcRsz.onwheel=(e)=>{
 			rlcRsz.innerText=(Math.max(0,Math.min(1,fl+0.01))).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 15});
 		}
 	}
-	relocScale_var=rlcRsz.innerText;
+	//relocScale_var=rlcRsz.innerText;
+	rlcRsz.dispatchEvent(new Event('input'));
 	//postRsz=true;
 };
-rlcRsz.oninput=(e)=>{
-	relocScale_var=rlcRsz.innerText;
-	shb2=false;
-	shiftBtns2();
-	//postRsz=true;
-};
+
 var bsw=0;
 
 ifrmRsz();
