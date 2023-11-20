@@ -1144,7 +1144,7 @@ var shiftVid=(force_default_place)=>{
 							let ifrm2R=absBoundingClientRect(ifrm2);
 							let ifrm3R=absBoundingClientRect(ifrm3);
 							//let wdt=getScreenWidth();
-
+							
 							let vw=ifrm3R.left-ifrm2R.right;
 							let vw2=vw*0.034;
 							let s=(vw-vw2-2)/myVdo.clientWidth;
@@ -1159,11 +1159,22 @@ var shiftVid=(force_default_place)=>{
 								firstAncestor.style.setProperty('left','-2px', 'important' );
 								firstAncestor.style.setProperty('transform-origin','top left', 'important' );	
 								firstAncestor.style.setProperty('transform','scale('+s+')','important' );
-								let myVdoR=absBoundingClientRect(myVdo);
-								firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(((ifrm2R.right+vw2)-myVdoR.left)/s)+'px) translateY('+((ifrm3R.top-myVdoR.top)/s)+'px)', 'important' );
+								let shgt=document?.documentElement?. clientHeight;
+								if(myVdo.getBoundingClientRect().height>shgt){
+									s=(shgt-2)/myVdo.clientHeight;
+									firstAncestor.style.setProperty('transform','scale('+s+')','important' );
+									let myVdoR=absBoundingClientRect(myVdo);
+									firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(((ifrm2R.right+0.5*(ifrm3R.left-ifrm2R.right))-(myVdoR.left+myVdoR.width*0.5))/s)+'px) translateY('+((ifrm3R.top-myVdoR.top)/s)+'px)', 'important' );
+								}else{					
+									let myVdoR=absBoundingClientRect(myVdo);
+									firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(((ifrm2R.right+vw2)-myVdoR.left)/s)+'px) translateY('+((ifrm3R.top-myVdoR.top)/s)+'px)', 'important' );
+								}
 								myVdoR=absBoundingClientRect(myVdo);
 								let firstAncestorR=absBoundingClientRect(firstAncestor);
 								document.documentElement.style.setProperty('min-height',`${Math.max(myVdoR.bottom,firstAncestorR.bottom,ifrm2R.bottom,ifrm3R.bottom)+ifrm2R.left}px`,'important');
+								
+								
+								
 							}
 		}
 }
