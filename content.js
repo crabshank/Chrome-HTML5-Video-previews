@@ -72,7 +72,7 @@ function save_options(){
 	
 	let expnd=[];
 	let exBool=true;
-
+let currentFig=null;
 let init=true;
 var g_ancestors=[];
 var firstAncestor=null;
@@ -85,6 +85,14 @@ var isOneCol=false;
 var jBack=false;
 var doc_minHeight=null;
 var suppressTU=false;
+var postRsz=false;
+let lastFigIx;
+
+function getFloat(z){
+	let fz=parseFloat(z);
+	fz=(isNaN(fz))?1:fz;
+	return fz;
+}
 
 function setFA_wh(wcs,setWH){
 	firstAncestor.style.setProperty('width',wcs['width'], 'important' );
@@ -769,16 +777,15 @@ var ifrmRsz=()=>{
 				
 				let figs=[...scts[j].children];
 
-				sctPrp=(figs.length==0)?i2w:i2w/figs.length;
-				sctPrp_f=sctPrp.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 				if(!isOneCol){
 					let sctW=0;
 					for (let i = 0; i < figs.length; i++) {
-						sctW+=figs[i].scrollWidth;
+						sctW+=figs[i].scrollWidth*parseFloat(figs[i].getAttribute('three_sect_zoom'));
 					}
-					fPrp=(sctW==0)?1:(i2w/(sctW/figs.length))* (isOneCol?1:(1/3));
-					fPrp_f=fPrp.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
-					scts[j].style.zoom=fPrp_f;
+					fPrp=(sctW==0)?1:(i2w/(sctW/figs.length))* (1/3);
+					scts[j].style.zoom=fPrp;
+				}else{
+					scts[j].style.zoom=i2w/(scts[j].getBoundingClientRect().width);
 				}
 			}
 	}
@@ -902,11 +909,13 @@ rlcRsz.onwheel=(e)=>{
 		}
 	}
 	relocScale_var=rlcRsz.innerText;
+	postRsz=true;
 };
 rlcRsz.oninput=(e)=>{
 	relocScale_var=rlcRsz.innerText;
 	shb2=false;
 	shiftBtns2();
+	postRsz=true;
 };
 var bsw=0;
 
@@ -937,36 +946,36 @@ function scrollElMidPage(el){
 
 var thumbs=ifrm2.contentWindow.document.querySelectorAll("div#thumbs")[0];
 
-function figSize(f){ //figure, reset
+
+function figSize(f,g,x){ //figure,
 	if(f===null){
 		if(!isOneCol){
 			let allFigs=thumbs.getElementsByTagName('FIGURE');
 			for(let i=0, len=allFigs.length; i<len; i++){
 				let fi=allFigs[i];
-				fi.style.zoom="";
+				fi.style.zoom=fi.getAttribute('three_sect_zoom');
 				fi.style.height="";
 			}
 		}
 	}else{
+		currentFig=f;
+		if(x===(lastFigIx+1) && myVdo.paused!==true){
+			scrollElMidPage(f);
+		}
+		lastFigIx=x;
 		if(!isOneCol){
 			let sct=f.parentElement;
 			let allFigs=thumbs.getElementsByTagName('FIGURE');
-			let sctFigs=sct.getElementsByTagName('FIGURE');
-			let sumW=0;
-			for(let i=0, len=sctFigs.length; i<len; i++){
-				sumW+=parseFloat(sctFigs[i].firstElementChild.getAttribute('width'));
-			}
-			let z=(0.5/(parseFloat(f.firstElementChild.getAttribute('width'))/sumW))*100;
-			f.style.zoom=z+"%";
 			for(let i=0, len=allFigs.length; i<len; i++){
 				let fi=allFigs[i];
 				if(fi.parentElement!==sct){
-						fi.style.zoom="";
+						fi.style.zoom=fi.getAttribute('three_sect_zoom');
 				}else{
 					if(f!==fi){
-						z=(0.25/(parseFloat(fi.firstElementChild.getAttribute('width'))/sumW))*100;
-						fi.style.zoom=z+"%";
+						fi.style.zoom=getFloat(fi.getAttribute('three_sect_zoom'))*0.75;
 						fi.style.height=(fi.getBoundingClientRect().height*2)+'px'; //*1.5*(1/0.75)
+					}else{
+						fi.style.zoom=getFloat(fi.getAttribute('three_sect_zoom'))*1.5;
 					}
 				}
 			}
@@ -983,6 +992,9 @@ function figSize(f){ //figure, reset
 			zeroRsz=false;
 			ifrmRsz();
 		}
+	}
+	if(g===true){
+		scrollElMidPage(f);
 	}
 }
 
@@ -1119,6 +1131,12 @@ var shiftVid=(force_default_place)=>{
 								ifrm2.style.cssText=p.join('transform: scale(calc('+relocScale_var+')) ');
 							}
 							scrollHdl();
+							try{
+								if(postRsz){
+									postRsz=false;
+									scrollElMidPage(currentFig);
+								}
+							}catch(e){;}
 							let ifrm2R=absBoundingClientRect(ifrm2);
 							let ifrm3R=absBoundingClientRect(ifrm3);
 							//let wdt=getScreenWidth();
@@ -1246,22 +1264,22 @@ function vidSrc(vid){
 }
 
 function pgBar(ix,ths,ev,attr,nxt){
-			if(ev.buttons>0){
-			ev.preventDefault();
-			ev.stopPropagation();
-			nowFlag=ix;
-			let cur=parseFloat(attr.timestamp.nodeValue);
-			let rct=absBoundingClientRect(ths);
-			let fg=captions[ix].parentElement.parentElement;
-			let sct=fg.parentElement;
-			let fz=fg.style.zoom;
-			let pfz=parseFloat(fz);
-			let z=( isNaN(pfz) || isOneCol)?1:0.01*pfz;
-			let fct=z*parseFloat(sct.style.zoom);
-			 progresses[ix].value=(ev.offsetX / (rct.width*fct));
-			 myVdo.currentTime=(progresses[ix].value)*(nxt-cur)+cur;
-			 curr_thumb=ix;
-}
+	if(ev.buttons>0 && typeof(ths)!=='undefined'){
+		ev.preventDefault();
+		ev.stopPropagation();
+		nowFlag=ix;
+		let cur=parseFloat(attr.timestamp.nodeValue);
+		let rct=absBoundingClientRect(ths);
+		let fg=captions[ix].parentElement.parentElement;
+		let sct=fg.parentElement;
+		let fz=fg.style.zoom;
+		let pfz=getFloat(fz);
+		//let z=( isNaN(pfz) || isOneCol)?1:0.01*pfz;
+		let fct=getFloat(sct.style.zoom);
+		progresses[ix].value=ev.offsetX/(rct.width*fct*pfz) ;
+		myVdo.currentTime=(progresses[ix].value)*(nxt-cur)+cur;
+		curr_thumb=ix;
+	}
 }	
 			
 			
@@ -1369,7 +1387,6 @@ if(sp_swtch==1 && aseek==0 && mxsp.valueAsNumber>1){
 					}
 					
 					}
-		
 
 						lddRaw=(myVdo.playbackRate==0)?tot:tot/myVdo.playbackRate;
 						if( (!myVdo.paused) ||  (myVdo.paused && lddRaw<2) ){
@@ -1909,6 +1926,7 @@ if(!tTrkFlg){
 }
 
 var tu2=(event) => {
+	let chg=false;
 	if(!tTrkFlg){
 		bSect.style.width='min-content';
 		bSect.style.minWidth='';
@@ -1959,7 +1977,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			//captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
 			captions[nowFlag].style.display="none";
 			progresses[nowFlag].style.display="";
-			figSize(progresses[nowFlag].parentElement.parentElement);
+			figSize(progresses[nowFlag].parentElement.parentElement,chg,nowFlag);
 			progresses[nowFlag].title=perc+"%";
 			curr_thumb=nowFlag;
 			captions[nowFlag].style.backgroundColor="#0004ff99";
@@ -1975,7 +1993,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
 			captions[cap_el].style.display="none";
 			progresses[cap_el].style.display="";
-			figSize(progresses[cap_el].parentElement.parentElement);
+			figSize(progresses[cap_el].parentElement.parentElement,chg,cap_el);
 			progresses[cap_el].title=perc+"%";
 			curr_thumb=cap_el;
 			captions[cap_el].style.backgroundColor="#0004ff99";
@@ -1992,7 +2010,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
 			captions[cap_el].style.display="none";
 			progresses[cap_el].style.display="";
-			figSize(progresses[cap_el].parentElement.parentElement);
+			figSize(progresses[cap_el].parentElement.parentElement,chg,cap_el);
 			progresses[cap_el].title=perc+"%";
 			curr_thumb=cap_el;
 			captions[cap_el].style.backgroundColor="#006115c7";
@@ -2009,7 +2027,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			//captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
 			captions[nowFlag].style.display="none";
 			progresses[nowFlag].style.display="";
-			figSize(progresses[nowFlag].parentElement.parentElement);
+			figSize(progresses[nowFlag].parentElement.parentElement,chg,nowFlag);
 			progresses[nowFlag].title=perc+"%";
 			curr_thumb=nowFlag;
 			captions[nowFlag].style.backgroundColor="#0004ff99";
@@ -2024,7 +2042,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			//captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+100+".0%]";
 			captions.at(-1).style.display="none";
 			progresses.at(-1).style.display="";
-			figSize(progresses.at(-1).parentElement.parentElement);
+			figSize(progresses.at(-1).parentElement.parentElement,chg,progresses.length-1);
 			progresses[captions.length-1].title="100.0%";
 			curr_thumb=captions.length-1;
 			captions[captions.length-1].style.backgroundColor="#006115c7";	
@@ -2038,7 +2056,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 		//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
 		captions[cap_el].style.display="none";
 		progresses[cap_el].style.display="";
-		figSize(progresses[cap_el].parentElement.parentElement);
+		figSize(progresses[cap_el].parentElement.parentElement,chg,cap_el);
 		progresses[cap_el].title=perc+"%";
 		curr_thumb=cap_el;
 		captions[cap_el].style.backgroundColor="#0004ff99";
@@ -2053,7 +2071,7 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			//captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
 			captions.at(-1).style.display="none";
 			progresses.at(-1).style.display="";
-			figSize(progresses.at(-1).parentElement.parentElement);
+			figSize(progresses.at(-1).parentElement.parentElement,chg,progresses.length-1);
 			progresses[captions.length-1].title=perc+"%";
 			curr_thumb=captions.length-1;
 			captions[captions.length-1].style.backgroundColor="#006115c7";
@@ -2182,6 +2200,7 @@ function thumbseek(bool){
 					isOneCol=!isOneCol;
 					let scts=[...thumbs.children];
 					if(isOneCol){
+							let tw=thumbs.getBoundingClientRect().width;
 							for(let i=0, len_i=scts.length; i<len_i; i++){
 								let si=scts[i];
 								let fgs=[...si.children];
@@ -2189,7 +2208,7 @@ function thumbseek(bool){
 								let fg0=fgs[0];
 								fg0.style.height='';
 								fg0.style.zoom=1;
-								let sz=parseFloat(si.style.zoom)*3;
+								let sz=tw/(fg0.getBoundingClientRect().width*getFloat(fg0.style.zoom));
 								si.style.zoom=sz;
 							for(let j=1, len_j=fgs.length; j<len_j; j++){
 								let fj=fgs[j];
@@ -2198,7 +2217,7 @@ function thumbseek(bool){
 								let ns=document.createElement('section');
 								ls.insertAdjacentElement('afterend',ns);
 								ns.style.cssText=si.style.cssText;
-								ns.style.zoom=sz;
+								ns.style.zoom=tw/(fj.getBoundingClientRect().width*getFloat(fj.style.zoom));
 								ns.insertAdjacentElement('afterbegin',fj);
 								ls=ns;
 							}
@@ -2212,14 +2231,19 @@ function thumbseek(bool){
 							let si2=scts[i+2];
 							rem.push(si1);
 							rem.push(si2);
-							si.insertAdjacentElement('beforeend',si1.firstElementChild);
-							si.insertAdjacentElement('beforeend',si2.firstElementChild);
+							let f1=si1.firstElementChild;
+							f1.style.zoom=f1.getAttribute('three_sect_zoom');
+							si.insertAdjacentElement('beforeend',f1);
+							let f2=si2.firstElementChild;
+							f2.style.zoom=f2.getAttribute('three_sect_zoom');
+							si.insertAdjacentElement('beforeend',f2);
 							si.style.zoom=1;
 							si.style.zoom=tw/si.getBoundingClientRect().width;
 						}
 						for(let i=0, len_i=rem.length; i<len_i; i++){
 							elRemover(rem[i]);
 						}
+						rsz();
 					}
 					
 					let sh=thumbs.scrollHeight;
@@ -2470,6 +2494,7 @@ threeSct.appendChild(f);
 f.style.setProperty( 'margin', 0, 'important' );
 f.style.setProperty( 'border', 0, 'important' );
 f.style.setProperty( 'padding', 0, 'important' );
+f.setAttribute('three_sect_zoom',1);
 
 f.appendChild(c);
 f.appendChild(pgs);
@@ -2485,9 +2510,38 @@ ct.style.cssText+="color: white  !important; font-size: 169%  !important; displa
 
 pgb.style.width=window.getComputedStyle(f).width;
 
+if(threeSct.children.length>1){
+	let ch3=[...threeSct.children];
+	let w0=ch3[0].scrollWidth;
+	let chSW=[w0];
+	let wMax=w0;
+	let brk=false;
+	for (let k = 1; k < ch3.length; k++) {
+		let ckw=ch3[k].scrollWidth;
+		chSW.push(ckw);
+		if(ckw!==w0){
+			brk=true;
+		}
+		if(ckw>wMax){
+			wMax=ckw;
+		}
+	}
+	if(brk===true){
+		for (let k = 0; k < ch3.length; k++) {
+			let swk=chSW[k];
+			if(swk!==wMax){
+				let c3k=ch3[k];
+				let z3=wMax/chSW[k];
+				c3k.style.zoom=z3;
+				c3k.setAttribute('three_sect_zoom',z3);
+			}
+		}
+	}
+}
+
 rsz();
 
-ct.style.setProperty( 'transform', 'scale('+((f.scrollWidth/ct.clientWidth)*0.2).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+')', 'important' );
+ct.style.setProperty( 'zoom', (f.scrollWidth/ct.clientWidth)*0.2,'important' );
 
   f.onclick= function(e){
     var index = captions.indexOf(this.lastElementChild.lastElementChild);
@@ -2517,10 +2571,10 @@ suppressScr=true;
 			let cur=parseFloat(cvs.getAttribute('timestamp'));
 			let rct=absBoundingClientRect(prg);
 			let fz=t.style.zoom;
-			let pfz=parseFloat(fz);
-			let z=( isNaN(pfz) || isOneCol )?1:0.01*pfz;
-			let fct=z*parseFloat(t.parentElement.style.zoom);
-			let pv=(e.offsetX / (rct.width*fct));
+			let pfz=getFloat(fz);
+			//let z=( isNaN(pfz) || isOneCol )?1:0.01*pfz;
+			let fct=getFloat(t.parentElement.style.zoom);
+			let pv=e.offsetX/(rct.width*fct*pfz) ;
 			prg.value=pv;
 			let nxt=(index===captions.length-1)?myVdo.duration:parseFloat(captions[index+1].parentElement.previousElementSibling.getAttribute('timestamp'));
 			suppressTU=true;
