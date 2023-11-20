@@ -85,7 +85,7 @@ var isOneCol=false;
 var jBack=false;
 var doc_minHeight=null;
 var suppressTU=false;
-var postRsz=false;
+//var postRsz=false;
 let lastFigIx;
 
 function getFloat(z){
@@ -909,13 +909,13 @@ rlcRsz.onwheel=(e)=>{
 		}
 	}
 	relocScale_var=rlcRsz.innerText;
-	postRsz=true;
+	//postRsz=true;
 };
 rlcRsz.oninput=(e)=>{
 	relocScale_var=rlcRsz.innerText;
 	shb2=false;
 	shiftBtns2();
-	postRsz=true;
+	//postRsz=true;
 };
 var bsw=0;
 
@@ -1131,12 +1131,12 @@ var shiftVid=(force_default_place)=>{
 								ifrm2.style.cssText=p.join('transform: scale(calc('+relocScale_var+')) ');
 							}
 							scrollHdl();
-							try{
+							/*try{
 								if(postRsz){
 									postRsz=false;
 									scrollElMidPage(currentFig);
 								}
-							}catch(e){;}
+							}catch(e){;}*/
 							let ifrm2R=absBoundingClientRect(ifrm2);
 							let ifrm3R=absBoundingClientRect(ifrm3);
 							//let wdt=getScreenWidth();
