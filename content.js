@@ -1161,10 +1161,10 @@ var shiftVid=(force_default_place)=>{
 								firstAncestor.style.setProperty('transform','scale('+s+')','important' );
 								let shgt=document?.documentElement?. clientHeight;
 								if(myVdo.getBoundingClientRect().height>shgt){
-									s=(shgt-2)/myVdo.clientHeight;
+									s=(shgt-4)/myVdo.clientHeight;
 									firstAncestor.style.setProperty('transform','scale('+s+')','important' );
 									let myVdoR=absBoundingClientRect(myVdo);
-									firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(((ifrm2R.right+0.5*(ifrm3R.left-ifrm2R.right))-(myVdoR.left+myVdoR.width*0.5))/s)+'px) translateY('+((ifrm3R.top-myVdoR.top)/s)+'px)', 'important' );
+									firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(((ifrm2R.right+0.5*(ifrm3R.left-ifrm2R.right))-(myVdoR.left+myVdoR.width*0.5))/s)+'px) translateY('+((ifrm3R.top-myVdoR.top+1)/s)+'px)', 'important' );
 								}else{					
 									let myVdoR=absBoundingClientRect(myVdo);
 									firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(((ifrm2R.right+vw2)-myVdoR.left)/s)+'px) translateY('+((ifrm3R.top-myVdoR.top)/s)+'px)', 'important' );
