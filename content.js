@@ -2466,6 +2466,7 @@ pgb.max=1;
 pgb.value=0;
 pgb.title='0.0%';
 pgb.style.display='none';
+pgb.style.transformOrigin='top';
 pgs.style.display='contents';
 pgs.style.width='inherit';
 pgs.style.position='absolute';
@@ -2482,6 +2483,8 @@ c.height=v_height;
 
 f.style.width= v_width;
 f.style.height=v_height;
+
+
 
 c.setAttribute('timestamp', myVdo.currentTime);
 let format_time=formatTime(myVdo.currentTime);
@@ -2537,7 +2540,9 @@ ct.style.cssText+="color: white  !important; font-size: 169%  !important; displa
 
 //ct.style.setProperty( 'transform', 'scale('+().toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+')', 'important' );
 
-pgb.style.width=window.getComputedStyle(f).width;
+let wcs_f=window.getComputedStyle(f);
+pgb.style.width=wcs_f.width;
+pgb.style.height=`${(parseFloat(wcs_f.height)*0.02)}px`;
 
 if(threeSct.children.length>1){
 	let ch3=[...threeSct.children];
