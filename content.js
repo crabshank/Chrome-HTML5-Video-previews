@@ -76,6 +76,7 @@ let currentFig=null;
 let init=true;
 var g_ancestors=[];
 var firstAncestor=null;
+var firstAncestor_zIndex=null;
 var firstAncestor_wh={};
 var firstParent=null;
 var vfr=false;
@@ -931,7 +932,7 @@ ifrmRsz();
  sc1.style.width=sc1w+'px';
  sc1.style.maxWidth=sc1w+'px';*/
 let suppressScr=false;
-let zeroRsz=false;
+//let zeroRsz=false;
 function scrollElMidPage(el){
 	let vpos='center';
 	let epp=el.parentElement.parentElement;
@@ -961,12 +962,18 @@ function figSize(f,g,x){ //figure,
 				fi.style.height="";
 			}
 		}
+		/*if(zeroRsz===true){
+			zeroRsz=false;
+			ifrmRsz();
+		}*/
 	}else{
 		currentFig=f;
-		if(x===(lastFigIx+1) && myVdo.paused!==true){
-			scrollElMidPage(f);
+		if(x!==null){
+			if(x===(lastFigIx+1) && myVdo.paused!==true){
+				scrollElMidPage(f);
+			}
+			lastFigIx=x;
 		}
-		lastFigIx=x;
 		if(!isOneCol){
 			let sct=f.parentElement;
 			let allFigs=thumbs.getElementsByTagName('FIGURE');
@@ -992,11 +999,12 @@ function figSize(f,g,x){ //figure,
 				scrollElMidPage(f);
 			}	
 		}
-		if(zeroRsz===true){
+		/*if(zeroRsz===true){
 			zeroRsz=false;
 			ifrmRsz();
-		}
+		}*/
 	}
+	ifrmRsz();
 	if(g===true){
 		scrollElMidPage(f);
 	}
@@ -1086,7 +1094,7 @@ var ancsRsz= ()=>{
 	if(fa.ownerDocument===document){
 		firstParent=g_ancestors[((g_ancestors.length==1)?0:1)];
 		firstAncestor=fa;
-		
+		firstAncestor_zIndex=window.getComputedStyle(fa)['z-index'];
 		vfr=false;
 		let ifrc=absBoundingClientRect(main);
 	
@@ -1104,6 +1112,7 @@ var ancsRsz= ()=>{
 	}else{
 		firstParent=null;
 		firstAncestor=null;
+		firstAncestor_zIndex=null;
 	}
 }
 
@@ -1116,10 +1125,13 @@ function scrollHdl(){
 			
 var shiftVid=(force_default_place)=>{
 		if(force_default_place){ //put video back in original location
-			if(!!firstAncestor && firstAncestor.getAttribute('css_txt')!==null){
-				firstAncestor.style.cssText=firstAncestor.getAttribute('css_txt');
+			if(!!firstAncestor){
+				if(firstAncestor.getAttribute('css_txt')!==null){
+					firstAncestor.style.cssText=firstAncestor.getAttribute('css_txt');
+				}
+				firstAncestor.style.setProperty('z-index',firstAncestor_zIndex);
 			}
-
+			
 			let p=ifrm2.style.cssText.split(/transform\s*\:\s*[^\!]*/);
 						 ifrm2.style.cssText=p.join('transform: translateY(0px) ');
 		}else{
@@ -1169,6 +1181,7 @@ var shiftVid=(force_default_place)=>{
 									let myVdoR=absBoundingClientRect(myVdo);
 									firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(((ifrm2R.right+vw2)-myVdoR.left)/s)+'px) translateY('+((ifrm3R.top-myVdoR.top)/s)+'px)', 'important' );
 								}
+								firstAncestor.style.setProperty('z-index',Number.MAX_SAFE_INTEGER);
 								myVdoR=absBoundingClientRect(myVdo);
 								let firstAncestorR=absBoundingClientRect(firstAncestor);
 								document.documentElement.style.setProperty('min-height',`${Math.max(myVdoR.bottom,firstAncestorR.bottom,ifrm2R.bottom,ifrm3R.bottom)+ifrm2R.left}px`,'important');
@@ -2186,7 +2199,7 @@ function thumbseek(bool){
 				ttmp=0;
 				bsw=0;
 				myVdo.currentTime=0;
-				zeroRsz=true;
+				//zeroRsz=true;
 				mvdb.style.display='block';
 				oneCol.style.display='block';
 				shiftBtns(false);
@@ -2258,7 +2271,8 @@ function thumbseek(bool){
 						for(let i=0, len_i=rem.length; i<len_i; i++){
 							elRemover(rem[i]);
 						}
-						rsz();
+						figSize(currentFig,true);
+						//rsz();
 					}
 					
 					let sh=thumbs.scrollHeight;
