@@ -1882,15 +1882,17 @@ myVdo.addEventListener("ratechange", (event) => {
 });		
 
 		 allFrames.forEach((frame,index) => {
-			if(!myVdo_el[1].includes(frame[2]) && myVdo_el[1]!='' && frame[0]!==ifrm && frame[0]!==ifrm2 && frame[0]!==ifrm3 && typeof frame[0].style!=='undefined'){
-				if(typeof frame[0].style.setProperty!=='undefined'){
-					frame[0].style.setProperty( 'display', 'none', 'important' );
-				}else{
-					frame[0].style.display='none';
-				}
-			}/*else{
-				//node.style.setProperty( 'pointer-events', '', 'important' );
-			}*/
+			 try{
+					if(!myVdo_el[1].includes(frame[2]) && myVdo_el[1]!='' && frame[0]!==ifrm && frame[0]!==ifrm2 && frame[0]!==ifrm3 && typeof(frame[0].style)!=='undefined'){
+						if(typeof frame[0].style.setProperty!=='undefined'){
+							frame[0].style.setProperty( 'display', 'none', 'important' );
+						}else{
+							frame[0].style.display='none';
+						}
+					}/*else{
+						//node.style.setProperty( 'pointer-events', '', 'important' );
+					}*/
+			 }catch(e){;}
 		 });
 
 		pip.onclick=function(){
