@@ -88,6 +88,7 @@ var doc_minHeight=null;
 var suppressTU=false;
 //var postRsz=false;
 //let lastFigIx;
+let vidSeek=true;
 let justSeek=false;
 
 function getFloat(z){
@@ -1309,7 +1310,8 @@ function pgBar(ix,ths,ev,attr,nxt){
 		let pfz=getFloat(fz);
 		//let z=( isNaN(pfz) || isOneCol)?1:0.01*pfz;
 		let fct=getFloat(sct.style.zoom);
-		progresses[ix].value=ev.offsetX/(rct.width*fct*pfz) ;
+		progresses[ix].value=ev.offsetX/(rct.width*fct*pfz);
+		vidSeek=false;
 		myVdo.currentTime=(progresses[ix].value)*(nxt-cur)+cur;
 		curr_thumb=ix;
 	}
@@ -1348,6 +1350,7 @@ var checkDur = function() {
 		vMut=null;
 	}
 	bsw=0;
+	vidSeek=false;
 	myVdo.currentTime=0;
 
 	if(!tTrkFlg){
@@ -1462,9 +1465,11 @@ function skip(event) {
 	event.preventDefault();
 	//event.stopPropagation();
 	if(event.deltaY>0){
+		vidSeek=false;
 	   myVdo.currentTime -= (myVdo.duration/t)*0.05;
 	}
 	if (event.deltaY<0){
+		vidSeek=false;
 		myVdo.currentTime +=  (myVdo.duration/t)*0.05;
 	}
 }
@@ -1940,6 +1945,7 @@ progresses=[];
 		vMut=null;
 	}
 	bsw=0;
+	vidSeek=false;
 	myVdo.currentTime = 0;
 
 aseek=1;
@@ -2142,6 +2148,7 @@ myVdo.addEventListener("playing", (event)=>{
 				myVdo.play();
 				jBack=(jBack===true)?false:jBack;
 			}else{
+				vidSeek=false;
 				myVdo.currentTime=time_track[0];
 				jBack=true;
 			}
@@ -2194,6 +2201,7 @@ function thumbseek(bool){
 			if(ttmp===1){
 				ifrm2.scrollIntoView();
 			}
+			vidSeek=false;
 			myVdo.currentTime = ttmp*(myVdo.duration/t);
 			}else {
 				endGtMv();
@@ -2203,6 +2211,7 @@ function thumbseek(bool){
 				time_track=[-1,0];
 				ttmp=0;
 				bsw=0;
+				vidSeek=false;
 				myVdo.currentTime=0;
 				//zeroRsz=true;
 				mvdb.style.display='block';
@@ -2422,9 +2431,15 @@ myVdo.addEventListener("seeking", (event) => {
 		if(myVdo.currentTime>time_track[0]){
 			thumbseek(true);
 		}else{
+			vidSeek=false;
 			myVdo.currentTime=ttmp*(myVdo.duration/t);
 		}
 	}else{
+		if(vidSeek===true){
+			justSeek=true;
+		}else{
+			vidSeek=true;
+		}
 		thumbseek(false);
 	}
 }); 
@@ -2435,10 +2450,10 @@ myVdo.playbackRate=1;
 		if(myVdo.currentTime>time_track[0]){
 			thumbseek(true);
 		}else{
+			vidSeek=false;
 			myVdo.currentTime=ttmp*(myVdo.duration/t);
 		}
 	}else{
-		justSeek=true;
 		thumbseek(false);
 	}
 });
@@ -2455,10 +2470,15 @@ myVdo.addEventListener("seeked", (event) => {
 		if(myVdo.currentTime>time_track[0]){
 			thumbseek(true);
 		}else{
+			vidSeek=false;
 			myVdo.currentTime=ttmp*(myVdo.duration/t);
 		}
 	}else{
-		justSeek=true;
+		if(vidSeek===true){
+			justSeek=true;
+		}else{
+			vidSeek=true;
+		}
 		thumbseek(false);
 	}
 });
@@ -2589,6 +2609,7 @@ ct.style.setProperty( 'zoom', (f.scrollWidth/ct.clientWidth)*0.2,'important' );
 	  if(window.getComputedStyle(progresses[index]).display==='none'){
 	nowFlag=index;
 	cap=index;
+	vidSeek=false;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
 /*if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
 			scrollElMidPage(myVdo);
@@ -2619,6 +2640,7 @@ suppressScr=true;
 			prg.value=pv;
 			let nxt=(index===captions.length-1)?myVdo.duration:parseFloat(captions[index+1].parentElement.previousElementSibling.getAttribute('timestamp'));
 			suppressTU=true;
+			vidSeek=false;
 			myVdo.currentTime=(1-pv)*cur+pv*nxt;
 	  }
 } 
@@ -2628,6 +2650,7 @@ suppressScr=true;
 	  if(window.getComputedStyle(progresses[index]).display!=='none'){
 	nowFlag=index;
 	cap=index;
+	vidSeek=false;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
 /*if(!myVdo.ownerDocument.pictureInPictureElement && vfr){
 			scrollElMidPage(myVdo);
