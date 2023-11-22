@@ -87,7 +87,7 @@ var jBack=false;
 var doc_minHeight=null;
 var suppressTU=false;
 //var postRsz=false;
-let lastFigIx;
+//let lastFigIx;
 
 function getFloat(z){
 	let fz=parseFloat(z);
@@ -968,12 +968,12 @@ function figSize(f,g,x){ //figure,
 		}*/
 	}else{
 		currentFig=f;
-		if(x!==null){
+		/*if(x!==null){
 			if(x===(lastFigIx+1) && myVdo.paused!==true){
 				scrollElMidPage(f);
 			}
 			lastFigIx=x;
-		}
+		}*/
 		if(!isOneCol){
 			let sct=f.parentElement;
 			let allFigs=thumbs.getElementsByTagName('FIGURE');
