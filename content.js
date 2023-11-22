@@ -88,6 +88,7 @@ var doc_minHeight=null;
 var suppressTU=false;
 //var postRsz=false;
 //let lastFigIx;
+let justSeek=false;
 
 function getFloat(z){
 	let fz=parseFloat(z);
@@ -968,6 +969,10 @@ function figSize(f,g,x){ //figure,
 		}*/
 	}else{
 		currentFig=f;
+		if(justSeek===true){
+			justSeek=false;
+			scrollElMidPage(f);
+		}
 		/*if(x!==null){
 			if(x===(lastFigIx+1) && myVdo.paused!==true){
 				scrollElMidPage(f);
@@ -2433,6 +2438,7 @@ myVdo.playbackRate=1;
 			myVdo.currentTime=ttmp*(myVdo.duration/t);
 		}
 	}else{
+		justSeek=true;
 		thumbseek(false);
 	}
 });
@@ -2452,6 +2458,7 @@ myVdo.addEventListener("seeked", (event) => {
 			myVdo.currentTime=ttmp*(myVdo.duration/t);
 		}
 	}else{
+		justSeek=true;
 		thumbseek(false);
 	}
 });
