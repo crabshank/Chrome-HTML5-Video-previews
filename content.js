@@ -1537,6 +1537,8 @@ window.addEventListener('pointermove', function (event) {
 					scrollElMidPage(figEl);
 				}
 			}
+				last_psTime[1]=true;
+				//myVdo.currentTime=last_psTime[0];
 		}else{
 			last_psTime=[null,false];
 		}
@@ -2509,6 +2511,11 @@ myVdo.addEventListener("seeking", (event) => {
 			myVdo.currentTime=ttmp*(myVdo.duration/t);
 		}
 	}else{
+		if(last_psTime[1]===true){
+			last_psTime[1]=false;
+			myVdo.currentTime=last_psTime[0];
+			return;
+		}
 		if(vidSeek===true){
 			justSeek=true;
 		}else{
@@ -2533,16 +2540,6 @@ myVdo.playbackRate=1;
 });
 
 myVdo.addEventListener("seeked", (event) => {
-	
-	function normalSeek(){
-		if(vidSeek===true){
-			justSeek=true;
-		}else{
-			vidSeek=true;
-		}
-		thumbseek(false);
-	}
-	
 	t_a=myVdo.currentTime;
 	if(myVdo.readyState>2){
 	calcSp();
@@ -2558,19 +2555,18 @@ myVdo.addEventListener("seeked", (event) => {
 			myVdo.currentTime=ttmp*(myVdo.duration/t);
 		}
 	}else{
-		if(last_psTime[0]!==null ){
-			if(last_psTime[1]===false){
-				last_psTime[1]=true;
-				myVdo.currentTime=last_psTime[0];
-			}else{
-				last_psTime[1]=false;
-				normalSeek();
-			}
-		}else{
-			normalSeek();
+		if(last_psTime[1]===true){
+			last_psTime[1]=false;
+			myVdo.currentTime=last_psTime[0];
+			return;
 		}
+		if(vidSeek===true){
+			justSeek=true;
+		}else{
+			vidSeek=true;
+		}
+		thumbseek(false);
 	}
-
 });
 
 function generateThumbnail() {
