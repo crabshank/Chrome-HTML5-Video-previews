@@ -814,12 +814,12 @@ var rsz_ifrm=()=>{
 	if(!!firstAncestor){
 		firstAncestor.style.setProperty( 'transform-origin','left bottom','important' );
 		firstAncestor.style.setProperty( 'transform', 'scale(0.97) translateY('+mainRct.height+'px)','important' );
-		
+		let ifR=absBoundingClientRect(ifrm);
 		
 		let fprc=absBoundingClientRect(firstParent);
 		let vrc=absBoundingClientRect(myVdo);
 		
-		let tp=Math.max(fprc.bottom,vrc.bottom)+gapVid;
+		let tp=Math.max(fprc.bottom,vrc.bottom,ifR.bottom)+gapVid;
 		ifrm2.style.top=tp+'px';
 		ifrm3.style.top=tp+'px';
 		ifrm2.style.left='0.22%';
@@ -1106,11 +1106,11 @@ var ancsRsz= ()=>{
 	
 		firstAncestor.style.setProperty( 'transform-origin','left bottom','important'  );
 		firstAncestor.style.setProperty( 'transform', 'scale(0.97) translateY('+ifrc.height+'px)','important'  );
-	
+		let ifR=absBoundingClientRect(ifrm);
 		let fprc=absBoundingClientRect(firstParent);
 		let vrc=absBoundingClientRect(myVdo);
 		
-		let tp=Math.max(fprc.bottom,vrc.bottom)+gapVid;
+		let tp=Math.max(fprc.bottom,vrc.bottom,ifR.bottom)+gapVid;
 		ifrm2.style.top=tp+'px';
 		ifrm3.style.top=tp+'px';
 		ifrm2.style.left='0.22%';
@@ -2529,7 +2529,8 @@ ifrm2.style.setProperty=('max-width',ifw+'px','important');
 try{
 	let fprc=absBoundingClientRect(firstParent);
 	let vrc=absBoundingClientRect(myVdo);
-	let btm=Math.max(fprc.bottom,vrc.bottom);
+	let ifR=absBoundingClientRect(ifrm);
+	let btm=Math.max(fprc.bottom,vrc.bottom,ifR.bottom);
 	if(parseFloat(ifrm2.style.top)<parseFloat(btm+gapVid)){
 		let tp=btm+gapVid;
 		ifrm2.style.setProperty( 'top', tp+'px', 'important' );
