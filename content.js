@@ -958,7 +958,7 @@ function scrollElMidPage(el){
 			vpos='end';
 		}
 	}
-	t.scrollIntoView({behavior: "auto", block: vpos, inline: "start"});
+	t.scrollIntoView({behavior: "instant", block: vpos, inline: "start"});
 }
 
 var thumbs=ifrm2.contentWindow.document.querySelectorAll("div#thumbs")[0];
@@ -1515,17 +1515,26 @@ window.addEventListener('pointermove', function (event) {
 		if(hasAncestor(t,firstAncestor)){
 			let cap1=res*done_t;
 			let cap_el1=Math.floor(cap1);
-			let sy,zeroRct,figEl;
+			let sy,sy2,zeroRct,figEl;
 			if (cap_el1+1<captions.length){
 				figEl=progresses[cap_el1].parentElement.parentElement;
 			}else{
 				figEl=progresses.at(-1).parentElement.parentElement;
 			}
-			scrollElMidPage(figEl);
+			ifrm2.scrollIntoView();
 			sy=getScrollY();
-			zeroRct=absBoundingClientRect(figEl);
-			if(zeroRct.top>sy){
-				figEl.scrollIntoView();
+			scrollElMidPage(figEl);
+			sy2=getScrollY();
+			if(sy2<sy){
+				ifrm2.scrollIntoView({behavior: "auto", block: 'start', inline: "start"});
+			}else{
+				ifrm2.scrollIntoView({behavior: "auto", block: 'end', inline: "start"});
+				sy=getScrollY();
+				if(sy<sy2){
+					figEl.scrollIntoView({behavior: "auto", block: 'end', inline: "start"});
+				}else{
+					scrollElMidPage(figEl);
+				}
 			}
 		}
 	}
