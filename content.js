@@ -1110,7 +1110,6 @@ var ancsRsz= ()=>{
 	if(fa.ownerDocument===document){
 		firstParent=g_ancestors[((g_ancestors.length==1)?0:1)];
 		firstAncestor=fa;
-		firstAncestor_zIndex=window.getComputedStyle(fa)['z-index'];
 		vfr=false;
 		let ifrc=absBoundingClientRect(main);
 	
@@ -1141,12 +1140,9 @@ function scrollHdl(){
 			
 var shiftVid=(force_default_place)=>{
 		if(force_default_place){ //put video back in original location
-			if(!!firstAncestor){
-				if(firstAncestor.getAttribute('css_txt')!==null){
+				if(!!firstAncestor && firstAncestor.getAttribute('css_txt')!==null){
 					firstAncestor.style.cssText=firstAncestor.getAttribute('css_txt');
 				}
-				firstAncestor.style.setProperty('z-index',firstAncestor_zIndex);
-			}
 			
 			let p=ifrm2.style.cssText.split(/transform\s*\:\s*[^\!]*/);
 						 ifrm2.style.cssText=p.join('transform: translateY(0px) ');
@@ -1197,7 +1193,7 @@ var shiftVid=(force_default_place)=>{
 									let myVdoR=absBoundingClientRect(myVdo);
 									firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(((ifrm2R.right+vw2)-myVdoR.left)/s)+'px) translateY('+((ifrm3R.top-myVdoR.top)/s)+'px)', 'important' );
 								}
-								firstAncestor.style.setProperty('z-index',Number.MAX_SAFE_INTEGER);
+
 								myVdoR=absBoundingClientRect(myVdo);
 								let firstAncestorR=absBoundingClientRect(firstAncestor);
 								document.documentElement.style.setProperty('min-height',`${Math.max(myVdoR.bottom,firstAncestorR.bottom,ifrm2R.bottom,ifrm3R.bottom)+ifrm2R.left}px`,'important');
