@@ -10,6 +10,7 @@ try {
 	var last_psTime=[null,false];
 	var relocVid_var= false;
 	var spdDef_var= false;
+	var currFigCaps=[];
 	
 	function restore_options(){
 	if(typeof chrome.storage==='undefined'){
@@ -1197,9 +1198,6 @@ var shiftVid=(force_default_place)=>{
 								myVdoR=absBoundingClientRect(myVdo);
 								let firstAncestorR=absBoundingClientRect(firstAncestor);
 								document.documentElement.style.setProperty('min-height',`${Math.max(myVdoR.bottom,firstAncestorR.bottom,ifrm2R.bottom,ifrm3R.bottom)+ifrm2R.left}px`,'important');
-								
-								
-								
 							}
 		}
 }
@@ -1512,12 +1510,28 @@ window.addEventListener('pointermove', function (event) {
 			last_psTime[0]=res*myVdo.duration;
 			let cap1=res*done_t;
 			let cap_el1=Math.floor(cap1);
-			let sy,sy2,zeroRct,figEl;
+			let sy,sy2,zeroRct,figEl,prg;
 			if (cap_el1+1<captions.length){
-				figEl=progresses[cap_el1].parentElement.parentElement;
+				prg=progresses[cap_el1];
 			}else{
-				figEl=progresses.at(-1).parentElement.parentElement;
+				prg=progresses.at(-1);
 			}
+			figEl=prg.parentElement.parentElement;
+			let currFigCap=prg.nextElementSibling;
+			for(let i=0, len=currFigCaps.length; i<len; i++ ){
+				try{
+					currFigCaps[i][0].style.setProperty('background-color','#00000099','important');
+					currFigCaps[i][0].style.setProperty('color','white','important');
+					currFigCaps[i][0].innerText=currFigCaps[i][1];
+				}catch(e){;}
+			}
+			currFigCaps=[];
+			try{
+				currFigCap.style.setProperty('background-color','#00ffff99','important');
+				currFigCap.style.setProperty('color','red','important');
+				currFigCaps.push([currFigCap,currFigCap.innerText]);
+				currFigCap.innerText=formatTime(last_psTime[0]);
+			}catch(e){;}
 			ifrm2.scrollIntoView();
 			sy=getScrollY();
 			scrollElMidPage(figEl);
@@ -1536,9 +1550,25 @@ window.addEventListener('pointermove', function (event) {
 				last_psTime[1]=true;
 				//myVdo.currentTime=last_psTime[0];
 		}else{
+			for(let i=0, len=currFigCaps.length; i<len; i++ ){
+				try{
+					currFigCaps[i][0].style.setProperty('background-color','#00000099','important');
+					currFigCaps[i][0].style.setProperty('color','white','important');
+					currFigCaps[i][0].innerText=currFigCaps[i][1];
+				}catch(e){;}
+			}
+			currFigCaps=[];
 			last_psTime=[null,false];
 		}
 	}else{
+		for(let i=0, len=currFigCaps.length; i<len; i++ ){
+				try{
+					currFigCaps[i][0].style.setProperty('background-color','#00000099','important');
+					currFigCaps[i][0].style.setProperty('color','white','important');
+					currFigCaps[i][0].innerText=currFigCaps[i][1];
+				}catch(e){;}
+			}
+			currFigCaps=[];
 		last_psTime=[null,false];
 	}
 });
@@ -1984,7 +2014,7 @@ myVdo.addEventListener("ratechange", (event) => {
 		rlcRsz.style.display='none';
 		mvdb.style.display='none';
 		oneCol.style.display='none';
-		last_psTime==[null,false];
+		last_psTime=[null,false];
 		document.documentElement.style.setProperty('min-height',doc_minHeight,'important');
 		checkDur();
 		tbG=true;
