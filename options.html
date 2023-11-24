@@ -20,7 +20,7 @@ button#save {
 	background: buttonface;
 	padding: 5px 10px 5px 10px;
 }
-div#relocScale {
+div[contentEditable]{
     width: 7ch;
     -webkit-appearance: textfield;
     background-color: white;
@@ -51,6 +51,7 @@ div#relocScale {
 Default "Speed through video" playback rate: <input type="number" id="plRate" min="1" max="16" step="0.01" value="6" style="width: 9ch;"></input><br>
 "At least every x seconds": <input type="number" id="everyX" min="1" step="1" value="30" style="width: 9ch;"></input><br>
 Relocate video scale factor: <div contenteditable="true" id="relocScale">0.65</div><br>
+Scrub through thumbs when: video is paused, video is relocated, in one column mode, and pointer in the bottom x% of the video (100% means disabled): <div contenteditable="true" id="pointerScrub">100%</div><br>
 	<label for="oneCol">One column by default?:</label>
 	<input type="checkbox" id="oneCol"></input><br>
 	

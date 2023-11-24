@@ -6,6 +6,7 @@
   var  relocVid_var= document.getElementById('relocVid');
   var  pipDef_var= document.getElementById('pipDef');
   var spdDef_var= document.getElementById('spdDef');
+  var pointerScrub_var= document.getElementById('pointerScrub');
   var svbt= document.getElementById('save');
 
 function unDef(v,d,r){
@@ -19,8 +20,18 @@ function unDef(v,d,r){
 var saver =function(){
 	 	plRate_var.value=(plRate_var.valueAsNumber>=1 && plRate_var.valueAsNumber<=16)?plRate_var.value:"6";
 		everyX_var.value=(everyX_var.valueAsNumber>=1)?everyX_var.value:"30";
+		let psPrc=pointerScrub_var.innerText.trim();
+		let psm=psPrc.match(/\d*\.*\d*(?=\%)/);
 		
-		
+		if(psm===null){
+			pointerScrub_var.innerText="100%";
+		}else{
+			let f_psm=parseFloat(psm[0]);
+			if(f_psm<0 || f_psm>100){
+				pointerScrub_var.innerText="100%";
+			}
+		}
+
 			chrome.storage.sync.clear(function() {
 		chrome.storage.sync.set(
 		{
@@ -29,7 +40,8 @@ var saver =function(){
 			relocScale_sett: relocScale_var.innerText.trim(),
 			oneCol_sett: oneCol_var.checked,
 			relocVid_sett: relocVid_var.checked,
-			spdDef_sett: spdDef_var.checked
+			spdDef_sett: spdDef_var.checked,
+			pointerScrub_sett: psPrc
 		}, function()
 		{
 			let status = document.getElementById('stats');
@@ -61,7 +73,8 @@ function restore_options()
 			oneCol_var.checked = unDef(items.oneCol_sett,false);
 			relocVid_var.checked = unDef(items.relocVid_sett,false);
 			spdDef_var.checked = unDef(items.spdDef_sett,false);
-
+			spdDef_var.checked = unDef(items.spdDef_sett,false);
+			pointerScrub_var.innerText = unDef(items.pointerScrub_sett,"100%");
 			svbt.onclick = () => saver();
 		}
 		else
@@ -82,7 +95,8 @@ function save_options()
 			relocScale_sett: "0.65",
 			oneCol_sett: false,
 			relocVid_sett: false,
-			spdDef_sett: false
+			spdDef_sett: false,
+			pointerScrub_sett: "100%"
 	}, function(){
 		restore_options();
 	});

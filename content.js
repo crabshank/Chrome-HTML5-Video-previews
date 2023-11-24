@@ -4,6 +4,8 @@ try {
 	var plRate_var= 6;
 	var everyX_var= 30;
 	var relocScale_var="0.65";
+	var pointerScrub_var=1;
+	var isEnterScrub=0;
 	var oneCol_var=false;
 	
 	var relocVid_var= false;
@@ -27,6 +29,13 @@ try {
 			
 			if(typeof(items.relocScale_sett)!=='undefined'){
 				relocScale_var=items.relocScale_sett;
+			}
+			
+			if(typeof(items.pointerScrub_sett)!=='undefined'){
+				let prcent=items.pointerScrub_sett;
+				if(prcent!=='100%'){
+					pointerScrub_var=parseFloat(prcent)*0.01;
+				}
 			}
 			
 			if(typeof(items.oneCol_sett)!=='undefined'){
@@ -60,7 +69,8 @@ function save_options(){
 		oneCol_sett: false,
 		relocVid_sett: false,
 		pipDef_sett: false,
-		spdDef_sett: false
+		spdDef_sett: false,
+		pointerScrub_sett: "100%"
 	}, function()
 	{
 		console.log('Default options saved.');
@@ -1474,6 +1484,52 @@ function skip(event) {
 	}
 }
 
+
+function ptrEnterLeave(event) {
+		let t=event.target;
+		let out=0;
+		if(hasAncestor(t,firstAncestor)){
+			let vRect=absBoundingClientRect(myVdo);
+			let evX=event.pageX;
+			let vrl=vRect.left;
+			let vrr=vRect.right;
+			let vrt=vRect.top;
+			let vrb=vRect.bottom;
+			let evY=event.pageY;
+			let ivLerp= (evY - vrt)/(vrb - vrt);
+			let inBtmPrc=(ivLerp<=1 && ivLerp>=pointerScrub_var)?true:false;
+			if(evX>=vrl && evX<=vrr && inBtmPrc){
+				isEnterScrub=(isEnterScrub>=1)?2:1;
+				out= (evX - vrl)/(vrr - vrl);
+			}else{
+				isEnterScrub=0;
+			}
+		}
+		return out;
+}
+
+window.addEventListener('pointermove', function (event) {
+	let res=ptrEnterLeave(event);
+	if(firstAncestor!==null && myVdo.paused && myVdo.readyState>0 && captions.length==done_t && aseek==0 && pointerScrub_var!==1 && isOneCol && vfr && isEnterScrub===2){
+		let t=event.target;
+		if(hasAncestor(t,firstAncestor)){
+			let cap1=res*done_t;
+			let cap_el1=Math.floor(cap1);
+			let sy,zeroRct,figEl;
+			if (cap_el1+1<captions.length){
+				figEl=progresses[cap_el1].parentElement.parentElement;
+			}else{
+				figEl=progresses.at(-1).parentElement.parentElement;
+			}
+			scrollElMidPage(figEl);
+			sy=getScrollY();
+			zeroRct=absBoundingClientRect(figEl);
+			if(zeroRct.top>sy){
+				figEl.scrollIntoView();
+			}
+		}
+	}
+});
 
 window.addEventListener('resize', function () {
 	rsz();
