@@ -1507,30 +1507,31 @@ window.addEventListener('pointermove', function (event) {
 	if(firstAncestor!==null && myVdo.paused && myVdo.readyState>0 && captions.length==done_t && aseek==0 && pointerScrub_var!==1 && isOneCol && vfr && isEnterScrub===2){
 		let t=event.target;
 		if(hasAncestor(t,firstAncestor)){
-			last_psTime[0]=res*myVdo.duration;
 			let cap1=res*done_t;
 			let cap_el1=Math.floor(cap1);
+			
 			let sy,sy2,zeroRct,figEl,prg;
 			if (cap_el1+1<captions.length){
 				prg=progresses[cap_el1];
 			}else{
 				prg=progresses.at(-1);
 			}
-			figEl=prg.parentElement.parentElement;
+			let cvsEl=prg.parentElement.previousElementSibling;
+			figEl=cvsEl.parentElement;
+			last_psTime[0]=figEl;
 			let currFigCap=prg.nextElementSibling;
 			for(let i=0, len=currFigCaps.length; i<len; i++ ){
 				try{
-					currFigCaps[i][0].style.setProperty('background-color','#00000099','important');
-					currFigCaps[i][0].style.setProperty('color','white','important');
-					currFigCaps[i][0].innerText=currFigCaps[i][1];
+					let fi=currFigCaps[i];
+					fi.style.setProperty('background-color','#00000099','important');
+					fi.style.setProperty('color','white','important');
 				}catch(e){;}
 			}
 			currFigCaps=[];
 			try{
 				currFigCap.style.setProperty('background-color','#00ffff99','important');
 				currFigCap.style.setProperty('color','red','important');
-				currFigCaps.push([currFigCap,currFigCap.innerText]);
-				currFigCap.innerText=formatTime(last_psTime[0]);
+				currFigCaps.push(currFigCap);
 			}catch(e){;}
 			ifrm2.scrollIntoView();
 			sy=getScrollY();
@@ -1552,9 +1553,9 @@ window.addEventListener('pointermove', function (event) {
 		}else{
 			for(let i=0, len=currFigCaps.length; i<len; i++ ){
 				try{
-					currFigCaps[i][0].style.setProperty('background-color','#00000099','important');
-					currFigCaps[i][0].style.setProperty('color','white','important');
-					currFigCaps[i][0].innerText=currFigCaps[i][1];
+					let fi=currFigCaps[i];
+					fi.style.setProperty('background-color','#00000099','important');
+					fi.style.setProperty('color','white','important');
 				}catch(e){;}
 			}
 			currFigCaps=[];
@@ -1563,9 +1564,9 @@ window.addEventListener('pointermove', function (event) {
 	}else{
 		for(let i=0, len=currFigCaps.length; i<len; i++ ){
 				try{
-					currFigCaps[i][0].style.setProperty('background-color','#00000099','important');
-					currFigCaps[i][0].style.setProperty('color','white','important');
-					currFigCaps[i][0].innerText=currFigCaps[i][1];
+					let fi=currFigCaps[i];
+					fi.style.setProperty('background-color','#00000099','important');
+					fi.style.setProperty('color','white','important');
 				}catch(e){;}
 			}
 			currFigCaps=[];
@@ -2539,7 +2540,8 @@ myVdo.addEventListener("seeking", (event) => {
 	}else{
 		if(last_psTime[1]===true){
 			last_psTime[1]=false;
-			myVdo.currentTime=last_psTime[0];
+			//myVdo.currentTime=last_psTime[0];
+			last_psTime[0].click();
 			return;
 		}
 		if(vidSeek===true){
@@ -2583,7 +2585,8 @@ myVdo.addEventListener("seeked", (event) => {
 	}else{
 		if(last_psTime[1]===true){
 			last_psTime[1]=false;
-			myVdo.currentTime=last_psTime[0];
+			//myVdo.currentTime=last_psTime[0];
+			last_psTime[0].click();
 			return;
 		}
 		if(vidSeek===true){
