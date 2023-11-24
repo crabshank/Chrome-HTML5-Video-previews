@@ -7,7 +7,7 @@ try {
 	var pointerScrub_var=1;
 	var isEnterScrub=0;
 	var oneCol_var=false;
-	
+	var last_psTime=[null,false];
 	var relocVid_var= false;
 	var spdDef_var= false;
 	
@@ -1513,6 +1513,7 @@ window.addEventListener('pointermove', function (event) {
 	if(firstAncestor!==null && myVdo.paused && myVdo.readyState>0 && captions.length==done_t && aseek==0 && pointerScrub_var!==1 && isOneCol && vfr && isEnterScrub===2){
 		let t=event.target;
 		if(hasAncestor(t,firstAncestor)){
+			last_psTime[0]=res*myVdo.duration;
 			let cap1=res*done_t;
 			let cap_el1=Math.floor(cap1);
 			let sy,sy2,zeroRct,figEl;
@@ -1536,7 +1537,11 @@ window.addEventListener('pointermove', function (event) {
 					scrollElMidPage(figEl);
 				}
 			}
+		}else{
+			last_psTime=[null,false];
 		}
+	}else{
+		last_psTime=[null,false];
 	}
 });
 
@@ -1867,6 +1872,7 @@ function LnkOp()
 		myVdo_el=vids[tIx_el];
 		myVdo=myVdo_el[0];
 		
+		
 		ancsRsz();
 			
 		shiftBtns(true);
@@ -1980,6 +1986,7 @@ myVdo.addEventListener("ratechange", (event) => {
 		rlcRsz.style.display='none';
 		mvdb.style.display='none';
 		oneCol.style.display='none';
+		last_psTime==[null,false];
 		document.documentElement.style.setProperty('min-height',doc_minHeight,'important');
 		checkDur();
 		tbG=true;
@@ -2526,6 +2533,16 @@ myVdo.playbackRate=1;
 });
 
 myVdo.addEventListener("seeked", (event) => {
+	
+	function normalSeek(){
+		if(vidSeek===true){
+			justSeek=true;
+		}else{
+			vidSeek=true;
+		}
+		thumbseek(false);
+	}
+	
 	t_a=myVdo.currentTime;
 	if(myVdo.readyState>2){
 	calcSp();
@@ -2541,13 +2558,19 @@ myVdo.addEventListener("seeked", (event) => {
 			myVdo.currentTime=ttmp*(myVdo.duration/t);
 		}
 	}else{
-		if(vidSeek===true){
-			justSeek=true;
+		if(last_psTime[0]!==null ){
+			if(last_psTime[1]===false){
+				last_psTime[1]=true;
+				myVdo.currentTime=last_psTime[0];
+			}else{
+				last_psTime[1]=false;
+				normalSeek();
+			}
 		}else{
-			vidSeek=true;
+			normalSeek();
 		}
-		thumbseek(false);
 	}
+
 });
 
 function generateThumbnail() {
