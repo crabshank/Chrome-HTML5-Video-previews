@@ -690,8 +690,14 @@ let ht_c=`
 progress::-webkit-progress-value {
     background-color: #00ffff8f;
 }
+progress.scrub::-webkit-progress-value {
+    background-color: #ff00008f;
+}
 progress::-webkit-progress-bar {
     background-color: #8080808f;
+}
+progress.scrub::-webkit-progress-bar {
+    background-color: #00ffff8f;
 }
 progress {
     position: absolute;
@@ -1502,6 +1508,13 @@ function ptrEnterLeave(event) {
 		return out;
 }
 
+window.addEventListener('pointerdown', function (event) {
+	if(last_psTime[0]!==null){
+		last_psTime[1]=true;
+		last_psTime[0].click();
+	}
+});
+
 window.addEventListener('pointermove', function (event) {
 	let res=ptrEnterLeave(event);
 	if(firstAncestor!==null && myVdo.paused && myVdo.readyState>0 && captions.length==done_t && aseek==0 && pointerScrub_var!==1 && isOneCol && vfr && isEnterScrub===2){
@@ -1522,16 +1535,20 @@ window.addEventListener('pointermove', function (event) {
 			let currFigCap=prg.nextElementSibling;
 			for(let i=0, len=currFigCaps.length; i<len; i++ ){
 				try{
-					let fi=currFigCaps[i];
+					let fgi=currFigCaps[i];
+					let fi=fgi[0];
+					let pi=fgi[1];
 					fi.style.setProperty('background-color','#00000099','important');
 					fi.style.setProperty('color','white','important');
+					pi.className='';
 				}catch(e){;}
 			}
 			currFigCaps=[];
 			try{
 				currFigCap.style.setProperty('background-color','#00ffff99','important');
 				currFigCap.style.setProperty('color','red','important');
-				currFigCaps.push(currFigCap);
+				prg.className='scrub';
+				currFigCaps.push([currFigCap,prg]);
 			}catch(e){;}
 			ifrm2.scrollIntoView();
 			sy=getScrollY();
@@ -1553,9 +1570,12 @@ window.addEventListener('pointermove', function (event) {
 		}else{
 			for(let i=0, len=currFigCaps.length; i<len; i++ ){
 				try{
-					let fi=currFigCaps[i];
+					let fgi=currFigCaps[i];
+					let fi=fgi[0];
+					let pi=fgi[1];
 					fi.style.setProperty('background-color','#00000099','important');
 					fi.style.setProperty('color','white','important');
+					pi.className='';
 				}catch(e){;}
 			}
 			currFigCaps=[];
@@ -1564,9 +1584,12 @@ window.addEventListener('pointermove', function (event) {
 	}else{
 		for(let i=0, len=currFigCaps.length; i<len; i++ ){
 				try{
-					let fi=currFigCaps[i];
+					let fgi=currFigCaps[i];
+					let fi=fgi[0];
+					let pi=fgi[1];
 					fi.style.setProperty('background-color','#00000099','important');
 					fi.style.setProperty('color','white','important');
+					pi.className='';
 				}catch(e){;}
 			}
 			currFigCaps=[];
