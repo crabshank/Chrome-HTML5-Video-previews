@@ -460,6 +460,9 @@ function getAncestors(el, elementsOnly, elToHTML, doc_head_body, notInShadow){
 }
 
 function hasAncestor(el,p){
+	if(el===p){
+		return true;
+	}
 	let out=false;
 	let curr=el;
 	let end=false;
