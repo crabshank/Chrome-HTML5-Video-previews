@@ -1556,12 +1556,12 @@ window.addEventListener('pointermove', function (event) {
 			scrollElMidPage(figEl);
 			sy2=getScrollY();
 			if(sy2<sy){
-				ifrm2.scrollIntoView({behavior: "auto", block: 'start', inline: "start"});
+				ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
 			}else{
-				ifrm2.scrollIntoView({behavior: "auto", block: 'end', inline: "start"});
+				ifrm2.scrollIntoView({behavior: "instant", block: 'end', inline: "start"});
 				sy=getScrollY();
 				if(sy<sy2){
-					figEl.scrollIntoView({behavior: "auto", block: 'end', inline: "start"});
+					figEl.scrollIntoView({behavior: "instant", block: 'end', inline: "start"});
 				}else{
 					scrollElMidPage(figEl);
 				}
