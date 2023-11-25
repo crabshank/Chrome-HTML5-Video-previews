@@ -895,7 +895,7 @@ let allNodes=[...document.querySelectorAll('*')];
 
 ifrm2.style.setProperty( 'top', maxBtm+'px', 'important' );
 ifrm3.style.setProperty( 'top', maxBtm+'px', 'important' );
-ifrm.scrollIntoView();
+ifrm.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
 
 var sc1=ifrm2.contentWindow.document.getElementsByTagName("section")[0];
 sc1.style.setProperty( 'min-width', '100%', 'important' );
@@ -1075,7 +1075,7 @@ hide_thumbs.onclick=()=>{
 	ifrm2.style.display=d;
 	ifrm3.style.display=d;
 	if(s===true){
-		ifrm2.scrollIntoView();
+		ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
 		if(tHidden_vfr===true){
 			vfr=false;
 			mvdb.click();
@@ -1555,7 +1555,7 @@ window.addEventListener('pointermove', function (event) {
 				prg.className='scrub';
 				currFigCaps.push([currFigCap,prg]);
 			}catch(e){;}
-			ifrm2.scrollIntoView();
+			ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
 			sy=getScrollY();
 			scrollElMidPage(figEl);
 			sy2=getScrollY();
@@ -1937,7 +1937,7 @@ function LnkOp()
 		thumbs.style.setProperty( 'visibility', 'visible', 'important' );
 		vrc= absBoundingClientRect(myVdo);
 
-		ifrm.scrollIntoView();
+		ifrm.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
 		
 
 myVdo.addEventListener("progress", (event) => {
@@ -2330,7 +2330,7 @@ function thumbseek(bool){
 			bSect.style.maxWidth=bsw+'px';
 			ifrmRsz();
 			if(ttmp===1){
-				ifrm2.scrollIntoView();
+				ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
 			}
 			vidSeek=false;
 			myVdo.currentTime = ttmp*(myVdo.duration/t);
@@ -2351,7 +2351,7 @@ function thumbseek(bool){
 				scrl.style.display='';
 				rsz_ifrm();
 				rsz();
-				ifrm2.scrollIntoView();
+				ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
 
 				shiftBtns2=(handleScr)=>{
 						if(!shb2){
