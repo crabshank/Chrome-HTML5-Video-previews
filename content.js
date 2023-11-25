@@ -1513,10 +1513,10 @@ function ptrEnterLeave(event) {
 
 window.addEventListener('pointerdown', function (event) {
 	if(last_psTime[0]!==null){
-		event.preventDefault();
+		//event.preventDefault();
 		last_psTime[1]=true;
 		last_psTime[0].click();
-		myVdo.play();
+		//myVdo.play();
 	}
 });
 
@@ -2567,11 +2567,11 @@ myVdo.addEventListener("seeking", (event) => {
 		}
 	}else{
 		if(last_psTime[1]===true){
-			event.preventDefault();
+			//event.preventDefault();
 			last_psTime[1]=false;
 			//myVdo.currentTime=last_psTime[0];
 			last_psTime[0].click();
-			myVdo.play();
+			//myVdo.play();
 			return;
 		}
 		if(vidSeek===true){
@@ -2614,11 +2614,11 @@ myVdo.addEventListener("seeked", (event) => {
 		}
 	}else{
 		if(last_psTime[1]===true){
-			event.preventDefault();
+			//event.preventDefault();
 			last_psTime[1]=false;
 			//myVdo.currentTime=last_psTime[0];
 			last_psTime[0].click();
-			myVdo.play();
+			//myVdo.play();
 			return;
 		}
 		if(vidSeek===true){
