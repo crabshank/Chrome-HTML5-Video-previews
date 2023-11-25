@@ -1512,6 +1512,7 @@ window.addEventListener('pointerdown', function (event) {
 	if(last_psTime[0]!==null){
 		last_psTime[1]=true;
 		last_psTime[0].click();
+		myVdo.play();
 	}
 });
 
@@ -2565,6 +2566,7 @@ myVdo.addEventListener("seeking", (event) => {
 			last_psTime[1]=false;
 			//myVdo.currentTime=last_psTime[0];
 			last_psTime[0].click();
+			myVdo.play();
 			return;
 		}
 		if(vidSeek===true){
@@ -2610,6 +2612,7 @@ myVdo.addEventListener("seeked", (event) => {
 			last_psTime[1]=false;
 			//myVdo.currentTime=last_psTime[0];
 			last_psTime[0].click();
+			myVdo.play();
 			return;
 		}
 		if(vidSeek===true){
