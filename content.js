@@ -4,10 +4,11 @@ try {
 	var plRate_var= 6;
 	var everyX_var= 30;
 	var relocScale_var="0.65";
-	var pointerScrub_var=1;
+	var pointerScrub_var=0.023;
 	var isEnterScrub=0;
 	var oneCol_var=false;
 	var last_psTime=[null,false];
+	var psDiv=null;
 	var relocVid_var= false;
 	var spdDef_var= false;
 	var currFigCaps=[];
@@ -33,9 +34,12 @@ try {
 			}
 			
 			if(typeof(items.pointerScrub_sett)!=='undefined'){
-				let prcent=items.pointerScrub_sett;
-				if(prcent!=='100%'){
-					pointerScrub_var=parseFloat(prcent)*0.01;
+				let v=items.pointerScrub_sett;
+				if(v!=="0"){
+					let fv=parseFloat(v);
+					pointerScrub_var=(fv===0)?0:parseFloat(v);
+				}else{
+					pointerScrub_var=0;
 				}
 			}
 			
@@ -1192,21 +1196,33 @@ var shiftVid=(force_default_place)=>{
 								firstAncestor.style.setProperty('top','1px', 'important' );	
 								firstAncestor.style.setProperty('left','-2px', 'important' );
 								firstAncestor.style.setProperty('transform-origin','top left', 'important' );	
+								firstAncestor.style.setProperty('transform','scale(1)');
+								let psGap=(pointerScrub_var!==0)?5.5:0;
+								let psdr=(pointerScrub_var!==0)?psDiv.getBoundingClientRect():{height:0};
+								let shgt=document?.documentElement?. clientHeight-1-psGap-psdr.height;
+								let myVdoR=myVdo.getBoundingClientRect();
+								let sch=myVdoR.height*s;
+								if(sch>shgt){ //overshoot
+									s*=(shgt/sch);
+								}							
+									
 								firstAncestor.style.setProperty('transform','scale('+s+')','important' );
-								let shgt=document?.documentElement?. clientHeight;
-								if(myVdo.getBoundingClientRect().height>shgt){
-									s=(shgt-4)/myVdo.clientHeight;
-									firstAncestor.style.setProperty('transform','scale('+s+')','important' );
-									let myVdoR=absBoundingClientRect(myVdo);
-									firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(((ifrm2R.right+0.5*(ifrm3R.left-ifrm2R.right))-(myVdoR.left+myVdoR.width*0.5))/s)+'px) translateY('+((ifrm3R.top-myVdoR.top+1)/s)+'px)', 'important' );
-								}else{					
-									let myVdoR=absBoundingClientRect(myVdo);
-									firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(((ifrm2R.right+vw2)-myVdoR.left)/s)+'px) translateY('+((ifrm3R.top-myVdoR.top)/s)+'px)', 'important' );
-								}
-
 								myVdoR=absBoundingClientRect(myVdo);
-								let firstAncestorR=absBoundingClientRect(firstAncestor);
-								document.documentElement.style.setProperty('min-height',`${Math.max(myVdoR.bottom,firstAncestorR.bottom,ifrm2R.bottom,ifrm3R.bottom)+ifrm2R.left}px`,'important');
+								tx=((ifrm2R.right+vw2)-myVdoR.left)/s;
+								ty=(ifrm3R.top-myVdoR.top+1)/s;
+								// myVdoR.top/left unaffected by scale because of transform-origin
+								firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(tx)+'px) translateY('+(ty)+'px)', 'important' );
+								
+								if(pointerScrub_var!==0){
+									myVdoR=absBoundingClientRect(myVdo);
+									psDiv.style.setProperty('top',((
+										myVdoR.bottom+psGap
+									))+'px', 'important' );
+									psDiv.style.setProperty('left',((
+										myVdoR.left
+									))+'px', 'important' );
+									psDiv.style.setProperty('width',`${myVdoR.width}px`,'important');
+								}
 							}
 		}
 }
@@ -1487,119 +1503,116 @@ function skip(event) {
 	}
 }
 
-
-function ptrEnterLeave(event) {
-		let t=event.target;
-		let out=0;
-		if(hasAncestor(t,firstAncestor)){
-			let vRect=absBoundingClientRect(myVdo);
-			let evX=event.pageX;
-			let vrl=vRect.left;
-			let vrr=vRect.right;
-			let vrt=vRect.top;
-			let vrb=vRect.bottom;
-			let evY=event.pageY;
-			let ivLerp= (evY - vrt)/(vrb - vrt);
-			let inBtmPrc=(ivLerp<=1 && ivLerp>=pointerScrub_var)?true:false;
-			if(evX>=vrl && evX<=vrr && inBtmPrc){
-				isEnterScrub=(isEnterScrub>=1)?2:1;
-				out= (evX - vrl)/(vrr - vrl);
-			}else{
-				isEnterScrub=0;
-			}
-		}
-		return out;
-}
-
 window.addEventListener('pointerdown', function (event) {
 	if(last_psTime[0]!==null){
-		//event.preventDefault();
-		last_psTime[1]=true;
+		event.preventDefault();
+		event.stopPropagation();
 		last_psTime[0].click();
-		//myVdo.play();
+		myVdo.play();
+		for(let i=0, len=currFigCaps.length; i<len; i++ ){
+			try{
+				let fgi=currFigCaps[i];
+				let fi=fgi[0];
+				let pi=fgi[1];
+				fi.style.setProperty('background-color','#00000099','important');
+				fi.style.setProperty('color','white','important');
+				pi.className='';
+			}catch(e){;}
+		}
+		currFigCaps=[];
+		last_psTime=[null,false];
 	}
 });
 
 window.addEventListener('pointermove', function (event) {
-	let res=ptrEnterLeave(event);
-	if(firstAncestor!==null && myVdo.paused && myVdo.readyState>0 && captions.length==done_t && aseek==0 && pointerScrub_var!==1 && isOneCol && vfr && isEnterScrub===2){
-		let t=event.target;
-		if(hasAncestor(t,firstAncestor)){
-			let cap1=res*done_t;
-			let cap_el1=Math.floor(cap1);
-			
-			let sy,sy2,zeroRct,figEl,prg;
-			if (cap_el1+1<captions.length){
-				prg=progresses[cap_el1];
-			}else{
-				prg=progresses.at(-1);
-			}
-			let cvsEl=prg.parentElement.previousElementSibling;
-			figEl=cvsEl.parentElement;
-			last_psTime[0]=figEl;
-			let currFigCap=prg.nextElementSibling;
-			for(let i=0, len=currFigCaps.length; i<len; i++ ){
-				try{
-					let fgi=currFigCaps[i];
-					let fi=fgi[0];
-					let pi=fgi[1];
-					fi.style.setProperty('background-color','#00000099','important');
-					fi.style.setProperty('color','white','important');
-					pi.className='';
-				}catch(e){;}
-			}
-			currFigCaps=[];
-			try{
-				currFigCap.style.setProperty('background-color','#00ffff99','important');
-				currFigCap.style.setProperty('color','red','important');
-				prg.className='scrub';
-				currFigCaps.push([currFigCap,prg]);
-			}catch(e){;}
-			ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
-			sy=getScrollY();
-			scrollElMidPage(figEl);
-			sy2=getScrollY();
-			if(sy2<sy){
-				ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
-			}else{
-				ifrm2.scrollIntoView({behavior: "instant", block: 'end', inline: "start"});
-				sy=getScrollY();
-				if(sy<sy2){
-					figEl.scrollIntoView({behavior: "instant", block: 'end', inline: "start"});
-				}else{
-					scrollElMidPage(figEl);
+		let rst=false;
+		if(psDiv!==null && firstAncestor!==null && myVdo.paused && myVdo.readyState>0 && captions.length==done_t && aseek==0 && isOneCol && vfr){
+			let res;
+			let ent=false;
+			let psRect=absBoundingClientRect(psDiv);
+			let evX=event.pageX;
+			let vrl=psRect.left;
+			let vrr=psRect.right;
+			let vrt=psRect.top;
+			let vrb=psRect.bottom;
+			let evY=event.pageY;
+			if(evY>=vrt && evY<=vrb){
+				let ivLerp= (evY - vrt)/(vrb - vrt);
+				if(evX>=vrl && evX<=vrr){
+					res= (evX - vrl)/(vrr - vrl);
+					ent=true;
 				}
 			}
-				last_psTime[1]=true;
-				//myVdo.currentTime=last_psTime[0];
-		}else{
-			for(let i=0, len=currFigCaps.length; i<len; i++ ){
+			if(ent){
+				let cap1=res*done_t;
+				let cap_el1=Math.floor(cap1);
+				
+				let sy,sy2,zeroRct,figEl,prg;
+				if (cap_el1+1<captions.length){
+					prg=progresses[cap_el1];
+				}else{
+					prg=progresses.at(-1);
+				}
+				let cvsEl=prg.parentElement.previousElementSibling;
+				figEl=cvsEl.parentElement;
+				last_psTime[0]=figEl;
+				let currFigCap=prg.nextElementSibling;
+				psDiv.title=currFigCap.innerText;
+				for(let i=0, len=currFigCaps.length; i<len; i++ ){
+					try{
+						let fgi=currFigCaps[i];
+						let fi=fgi[0];
+						let pi=fgi[1];
+						fi.style.setProperty('background-color','#00000099','important');
+						fi.style.setProperty('color','white','important');
+						pi.className='';
+					}catch(e){;}
+				}
+				currFigCaps=[];
 				try{
-					let fgi=currFigCaps[i];
-					let fi=fgi[0];
-					let pi=fgi[1];
-					fi.style.setProperty('background-color','#00000099','important');
-					fi.style.setProperty('color','white','important');
-					pi.className='';
+					currFigCap.style.setProperty('background-color','#00ffff99','important');
+					currFigCap.style.setProperty('color','red','important');
+					prg.className='scrub';
+					currFigCaps.push([currFigCap,prg]);
 				}catch(e){;}
+				ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
+				sy=getScrollY();
+				scrollElMidPage(figEl);
+				sy2=getScrollY();
+				if(sy2<sy){
+					ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
+				}else{
+					ifrm2.scrollIntoView({behavior: "instant", block: 'end', inline: "start"});
+					sy=getScrollY();
+					if(sy<sy2){
+						figEl.scrollIntoView({behavior: "instant", block: 'end', inline: "start"});
+					}else{
+						scrollElMidPage(figEl);
+					}
+				}
+					last_psTime[1]=true;
+					//myVdo.currentTime=last_psTime[0];
+			}else{
+				rst=true;
+			}
+		}else{
+			rst=true;
+		}
+		
+		if(rst===true){
+			for(let i=0, len=currFigCaps.length; i<len; i++ ){
+					try{
+						let fgi=currFigCaps[i];
+						let fi=fgi[0];
+						let pi=fgi[1];
+						fi.style.setProperty('background-color','#00000099','important');
+						fi.style.setProperty('color','white','important');
+						pi.className='';
+					}catch(e){;}
 			}
 			currFigCaps=[];
 			last_psTime=[null,false];
 		}
-	}else{
-		for(let i=0, len=currFigCaps.length; i<len; i++ ){
-				try{
-					let fgi=currFigCaps[i];
-					let fi=fgi[0];
-					let pi=fgi[1];
-					fi.style.setProperty('background-color','#00000099','important');
-					fi.style.setProperty('color','white','important');
-					pi.className='';
-				}catch(e){;}
-			}
-			currFigCaps=[];
-		last_psTime=[null,false];
-	}
 });
 
 window.addEventListener('resize', function () {
@@ -2043,7 +2056,14 @@ myVdo.addEventListener("ratechange", (event) => {
 		rlcRsz.style.display='none';
 		mvdb.style.display='none';
 		oneCol.style.display='none';
+		if(pointerScrub_var!==0){
+			try{
+				elRemover(psDiv);
+			}catch(e){;}
+			psDiv=null;
+		}
 		last_psTime=[null,false];
+		isOneCol=false;
 		document.documentElement.style.setProperty('min-height',doc_minHeight,'important');
 		checkDur();
 		tbG=true;
@@ -2347,6 +2367,12 @@ function thumbseek(bool){
 				//zeroRsz=true;
 				mvdb.style.display='block';
 				oneCol.style.display='block';
+				if(pointerScrub_var!==0){
+					psDiv=document.createElement('div');
+					psDiv.style.cssText="all: initial !important; min-height: 9px !important; height: "+(pointerScrub_var*window.screen.height)+"px !important; display: none !important; position: absolute !important;  top: 0px !important;  left: 0px !important; transform-origin: top left !important; background: #00ffff !important; z-index: "+(Number.MAX_SAFE_INTEGER)+" !important;";
+					psDiv.title="Hover over to scrub through thumbs";
+					firstAncestor.insertAdjacentElement('afterend',psDiv);
+				}
 				shiftBtns(false);
 				scrl.style.display='';
 				rsz_ifrm();
@@ -2395,6 +2421,9 @@ function thumbseek(bool){
 								ls=ns;
 							}
 						}
+						if(psDiv!==null){
+							psDiv.style.setProperty('display','block','important')
+						}
 					}else{
 						let rem=[];
 						let tw=thumbs.getBoundingClientRect().width;
@@ -2418,6 +2447,9 @@ function thumbseek(bool){
 						}
 						figSize(currentFig,true);
 						//rsz();
+						if(psDiv!==null){
+							psDiv.style.setProperty('display','none','important')
+						}
 					}
 					
 					let sh=thumbs.scrollHeight;
@@ -2427,6 +2459,7 @@ function thumbseek(bool){
 					ifrm2.style.maxHeight=sh+'px';
 					
 					scrollElMidPage(captions[curr_thumb].parentElement.parentElement);
+					
 				}
 				
 				mvdb.onclick=function(){
@@ -2566,14 +2599,6 @@ myVdo.addEventListener("seeking", (event) => {
 			myVdo.currentTime=ttmp*(myVdo.duration/t);
 		}
 	}else{
-		if(last_psTime[1]===true){
-			//event.preventDefault();
-			last_psTime[1]=false;
-			//myVdo.currentTime=last_psTime[0];
-			last_psTime[0].click();
-			//myVdo.play();
-			return;
-		}
 		if(vidSeek===true){
 			justSeek=true;
 		}else{
@@ -2613,14 +2638,6 @@ myVdo.addEventListener("seeked", (event) => {
 			myVdo.currentTime=ttmp*(myVdo.duration/t);
 		}
 	}else{
-		if(last_psTime[1]===true){
-			//event.preventDefault();
-			last_psTime[1]=false;
-			//myVdo.currentTime=last_psTime[0];
-			last_psTime[0].click();
-			//myVdo.play();
-			return;
-		}
 		if(vidSeek===true){
 			justSeek=true;
 		}else{

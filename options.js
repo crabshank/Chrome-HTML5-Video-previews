@@ -20,17 +20,6 @@ function unDef(v,d,r){
 var saver =function(){
 	 	plRate_var.value=(plRate_var.valueAsNumber>=1 && plRate_var.valueAsNumber<=16)?plRate_var.value:"6";
 		everyX_var.value=(everyX_var.valueAsNumber>=1)?everyX_var.value:"30";
-		let psPrc=pointerScrub_var.innerText.trim();
-		let psm=psPrc.match(/\d*\.*\d*(?=\%)/);
-		
-		if(psm===null){
-			pointerScrub_var.innerText="100%";
-		}else{
-			let f_psm=parseFloat(psm[0]);
-			if(f_psm<0 || f_psm>100){
-				pointerScrub_var.innerText="100%";
-			}
-		}
 
 			chrome.storage.sync.clear(function() {
 		chrome.storage.sync.set(
@@ -41,7 +30,7 @@ var saver =function(){
 			oneCol_sett: oneCol_var.checked,
 			relocVid_sett: relocVid_var.checked,
 			spdDef_sett: spdDef_var.checked,
-			pointerScrub_sett: psPrc
+			pointerScrub_sett: pointerScrub_var.value
 		}, function()
 		{
 			let status = document.getElementById('stats');
@@ -74,7 +63,7 @@ function restore_options()
 			relocVid_var.checked = unDef(items.relocVid_sett,false);
 			spdDef_var.checked = unDef(items.spdDef_sett,false);
 			spdDef_var.checked = unDef(items.spdDef_sett,false);
-			pointerScrub_var.innerText = unDef(items.pointerScrub_sett,"100%");
+			pointerScrub_var.value = unDef(items.pointerScrub_sett,"0.023");
 			svbt.onclick = () => saver();
 		}
 		else
@@ -96,7 +85,7 @@ function save_options()
 			oneCol_sett: false,
 			relocVid_sett: false,
 			spdDef_sett: false,
-			pointerScrub_sett: "100%"
+			pointerScrub_sett: "0.023"
 	}, function(){
 		restore_options();
 	});
