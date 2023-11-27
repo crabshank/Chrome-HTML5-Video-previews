@@ -2369,7 +2369,7 @@ function thumbseek(bool){
 				oneCol.style.display='block';
 				if(pointerScrub_var!==0){
 					psDiv=document.createElement('div');
-					psDiv.style.cssText="all: initial !important; min-height: 9px !important; height: "+(pointerScrub_var*window.screen.height)+"px !important; display: none !important; position: absolute !important;  top: 0px !important;  left: 0px !important; transform-origin: top left !important; background: #00ffff !important; z-index: "+(Number.MAX_SAFE_INTEGER)+" !important;";
+					psDiv.style.cssText="all: initial !important; min-height: 9px !important; height: "+(pointerScrub_var*window.screen.height)+"px !important; display: none !important; position: absolute !important;  top: 0px !important;  left: 0px !important; transform-origin: top left !important; background: #00ffff99 !important; z-index: "+(Number.MAX_SAFE_INTEGER)+" !important;";
 					psDiv.title="Hover over to scrub through thumbs";
 					firstAncestor.insertAdjacentElement('afterend',psDiv);
 				}
