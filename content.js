@@ -2476,6 +2476,8 @@ function thumbseek(bool){
 					let faRect=absBoundingClientRect(firstAncestor);
 					
 					doc_minHeight=Math.max(
+						((doc_minHeight===null)?0:doc_minHeight),
+						window.getComputedStyle(document.documentElement)['min-height'],
 						absBoundingClientRect(ifrm2).bottom,
 						absBoundingClientRect(ifrm3).bottom,
 						faRect.bottom/( faRect.height / firstAncestor.offsetHeight)
