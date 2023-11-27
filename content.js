@@ -2288,7 +2288,9 @@ myVdo.addEventListener("timeupdate", (event)=>{
 myVdo.addEventListener("play", (event)=>{
 	if(psDiv!==null){
 		psDiv.style.setProperty('display','none','important');
-		shiftVid(false);
+		if(isOneCol && vfr){
+			shiftVid(false);
+		}
 	}
 });
 
