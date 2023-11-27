@@ -2286,14 +2286,14 @@ myVdo.addEventListener("timeupdate", (event)=>{
 });	
 
 myVdo.addEventListener("play", (event)=>{
-	if(pointerScrub_var!==0){
+	if(psDiv!==null){
 		psDiv.style.setProperty('display','none','important');
 		shiftVid(false);
 	}
 });
 
 myVdo.addEventListener("pause", (event)=>{
-	if(pointerScrub_var!==0){
+	if(psDiv!==null && isOneCol && vfr){
 		psDiv.style.setProperty('display','block','important');
 		shiftVid(false);
 	}
