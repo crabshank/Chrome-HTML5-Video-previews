@@ -2457,7 +2457,14 @@ function thumbseek(bool){
 					ifrm2.style.minHeight=sh+'px';
 					ifrm2.style.height=sh+'px';
 					ifrm2.style.maxHeight=sh+'px';
+					let faRect=absBoundingClientRect(firstAncestor);
 					
+					doc_minHeight=Math.max(
+						absBoundingClientRect(ifrm2).bottom,
+						absBoundingClientRect(ifrm3).bottom,
+						faRect.bottom/( faRect.height / firstAncestor.offsetHeight)
+					);
+					document.documentElement.style.setProperty('min-height',doc_minHeight+'px','important');
 					scrollElMidPage(captions[curr_thumb].parentElement.parentElement);
 					
 				}
