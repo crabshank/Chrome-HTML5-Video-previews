@@ -2495,7 +2495,7 @@ function thumbseek(bool){
 						setFA_wh(w1,true);
 					}
 					doc_minHeight=(doc_minHeight===null)?parseFloat(window.getComputedStyle(document.documentElement)['min-height']):doc_minHeight;
-					doc_minHeight=(doc_minHeight===null)?'':doc_minHeight;
+					doc_minHeight=(doc_minHeight===null || isNaN(doc_minHeight))?0:doc_minHeight;
 					rlcRsz.style.display=(vfr)?'block':'none';
 					ifrmRsz();
 					shb2=false;
