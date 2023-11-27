@@ -1933,7 +1933,7 @@ function LnkOp()
 		loadFlag=false;
 		ttmp=0;
 		ev_t=-1;
-		document.documentElement.style.setProperty('min-height',doc_minHeight,'important');
+		document.documentElement.style.setProperty('min-height',doc_minHeight+'px','important');
 		/*let txtVal=txtBx.value;
 		alert(txtVal);  
 		vid.src = txtVal;      
@@ -2064,7 +2064,7 @@ myVdo.addEventListener("ratechange", (event) => {
 		}
 		last_psTime=[null,false];
 		isOneCol=false;
-		document.documentElement.style.setProperty('min-height',doc_minHeight,'important');
+		document.documentElement.style.setProperty('min-height',doc_minHeight+'px','important');
 		checkDur();
 		tbG=true;
 		gnrB.value='Generate thumbs';
@@ -2477,7 +2477,7 @@ function thumbseek(bool){
 					
 					doc_minHeight=Math.max(
 						((doc_minHeight===null)?0:doc_minHeight),
-						window.getComputedStyle(document.documentElement)['min-height'],
+						parseFloat(window.getComputedStyle(document.documentElement)['min-height']),
 						absBoundingClientRect(ifrm2).bottom,
 						absBoundingClientRect(ifrm3).bottom,
 						faRect.bottom/( faRect.height / firstAncestor.offsetHeight)
@@ -2494,7 +2494,7 @@ function thumbseek(bool){
 						let w1=window.getComputedStyle(firstAncestor);
 						setFA_wh(w1,true);
 					}
-					doc_minHeight=(doc_minHeight===null)?window.getComputedStyle(document.documentElement)['min-height']:doc_minHeight;
+					doc_minHeight=(doc_minHeight===null)?parseFloat(window.getComputedStyle(document.documentElement)['min-height']):doc_minHeight;
 					doc_minHeight=(doc_minHeight===null)?'':doc_minHeight;
 					rlcRsz.style.display=(vfr)?'block':'none';
 					ifrmRsz();
@@ -2503,7 +2503,7 @@ function thumbseek(bool){
 					if(vfr){
 						scrollElMidPage(captions[curr_thumb].parentElement.parentElement);
 					}else{
-						document.documentElement.style.setProperty('min-height',doc_minHeight,'important');
+						document.documentElement.style.setProperty('min-height',doc_minHeight+'px','important');
 					}
 				};
 									
