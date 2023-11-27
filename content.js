@@ -2285,6 +2285,20 @@ myVdo.addEventListener("timeupdate", (event)=>{
 		suppressTU=(suppressTU===true)?false:suppressTU;
 });	
 
+myVdo.addEventListener("play", (event)=>{
+	if(pointerScrub_var!==0){
+		psDiv.style.setProperty('display','none','important');
+		shiftVid(false);
+	}
+});
+
+myVdo.addEventListener("pause", (event)=>{
+	if(pointerScrub_var!==0){
+		psDiv.style.setProperty('display','block','important');
+		shiftVid(false);
+	}
+});
+
 myVdo.addEventListener("playing", (event)=>{
 	tu2(event);
 });		
