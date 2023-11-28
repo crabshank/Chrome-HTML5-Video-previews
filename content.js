@@ -1205,22 +1205,35 @@ var shiftVid=(force_default_place)=>{
 								let psdr=(pointerScrub_var!==0)?psDiv.getBoundingClientRect():{height:0};
 								let shgt=document?.documentElement?. clientHeight-1-psGap-psdr.height;
 								myVdoR=myVdo.getBoundingClientRect();
-								let sch=myVdoR.height*s;
+								//centre
+								myVdoR.centre_y=myVdoR.top+myVdoR.height*0.5;
+								let wScl=myVdoR.width/myVdo.videoWidth;
+								let hScld=wScl*myVdo.videoHeight;
+								//myVdoR.vid_top=myVdoR.centre_y-0.5*(hScld);
+								let sch=hScld*s;
 								if(sch>shgt){ //overshoot
 									s*=(shgt/sch);
 								}							
 									
 								firstAncestor.style.setProperty('transform','scale('+s+')','important' );
 								myVdoR=absBoundingClientRect(myVdo);
+								myVdoR.centre_y=myVdoR.top+myVdoR.height*0.5;
+								wScl=myVdoR.width/myVdo.videoWidth;
+								hScld=wScl*myVdo.videoHeight;
+								myVdoR.vid_top=myVdoR.centre_y-0.5*(hScld);
 								tx=((ifrm2R.right+vw2)-myVdoR.left)/s;
-								ty=(ifrm3R.top-myVdoR.top+1)/s;
+								ty=(ifrm3R.top-myVdoR.vid_top+1)/s;
 								// myVdoR.top/left unaffected by scale because of transform-origin
 								firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(tx)+'px) translateY('+(ty)+'px)', 'important' );
 								
 								if(pointerScrub_var!==0){
 									myVdoR=absBoundingClientRect(myVdo);
+									myVdoR.centre_y=myVdoR.top+myVdoR.height*0.5;
+									wScl=myVdoR.width/myVdo.videoWidth;
+									hScld=wScl*myVdo.videoHeight;
+									myVdoR.vid_bottom=myVdoR.centre_y+0.5*(hScld);
 									psDiv.style.setProperty('top',((
-										myVdoR.bottom+psGap
+										myVdoR.vid_bottom+psGap
 									))+'px', 'important' );
 									psDiv.style.setProperty('left',((
 										myVdoR.left
