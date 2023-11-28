@@ -1198,9 +1198,9 @@ var shiftVid=(force_default_place)=>{
 								firstAncestor.style.setProperty('left','-2px', 'important' );
 								firstAncestor.style.setProperty('transform-origin','top left', 'important' );
 								myVdoR=myVdo.getBoundingClientRect();
-								let faRect=firstAncestor.getBoundingClientRect();
-								s/=myVdoR.width/(faRect.width-2);
 								firstAncestor.style.setProperty('transform','scale(1)');
+								let faRect=firstAncestor.getBoundingClientRect();
+								s=(vw-vw2-2)/((myVdo.clientWidth/faRect.width)*firstAncestor.clientWidth);
 								let psGap=(pointerScrub_var!==0)?5.5:0;
 								let psdr=(pointerScrub_var!==0)?psDiv.getBoundingClientRect():{height:0};
 								let shgt=document?.documentElement?. clientHeight-1-psGap-psdr.height;
