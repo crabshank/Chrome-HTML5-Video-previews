@@ -1200,7 +1200,6 @@ var shiftVid=(force_default_place)=>{
 								myVdoR=myVdo.getBoundingClientRect();
 								let faRect=firstAncestor.getBoundingClientRect();
 								s=(vw-vw2-2)/((myVdoR.width/faRect.width)*firstAncestor.clientWidth);
-								firstAncestor.style.setProperty('transform','scale(1)');
 								let psGap=(pointerScrub_var!==0)?5.5:0;
 								let psdr=(pointerScrub_var!==0)?psDiv.getBoundingClientRect():{height:0};
 								let shgt=document?.documentElement?. clientHeight-1-psGap-psdr.height;
