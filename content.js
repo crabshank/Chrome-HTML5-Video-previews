@@ -2314,6 +2314,10 @@ myVdo.addEventListener("play", (event)=>{
 myVdo.addEventListener("pause", (event)=>{
 	if(psDiv!==null && isOneCol && vfr){
 		psDiv.style.setProperty('display','block','important');
+		let currThumb=Math.floor((myVdo.currentTime/myVdo.duration)*done_t);
+		let figSt=(currThumb/done_t)*100;
+		let figEnd=((currThumb+1)/done_t)*100;
+		psDiv.style.setProperty('background',`linear-gradient(to right, #00ffff99 0%,#00ffff99 ${figSt}%,#ff000099 ${figSt}%,#ff000099 ${figEnd}%,#00ffff99 ${figEnd}%)`,'important');
 		shiftVid(false);
 	}
 });
@@ -2455,7 +2459,11 @@ function thumbseek(bool){
 							}
 						}
 						if(psDiv!==null){
-							psDiv.style.setProperty('display','block','important')
+							psDiv.style.setProperty('display','block','important');
+							let currThumb=Math.floor((myVdo.currentTime/myVdo.duration)*done_t);
+							let figSt=(currThumb/done_t)*100;
+							let figEnd=((currThumb+1)/done_t)*100;
+							psDiv.style.setProperty('background',`linear-gradient(to right, #00ffff99 0%,#00ffff99 ${figSt}%,#ff000099 ${figSt}%,#ff000099 ${figEnd}%,#00ffff99 ${figEnd}%)`,'important');
 						}
 					}else{
 						let rem=[];
