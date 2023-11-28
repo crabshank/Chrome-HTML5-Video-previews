@@ -1185,7 +1185,7 @@ var shiftVid=(force_default_place)=>{
 							
 							let vw=ifrm3R.left-ifrm2R.right;
 							let vw2=vw*0.034;
-							let myVdoR=myVdo.getBoundingClientRect();
+							let myVdoR;
 							let s=(vw-vw2-2)/myVdo.clientWidth;
 							
 							if(!!firstAncestor){
