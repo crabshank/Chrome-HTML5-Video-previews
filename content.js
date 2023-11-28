@@ -1185,6 +1185,7 @@ var shiftVid=(force_default_place)=>{
 							
 							let vw=ifrm3R.left-ifrm2R.right;
 							let vw2=vw*0.034;
+							let myVdoR=myVdo.getBoundingClientRect();
 							let s=(vw-vw2-2)/myVdo.clientWidth;
 							
 							if(!!firstAncestor){
@@ -1195,12 +1196,15 @@ var shiftVid=(force_default_place)=>{
 								firstAncestor.style.setProperty('position','fixed', 'important' );	
 								firstAncestor.style.setProperty('top','1px', 'important' );	
 								firstAncestor.style.setProperty('left','-2px', 'important' );
-								firstAncestor.style.setProperty('transform-origin','top left', 'important' );	
+								firstAncestor.style.setProperty('transform-origin','top left', 'important' );
+								myVdoR=myVdo.getBoundingClientRect();
+								let faRect=firstAncestor.getBoundingClientRect();
+								s/=myVdoR.width/(faRect.width-2);
 								firstAncestor.style.setProperty('transform','scale(1)');
 								let psGap=(pointerScrub_var!==0)?5.5:0;
 								let psdr=(pointerScrub_var!==0)?psDiv.getBoundingClientRect():{height:0};
 								let shgt=document?.documentElement?. clientHeight-1-psGap-psdr.height;
-								let myVdoR=myVdo.getBoundingClientRect();
+								myVdoR=myVdo.getBoundingClientRect();
 								let sch=myVdoR.height*s;
 								if(sch>shgt){ //overshoot
 									s*=(shgt/sch);
