@@ -1835,9 +1835,8 @@ if(allFrames.length>0){
 		let filt_vid=[];
 		for (let k=0; k<vids.length; k++){
 			if(!!isFinite(vids[k][0].duration)){
-				if(vids[k][1]===''){
-					filt_vid.push([vids[k][0],vids[k][1]]);
-				}else if(vids[k].length===3){
+				filt_vid.push([vids[k][0],vids[k][1]]);
+				if(vids[k].length===3){
 					allFrames=removeEls(vids[k][2], allFrames);
 					allFrames.unshift(vids[k][2]);
 				}
@@ -1847,17 +1846,9 @@ if(allFrames.length>0){
 		vids=[...filt_vid];		
 				
 		 allFrames.forEach((frame,index) => {
-			 let vwg=false;
-			 for(let i=0; i<vids.length; i++){
-				 if(vids[i][1].includes(frame[2]) && vids[i][1]!=''){
-					 vwg=true;
-					 i=vids.length-1;
-				 }
-			 }
-			 
 			 try{
 				 
-				 if(!vwg && !!frame[0].src && frame[0].src!='' && frame[0].src!='about:blank' && frame[0].src!='javascript:false'&& frame[0].src!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2 && frame[0]!=ifrm3){
+				 if(!!frame[0].src && frame[0].src!='' && frame[0].src!='about:blank' && frame[0].src!='javascript:false'&& frame[0].src!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2 && frame[0]!=ifrm3){
 					 	frame[0].style.setProperty( 'visibility', 'visible', 'important' );
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].src;
@@ -1871,7 +1862,7 @@ if(allFrames.length>0){
 				}catch(e){;}			
 
 				try{
-				 if(!vwg && !!frame[0].getAttribute('data-src') && frame[0].getAttribute('data-src')!='' && frame[0].getAttribute('data-src')!='about:blank' && frame[0].getAttribute('data-src')!='javascript:false'&& frame[0].getAttribute('data-src')!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2 && frame[0]!=ifrm3){
+				 if(!!frame[0].getAttribute('data-src') && frame[0].getAttribute('data-src')!='' && frame[0].getAttribute('data-src')!='about:blank' && frame[0].getAttribute('data-src')!='javascript:false'&& frame[0].getAttribute('data-src')!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2 && frame[0]!=ifrm3){
 					 	frame[0].style.setProperty( 'visibility', 'visible', 'important' );
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].getAttribute('data-src');
