@@ -1828,14 +1828,19 @@ if(allFrames.length>0){
 		}	
 		
 		for (let k=0; k<vids1.length; k++){
-			vids.push([vids1[k],allFrames[j][2]]);
+			vids.push([vids1[k],allFrames[j][2],allFrames[j]]);
 		}
 	}
 
 		let filt_vid=[];
 		for (let k=0; k<vids.length; k++){
-			if(!!isFinite(vids[k][0].duration) && vids[k][1]===''){
-				filt_vid.push([vids[k][0],vids[k][1]]);
+			if(!!isFinite(vids[k][0].duration)){
+				if(vids[k][1]===''){
+					filt_vid.push([vids[k][0],vids[k][1]]);
+				}else if(vids[k].length===3){
+					allFrames=removeEls(vids[k][2], allFrames);
+					allFrames.unshift(vids[k][2]);
+				}
 			}
 		}	
 		
