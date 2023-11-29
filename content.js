@@ -1931,10 +1931,19 @@ function LnkOp()
 {
 	if(txtBx.children.length>0){
 		let selIx=txtBx[txtBx.selectedIndex].getAttribute('index');
-		let tIx=parseInt(selIx);
-		let tIx_el=Math.abs(selIx);
-			let frEl=allFrames[tIx_el][0];
-		if(tIx<0){
+		let mnz=false;
+		let tIx,tIx_el;
+		if(selIx==='-0'){
+			mnz=true;
+			tIx=0;
+			tIx_el=0;
+		}else{
+			tIx=parseInt(selIx);
+			tIx_el=Math.abs(selIx);
+		}
+		
+		let frEl=allFrames[tIx_el][0];
+		if(tIx<0 || mnz){
 			if(!expnd.includes(frEl)){
 			let frct=absBoundingClientRect(frEl);
 			chrome.runtime.sendMessage({msg: txtBx[txtBx.selectedIndex].attributes.link.value, left: frct.left, right: frct.right, top: frct.top, bottom: frct.bottom, type: 'expand'}, function(response){
