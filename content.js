@@ -1109,7 +1109,7 @@ var vhw={w:0,h:0};
 var allFrames=[];
 
 var ancsRsz= ()=>{
-	
+	firstAncestorIFR=null;
 	g_ancestors=getAncestors(myVdo,true,true,false,true);
 	let fa=g_ancestors.at(-1);
 	if(fa.ownerDocument!==document){
