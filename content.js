@@ -1834,7 +1834,7 @@ if(allFrames.length>0){
 
 		let filt_vid=[];
 		for (let k=0; k<vids.length; k++){
-			if(!!isFinite(vids[k][0].duration)){
+			if(!!isFinite(vids[k][0].duration) && vids[k][1]===''){
 				filt_vid.push([vids[k][0],vids[k][1]]);
 			}
 		}	
