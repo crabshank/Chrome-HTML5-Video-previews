@@ -91,6 +91,7 @@ let currentFig=null;
 let init=true;
 var g_ancestors=[];
 var firstAncestor=null;
+var firstAncestorIFR=false;
 var firstAncestor_zIndex=null;
 var firstAncestor_wh={};
 var firstParent=null;
@@ -1116,6 +1117,7 @@ var ancsRsz= ()=>{
 			let fri=allFrames[i][0]
 			if(myVdo_el[1].includes(allFrames[i][2]) && myVdo_el[1]!='' && document.documentElement.contains(fri)){
 				g_ancestors=getAncestors(fri,true,true,false,true);
+				firstAncestorIFR=fri;
 				fa=g_ancestors.at(-1);
 				break
 			}
@@ -1198,13 +1200,15 @@ var shiftVid=(force_default_place)=>{
 								firstAncestor.style.setProperty('top','1px', 'important' );	
 								firstAncestor.style.setProperty('left','-2px', 'important' );
 								firstAncestor.style.setProperty('transform-origin','top left', 'important' );
-								myVdoR=myVdo.getBoundingClientRect();
+								firstAncestor.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
+								let mvl=(firstAncestorIFR!==null)?firstAncestorIFR:myVdo;
+								myVdoR=mvl.getBoundingClientRect();
 								let faRect=firstAncestor.getBoundingClientRect();
 								s=fGap/((myVdoR.width/faRect.width)*firstAncestor.clientWidth);
 								let psGap=(pointerScrub_var!==0)?5.5:0;
 								let psdr=(pointerScrub_var!==0)?psDiv.getBoundingClientRect():{height:0};
 								let shgt=document?.documentElement?. clientHeight-1-psGap-psdr.height;
-								myVdoR=myVdo.getBoundingClientRect();
+								myVdoR=mvl.getBoundingClientRect();
 								//centre
 								myVdoR.centre_y=myVdoR.top+myVdoR.height*0.5;
 								let wScl=myVdoR.width/myVdo.videoWidth;
@@ -1216,7 +1220,7 @@ var shiftVid=(force_default_place)=>{
 								}							
 									
 								firstAncestor.style.setProperty('transform','scale('+s+')','important' );
-								myVdoR=absBoundingClientRect(myVdo);
+								myVdoR=absBoundingClientRect(mvl);
 								myVdoR.centre_y=myVdoR.top+myVdoR.height*0.5;
 								wScl=myVdoR.width/myVdo.videoWidth;
 								hScld=wScl*myVdo.videoHeight;
@@ -1227,7 +1231,7 @@ var shiftVid=(force_default_place)=>{
 								firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(tx)+'px) translateY('+(ty)+'px)', 'important' );
 								
 								if(pointerScrub_var!==0){
-									myVdoR=absBoundingClientRect(myVdo);
+									myVdoR=absBoundingClientRect(mvl);
 									myVdoR.centre_y=myVdoR.top+myVdoR.height*0.5;
 									wScl=myVdoR.width/myVdo.videoWidth;
 									hScld=wScl*myVdo.videoHeight;
