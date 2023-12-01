@@ -1,5 +1,7 @@
 try {
 	//console.log(window.location.href+" - 'HTML5 Video previews page' has access");
+	var hed=document.getElementsByTagName("head")[0];	
+
 	var fr_id=null;
 	async function get_ids(){
 		return new Promise(function(resolve, reject) {
@@ -677,6 +679,9 @@ emb_to_ifr(embeds);
 
 function handleBrowserActionClicked(bgMsg) {
 
+var controls_tag=document.createElement('style');
+hed.insertAdjacentElement('afterbegin',controls_tag);
+
 ifrm=document.createElement('iframe');
 ifrm.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
 ifrm.style.setProperty( 'width', '-webkit-fill-available', 'important' );
@@ -1292,7 +1297,11 @@ var shiftVid=(force_default_place)=>{
 								myVdoR.centre_y=myVdoR.top+myVdoR.height*0.5;
 								wScl=myVdoR.width/myVdo.videoWidth;
 								hScld=wScl*myVdo.videoHeight;
-								myVdoR.vid_top=myVdoR.centre_y-0.5*(hScld);
+								let hlf=0.5*(hScld);
+								myVdoR.vid_top=myVdoR.centre_y-hlf;
+								myVdoR.vid_bottom=myVdoR.centre_y+hlf;
+								controls_tag.innerHTML=`video::-webkit-media-controls {transform: translateY(${myVdoR.vid_bottom-myVdoR.bottom}px) !important;}`;//-
+								
 								tx=((ifrm2R.right+vw2)-myVdoR.left)/s;
 								ty=(ifrm3R.top-myVdoR.vid_top+1)/s;
 								// myVdoR.top/left unaffected by scale because of transform-origin
