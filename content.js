@@ -1229,6 +1229,7 @@ function scrollHdl(){
 			
 var shiftVid=(force_default_place)=>{
 		if(force_default_place){ //put video back in original location
+				controls_tag.innerHTML=``;//-
 				if(!!firstAncestor && firstAncestor.getAttribute('css_txt')!==null){
 					firstAncestor.style.cssText=firstAncestor.getAttribute('css_txt');
 				}
