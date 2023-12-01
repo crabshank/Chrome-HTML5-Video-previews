@@ -1,6 +1,16 @@
 try {
 	//console.log(window.location.href+" - 'HTML5 Video previews page' has access");
-	
+	var fr_id=null;
+	async function get_ids(){
+		return new Promise(function(resolve, reject) {
+			restore_options();
+			chrome.runtime.sendMessage({message: "get_info", chg:window.location.href}, function(response) {
+				fr_id=response.info.frameId;
+				resolve();
+			});
+		});
+	}
+	(async ()=>{ await get_ids(); })();
 	var plRate_var= 6;
 	var everyX_var= 30;
 	var relocScale_var="0.65";
@@ -12,6 +22,8 @@ try {
 	var relocVid_var= false;
 	var spdDef_var= false;
 	var currFigCaps=[];
+	var allFrames=[];
+	var ifrm,ifrm2,ifrm3;
 	
 	function restore_options(){
 	if(typeof chrome.storage==='undefined'){
@@ -86,9 +98,10 @@ function save_options(){
 	restore_options();
 	
 	let expnd=[];
+	let expndCSS=[];
 	let exBool=true;
 let currentFig=null;
-let init=true;
+let init=null;
 var g_ancestors=[];
 var firstAncestor=null;
 var firstAncestorIFR=null;
@@ -484,31 +497,50 @@ function hasAncestor(el,p){
 	return out;
 }
 
-function expandFrame(fr){
-			fr.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
-			 
-			 
-			fr.style.setProperty( 'margin', 0, 'important' );
-			fr.style.setProperty( 'border', 0, 'important' );
-			fr.style.setProperty( 'padding', 0, 'important' );
-	
-			fr.style.setProperty( 'max-height','-webkit-fill-available', 'important' );
-			fr.style.setProperty( 'max-width','-webkit-fill-available', 'important' );
-			fr.style.setProperty( 'min-height','100vh', 'important' );
-			fr.style.setProperty( 'min-width','100vw', 'important' );
-			fr.style.setProperty( 'height','-webkit-fill-available', 'important' );
-			fr.style.setProperty( 'position','fixed', 'important' );
-			fr.style.setProperty( 'width','-webkit-fill-available', 'important' );
+function expandFrame(frs){
+			for(let i=0; i<frs.length; i++){
+				let fr=frs[i];
+				fr.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
+				 
+				 
+				fr.style.setProperty( 'margin', 0, 'important' );
+				fr.style.setProperty( 'border', 0, 'important' );
+				fr.style.setProperty( 'padding', 0, 'important' );
+		
+				fr.style.setProperty( 'max-height','-webkit-fill-available', 'important' );
+				fr.style.setProperty( 'max-width','-webkit-fill-available', 'important' );
+				fr.style.setProperty( 'min-height','100vh', 'important' );
+				//fr.style.setProperty( 'min-width','100vw', 'important' );
+				fr.style.setProperty( 'height','-webkit-fill-available', 'important' );
+				fr.style.setProperty( 'position','fixed', 'important' );
+				fr.style.setProperty( 'width','-webkit-fill-available', 'important' );
 
-			fr.style.setProperty( 'top',  window.screen.availTop+'px', 'important' );
-			fr.style.setProperty( 'left',  window.screen.availLeft+'px', 'important' );
+				//fr.style.setProperty( 'top',  window.screen.availTop+'px', 'important' );
+				fr.style.setProperty( 'left',  '0px', 'important' );
+			}
 }
 
 
 function messageHdl(request, sender, sendResponse) {
 	//console.log(request);
 	if(typeof request.type !=='undefined'){
-		 if(request.type ==='close'){
+		 if(request.type ==='size'){
+			let x=[];
+			for(let i=allFrames.length-1; i>=0; i--){
+				let ifr=allFrames[i];
+				let ifr0=ifr[0];
+				if (ifr0.src===request.url || ifr0.getAttribute('data-src')===request.url){
+					x=[ifr0,...ifr[3]];
+					let hg=request.doc_minHeight+'px';
+					x.forEach(f=>{
+						f.style.setProperty( 'max-height',hg, 'important' );
+						f.style.setProperty( 'min-height',hg, 'important' );
+						f.style.setProperty( 'height',hg, 'important' );
+					});
+					break;
+				}
+			}
+		 }else if(request.type ==='close'){
 		if(document.URL!=request.message){
 			
 					let xfr=null;
@@ -520,45 +552,52 @@ function messageHdl(request, sender, sendResponse) {
 		}
 		
 		if(!xfr){
-			
-					let ifrs=getMatchingNodesShadow(document,'IFRAME',true,false);
-		for(let i=0; i<ifrs.length; i++){
-			if (ifrs[i].src===request.message || ifrs[i].getAttribute('data-src')===request.message){
-				fr=ifrs[i];
-				expnd.push(fr);
+			let x=[];
+		for(let i=allFrames.length-1; i>=0; i--){
+			let ifr=allFrames[i];
+			let ifr0=ifr[0];
+			if (ifr0.src===request.message || ifr0.getAttribute('data-src')===request.message){
+				x=[ifr0,...ifr[3]].filter(xi=>{ return !expnd.includes(xi)});
+				expnd.push(...x);
+				let xc=x.map(f=>{return window.getComputedStyle(f)});
+				expndCSS.push(...xc);
 				break;
 			}
 		}
 			
-			if(!!fr){
-				expandFrame(fr);
+			if(x.length>0){
+				expandFrame(x);
 			}
 		}else{
-			
-			
-		let ifrs=getMatchingNodesShadow(document,'IFRAME',true,false);
-		let fr=null;
-		for(let i=0; i<ifrs.length; i++){
-			if (ifrs[i].src===request.message || ifrs[i].getAttribute('data-src')===request.message){
-				fr=ifrs[i];
-				expnd=removeEls(fr, expnd);
+			let x=[];
+		for(let i=allFrames.length-1; i>=0; i--){
+			let ifr=allFrames[i];
+			let ifr0=ifr[0];
+			if (ifr0.src===request.message || ifr0.getAttribute('data-src')===request.message){
+				x=[ifr0,...ifr[3]];
 				break;
 			}
 		}
-		
-		if(!!fr){
-		let hg=Math.abs(request.bottom-request.top);
-		let wd=Math.abs(request.right-request.left);
-			fr.style.setProperty( 'max-height', hg+'px', 'important' );
-			fr.style.setProperty( 'max-width', wd+'px', 'important' );	
-			fr.style.setProperty( 'min-height', hg+'px', 'important' );
-			fr.style.setProperty( 'min-width', wd+'px', 'important' );
-			fr.style.setProperty( 'height', hg+'px', 'important' );
-			fr.style.setProperty( 'width', wd+'px', 'important' );	
 
-			fr.style.setProperty( 'top', request.top+'px', 'important' );
-			fr.style.setProperty( 'left', request.left+'px', 'important' );
-			
+	if(x.length>0){
+		for(let k=0; k<x.length; k++){
+			let fr=x[k];
+			let ix=expnd.indexOf(fr);
+			let fc=expndCSS[ix];
+			let hg=Math.abs(request.bottom-request.top);
+			let wd=Math.abs(request.right-request.left);
+			fr.style.setProperty( 'max-height', fc['max-height'], 'important' );
+			fr.style.setProperty( 'max-width', fc['max-width'], 'important' );
+			fr.style.setProperty(  'min-height', fc[' min-height'], 'important' );
+			//fr.style.setProperty(  'min-width', fc[ 'min-width'], 'important' );
+			fr.style.setProperty( 'height', fc['height'], 'important' );
+			fr.style.setProperty('width', fc['width'], 'important' );
+			//fr.style.setProperty( 'top', fc['top'], 'important' );
+			fr.style.setProperty(  'left', fc[ 'left'], 'important' );
+			fr.style.setProperty(  'z-index', fc[ 'z-index'], 'important' );
+			expnd=removeEls(fr, expnd);
+			expndCSS=expndCSS.filter((c,idx)=>{return idx!==ix;})
+		}
 	}
 	
 		}
@@ -566,19 +605,39 @@ function messageHdl(request, sender, sendResponse) {
 	
 	
 	}else if(request.type ==='expand'){
-		if(document.URL==request.message && init){
-		handleBrowserActionClicked(request);
-		init=false;
+		if(document.URL==request.message && init===null){
+			handleBrowserActionClicked(request);
+			init=false;
+		}else if(init===false && fr_id!==0){ //hide
+			ifrm.style.setProperty( 'display', 'none', 'important' );
+			ifrm2.style.setProperty( 'display', 'none', 'important' );
+			ifrm3.style.setProperty( 'display', 'none', 'important' );
+			init=true;
+		}else if(init===true && fr_id!==0){ //show
+			ifrm.style.setProperty( 'display', 'flex', 'important' );
+			 ifrm2.style.setProperty( 'display', 'flex', 'important' );
+			 ifrm3.style.setProperty( 'display', 'flex', 'important' );
+			 init=false;
 		}
 	}
 
 	}else{
 	
 	if(window.location.href==request.message){
-	if(init){
+	if(init===null){
 	 handleBrowserActionClicked(request);
 		init=false;
-		}
+	}else if(init===false && fr_id!==0){ //hide
+		ifrm.style.setProperty( 'display', 'none', 'important' );
+		ifrm2.style.setProperty( 'display', 'none', 'important' );
+		ifrm3.style.setProperty( 'display', 'none', 'important' );
+		init=true;
+	}else if(init===true && fr_id!==0){ //show
+		ifrm.style.setProperty( 'display', 'flex', 'important' );
+		ifrm2.style.setProperty( 'display', 'flex', 'important' );
+		ifrm3.style.setProperty( 'display', 'flex', 'important' );
+		init=false;
+	}
 	}else{
 		//if(init){
 			 convertEmbeds();
@@ -618,7 +677,7 @@ emb_to_ifr(embeds);
 
 function handleBrowserActionClicked(bgMsg) {
 
-let ifrm=document.createElement('iframe');
+ifrm=document.createElement('iframe');
 ifrm.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
 ifrm.style.setProperty( 'width', '-webkit-fill-available', 'important' );
 ifrm.style.setProperty( 'margin', 0, 'important' );
@@ -633,7 +692,7 @@ ifrm.style.setProperty( 'transform', 'translateY(0px)', 'important' );
 ifrm.style.setProperty( 'top', '0.37ch', 'important' );
 ifrm.style.setProperty( 'left', '0.66ch', 'important' );
 
-let ifrm2=document.createElement('iframe');
+ifrm2=document.createElement('iframe');
 ifrm2.style.setProperty( 'position', 'absolute', 'important' );
 ifrm2.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
 ifrm2.style.setProperty( 'min-width', '-webkit-fill-available', 'important' );
@@ -648,7 +707,7 @@ ifrm2.style.setProperty( 'background', '#121212', 'important' );
 ifrm2.style.setProperty( 'transform', 'translateY(0px)', 'important' );
 ifrm2.style.setProperty( 'transform-origin', 'left top', 'important' );
 
-let ifrm3=document.createElement('iframe');
+ifrm3=document.createElement('iframe');
 ifrm3.style.setProperty( 'position', 'absolute', 'important' );
 ifrm3.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
 ifrm3.style.setProperty( 'min-height', '100vh', 'important' );
@@ -681,7 +740,7 @@ input::-webkit-textfield-decoration-container {
 `;
 
 if(typeof bgMsg.top !=='undefined'){
-	ht_a+= '<input lft="'+bgMsg.left+'" rgt="'+bgMsg.right+'" tp="'+bgMsg.top+'" btm="'+bgMsg.bottom+'" style="background-color: buttonface !important; visibility: initial !important;" id="rstD" type="button" Value="Toggle maximise">'
+	ht_a+= '<input lft="'+bgMsg.left+'" rgt="'+bgMsg.right+'" tp="'+bgMsg.top+'" btm="'+bgMsg.bottom+'" style="background-color: buttonface !important; visibility: initial !important;" id="rstD" type="button" Value="Toggle maximise">';
 }
 
 ht_a+=`
@@ -1094,9 +1153,19 @@ var clse;
 try{
 	clse=ifrm.contentWindow.document.querySelectorAll("input#rstD")[0];
 	clse.onclick=()=>{
+					let undAnc=(typeof(firstAncestor)==='undefined' || !firstAncestor)?true:false;
+					let faRect=(undAnc)?0:absBoundingClientRect(firstAncestor);
+					
 					exBool=(exBool)?false:true;
-					chrome.runtime.sendMessage({msg: clse.ownerDocument.URL, left: parseFloat(clse.attributes.lft.value), right: parseFloat(clse.attributes.rgt.value), top: parseFloat(clse.attributes.tp.value), bottom: parseFloat(clse.attributes.btm.value), type:'close', boolMrk:exBool}, function(response){
-					});
+					doc_minHeight=Math.max(
+						((doc_minHeight===null)?0:doc_minHeight),
+						parseFloat(window.getComputedStyle(document.documentElement)['min-height']),
+						absBoundingClientRect(ifrm2).bottom,
+						absBoundingClientRect(ifrm3).bottom,
+						(undAnc)?0:faRect.bottom/( faRect.height / firstAncestor.offsetHeight)
+					);
+					let tp=parseFloat(clse.attributes.tp.value)
+					chrome.runtime.sendMessage({msg: clse.ownerDocument.URL, left: parseFloat(clse.attributes.lft.value), right: parseFloat(clse.attributes.rgt.value), top: tp, bottom: (exBool===false)?tp+doc_minHeight:parseFloat(clse.attributes.btm.value), type:'close', boolMrk:exBool}, function(response){});
 	}
 }catch(e){;}
 
@@ -1106,14 +1175,13 @@ var txtBx = ifrm.contentWindow.document.querySelectorAll('select#txt_Bx')[0];
 //var pgrCSS = ifrm2.contentWindow.document.querySelectorAll('style#pgrB')[0];
 var vids=[];
 var vhw={w:0,h:0};
-var allFrames=[];
 
 var ancsRsz= ()=>{
 	firstAncestorIFR=null;
 	g_ancestors=getAncestors(myVdo,true,true,false,true);
 	let fa=g_ancestors.at(-1);
 	if(fa.ownerDocument!==document){
-		for(let i=0, len=allFrames.length; i<len; i++){
+		for(let i=allFrames.length-1; i>=0; i--){
 			let fri=allFrames[i][0]
 			if(myVdo_el[1].includes(allFrames[i][2]) && myVdo_el[1]!='' && document.documentElement.contains(fri)){
 				g_ancestors=getAncestors(fri,true,true,false,true);
@@ -1799,20 +1867,20 @@ gnrB.value='Select video';
 	
 		if(!!frms && frms.length>0){
 		for (let k=0; k<frms.length; k++){
-			allFrames.push([frms[k],1,',f'+gene+',']);
+			allFrames.push([frms[k],1,',f'+gene+',',[]]);
 			gene++;
 		}
 		}
 
 if(allFrames.length>0){
 	while(allFrames.map(function(v){return v[1]}).reduce(function(a,b) {return a + b})>0){
-		for (let j=0; j<allFrames.length; j++){
+		for(let j=allFrames.length-1; j>=0; j--){
 			if(allFrames[j][1]==1){
 		let frms1=getContainedFrames(allFrames[j]); 
 		allFrames[j][1]=0;
 		if(!!frms1 && frms1.length>0){
 		for (let k=0; k<frms1.length; k++){
-				allFrames.push([frms1[k],1,allFrames[j][2]+',f'+gene+',']);
+				allFrames.push([frms1[k],1,allFrames[j][2]+',f'+gene+',',	[frms1[k],...allFrames[j][3]]	]);
 				gene++;
 			}
 		}
@@ -1820,7 +1888,22 @@ if(allFrames.length>0){
 	}
 	}
 }
-	for (let j=0; j<allFrames.length; j++){
+
+	for(let j=allFrames.length-1; j>=0; j--){
+		let aj=allFrames[j];
+		let aj0=aj[0];
+		let aj3=aj[3];
+		let ifr=((	typeof(aj0.frameElement)!=='undefined'	&& !(typeof(aj0.nodeName)!=='undefined'	&& aj0.nodeName==="IFRAME" 	))?aj0.frameElement:aj0);
+		allFrames[j][0]=ifr
+		
+		for (let k=0; k<aj3.length; k++){
+			aj3k=aj3[k];
+			ifr=((	typeof(aj3k.frameElement)!=='undefined'	&& !(typeof(aj3k.nodeName)!=='undefined'	&& aj3k.nodeName==="IFRAME" 	))?aj3k.frameElement:aj3k);
+			allFrames[j][3][k]=ifr
+		}
+		
+	}
+	for(let j=allFrames.length-1; j>=0; j--){
 		let vids1=[];
 		
 		try{
@@ -1842,21 +1925,22 @@ if(allFrames.length>0){
 				filt_vid.push([vids[k][0],vids[k][1]]);
 				if(vids[k].length===3){
 					allFrames=removeEls(vids[k][2], allFrames);
-					allFrames.unshift(vids[k][2]);
+					allFrames.push(vids[k][2]);
 				}
 			}
 		}	
 		
 		vids=[...filt_vid];		
 				
-		 allFrames.forEach((frame,index) => {
+			 for(let j=allFrames.length-1; j>=0; j--){
+				 let frame=allFrames[j];
 			 try{
 				 
 				 if(!!frame[0].src && frame[0].src!='' && frame[0].src!='about:blank' && frame[0].src!='javascript:false'&& frame[0].src!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2 && frame[0]!=ifrm3){
 					 	frame[0].style.setProperty( 'visibility', 'visible', 'important' );
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].src;
-						opt.setAttribute("index", '-'+index);
+						opt.setAttribute("index", '-'+j);
 						opt.setAttribute("link", frame[0].src);
 						opt.style.cssText='color: black !important;';
 						txtBx.appendChild(opt);	
@@ -1870,7 +1954,7 @@ if(allFrames.length>0){
 					 	frame[0].style.setProperty( 'visibility', 'visible', 'important' );
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].getAttribute('data-src');
-						opt.setAttribute("index", '-'+index);
+						opt.setAttribute("index", '-'+j);
 						opt.setAttribute("link", frame[0].getAttribute('data-src'));
 						opt.style.cssText='color: black !important;';
 						txtBx.appendChild(opt);	
@@ -1879,7 +1963,8 @@ if(allFrames.length>0){
 				 }
 				}catch(e){;}
 
-			});
+			 }
+
 			
 
 	let pxs=0;
@@ -1924,6 +2009,7 @@ function LnkOp()
 }
 	function changeValue()
 {
+	let sndHide=true;
 	if(txtBx.children.length>0){
 		let selIx=txtBx[txtBx.selectedIndex].getAttribute('index');
 		let mnz=false;
@@ -1941,17 +2027,53 @@ function LnkOp()
 		if(tIx<0 || mnz){
 			if(!expnd.includes(frEl)){
 			let frct=absBoundingClientRect(frEl);
+			
+			myVdo_el=[];
+			myVdo=null;
+			firstAncestor=null;
+			firstAncestorIFR=null;
+			curr_thumb=0;
+			loadFlag=false;
+			ttmp=0;
+			ev_t=-1;
+			captions=[];
+			progresses=[];
+			curr_thumb=0;
+			thumbs.innerHTML = '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;align-items: flex-end !important;"></section>';
+			threeSct=thumbs.firstChild;
+			scrl.style.display='none';
+			shiftBtns(true);
+			rlcRsz.style.display='none';
+			mvdb.style.display='none';
+			oneCol.style.display='none';
+			if(pointerScrub_var!==0){
+				try{
+					elRemover(psDiv);
+				}catch(e){;}
+				psDiv=null;
+			}
+			last_psTime=[null,false];
+			isOneCol=false;
+			document.documentElement.style.setProperty('min-height',doc_minHeight+'px','important');
+			//checkDur();
+			tbG=false;
+			frame_btn.innerHTML=24;
+			evry.style.display='none';
+			gnrB.value='Generate thumbs';
+			sndHide=false;
 			chrome.runtime.sendMessage({msg: txtBx[txtBx.selectedIndex].attributes.link.value, left: frct.left, right: frct.right, top: frct.top, bottom: frct.bottom, type: 'expand'}, function(response){
 			 gnrB.value='iFrame expanded!';
-
-			 expandFrame(frEl);
+			let x=[frEl,...allFrames[tIx_el][3]].filter(xi=>{ return !expnd.includes(xi)});
+			 expandFrame(x);
 				
 			/*frEl.scrolling="yes";
 			frEl.allowfullscreen="true"; 
 			frEl.webkitallowfullscreen="true"; 
 			frEl.mozallowfullscreen="true";*/
 			
-			expnd.push(frEl);
+			expnd.push(...x);
+			let xc=x.map(f=>{return window.getComputedStyle(f)});
+			expndCSS.push(...xc);
 			});
 		}
 		}else if(!tbG){
@@ -2048,7 +2170,8 @@ myVdo.addEventListener("ratechange", (event) => {
 	}
 });		
 
-		 allFrames.forEach((frame,index) => {
+		 for(let j=allFrames.length-1; j>=0; j--){
+				 let frame=allFrames[j];
 			 try{
 					if(!myVdo_el[1].includes(frame[2]) && myVdo_el[1]!='' && frame[0]!==ifrm && frame[0]!==ifrm2 && frame[0]!==ifrm3 && typeof(frame[0].style)!=='undefined'){
 						if(typeof frame[0].style.setProperty!=='undefined'){
@@ -2060,7 +2183,7 @@ myVdo.addEventListener("ratechange", (event) => {
 						//node.style.setProperty( 'pointer-events', '', 'important' );
 					}*/
 			 }catch(e){;}
-		 });
+		 }
 
 		pip.onclick=function(){
 		if (myVdo.ownerDocument.pictureInPictureElement) {
@@ -2100,6 +2223,9 @@ myVdo.addEventListener("ratechange", (event) => {
 		doThumbs();
 		}
 	}
+		if(sndHide){
+			chrome.runtime.sendMessage({type: 'expand'}, function(response){});
+		}
 }
 
 
@@ -2517,6 +2643,7 @@ function thumbseek(bool){
 						faRect.bottom/( faRect.height / firstAncestor.offsetHeight)
 					);
 					document.documentElement.style.setProperty('min-height',doc_minHeight+'px','important');
+					chrome.runtime.sendMessage({doc_minHeight:doc_minHeight, url:window.location.href, type: 'size'}, function(response){;});
 					scrollElMidPage(captions[curr_thumb].parentElement.parentElement);
 					
 				}
@@ -2538,6 +2665,7 @@ function thumbseek(bool){
 						scrollElMidPage(captions[curr_thumb].parentElement.parentElement);
 					}else{
 						document.documentElement.style.setProperty('min-height',doc_minHeight+'px','important');
+						chrome.runtime.sendMessage({doc_minHeight:doc_minHeight, url:window.location.href, type: 'size'}, function(response){;});
 					}
 				};
 									

@@ -33,7 +33,11 @@ chrome.action.onClicked.addListener((tab) => {
 });
 
 function handleMessage(request, sender, sendResponse) {
-				if(lastMsg[0]!=JSON.stringify(request) || lastMsg[1]!= JSON.stringify(sender)){
+				if(request.message==='get_info'){
+					sendResponse({info: sender}); // send to querying frame (response)
+				}else if (request.type=='size'){
+					 chrome.tabs.sendMessage(sender.tab.id, request);
+				}else if(lastMsg[0]!=JSON.stringify(request) || lastMsg[1]!= JSON.stringify(sender)){
 					lastMsg[0]=JSON.stringify(request);
 					lastMsg[1]=JSON.stringify(sender);
   				if (request.type=='open'){
@@ -55,7 +59,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	handleMessage(request, sender, sendResponse);
 	return true;
 });
-
 
 } catch (e) {	
   console.error(e);
