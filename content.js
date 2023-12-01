@@ -1903,12 +1903,19 @@ if(allFrames.length>0){
 		let aj=allFrames[j];
 		let aj0=aj[0];
 		let aj3=aj[3];
-		let ifr=((	typeof(aj0.frameElement)!=='undefined'	&& !(typeof(aj0.nodeName)!=='undefined'	&& aj0.nodeName==="IFRAME" 	))?aj0.frameElement:aj0);
+		let ifr;
+		try{
+			ifr=((	typeof(aj0.frameElement)!=='undefined'	&& !(typeof(aj0.nodeName)!=='undefined'	&& aj0.nodeName==="IFRAME" 	))?aj0.frameElement:aj0);
+		}catch(e){ifr=aj0;}
+		
 		allFrames[j][0]=ifr
 		
 		for (let k=0; k<aj3.length; k++){
 			aj3k=aj3[k];
-			ifr=((	typeof(aj3k.frameElement)!=='undefined'	&& !(typeof(aj3k.nodeName)!=='undefined'	&& aj3k.nodeName==="IFRAME" 	))?aj3k.frameElement:aj3k);
+			let ifr;
+			try{
+				ifr=((	typeof(aj3k.frameElement)!=='undefined'	&& !(typeof(aj3k.nodeName)!=='undefined'	&& aj3k.nodeName==="IFRAME" 	))?aj3k.frameElement:aj3k);
+			}catch(e){ifr=aj3k;}
 			allFrames[j][3][k]=ifr
 		}
 		
