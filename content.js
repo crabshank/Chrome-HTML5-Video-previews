@@ -25,18 +25,24 @@ try {
 	var spdDef_var= false;
 	var currFigCaps=[];
 	var allFrames=[];
+	var scrubEnt=false;
 	var ifrm,ifrm2,ifrm3;
 	
 	function setStyle(el,prop,val,pat){
 		pat=(typeof(pat)==='undefined')?new RegExp(`(?<=(^\\s*|;\\s*))${prop}\\s*\:\\s*[^;]*;?`):new RegExp(pat);
 		let c=el.style.cssText;
+		let cs=[...c];
 		let p=c.match(pat);
 		let nv=`${prop}: ${val} !important;`;
 		if(p===null){
 			let sc=(c.trim().endsWith(';'))?'':';';
 			el.style.cssText+=sc+nv;
 		}else if(p[0]!==nv){
-			el.style.cssText=c.replace(p[0],nv);
+			for(let i=p.index; i<p.index+p[0].length-1; ++i){
+				cs[i]='';
+			}
+			cs[p.index]=nv;
+			el.style.cssText=cs.join('');
 		}
 	}
 	
@@ -1062,22 +1068,17 @@ function figSize(f,g,x){ //figure,
 				setStyle(fi,'height',"");
 			}
 		}
-		/*if(zeroRsz===true){
-			zeroRsz=false;
-			ifrmRsz();
-		}*/
 	}else{
 		currentFig=f;
 		if(justSeek===true){
 			justSeek=false;
 			scrollElMidPage(f);
 		}
-		/*if(x!==null){
-			if(x===(lastFigIx+1) && myVdo.paused!==true){
-				scrollElMidPage(f);
-			}
-			lastFigIx=x;
-		}*/
+		if(x!==null){
+			let figSt=(x/done_t)*100;
+			let figEnd=((x+1)/done_t)*100;
+			setStyle(psDiv,'background',`linear-gradient(to right, #00ffff99 0%,#00ffff99 ${figSt}%,#ff000099 ${figSt}%,#ff000099 ${figEnd}%,#00ffff99 ${figEnd}%)`);
+		}
 		if(!isOneCol){
 			let sct=f.parentElement;
 			let allFigs=thumbs.getElementsByTagName('FIGURE');
@@ -1103,10 +1104,6 @@ function figSize(f,g,x){ //figure,
 				scrollElMidPage(f);
 			}	
 		}
-		/*if(zeroRsz===true){
-			zeroRsz=false;
-			ifrmRsz();
-		}*/
 	}
 	ifrmRsz();
 	if(g===true){
@@ -1633,7 +1630,7 @@ window.addEventListener('pointerdown', function (event) {
 
 window.addEventListener('pointermove', function (event) {
 		let rst=false;
-		if(psDiv!==null && firstAncestor!==null && myVdo.paused && myVdo.readyState>0 && captions.length==done_t && aseek==0 && isOneCol && vfr){
+		if(psDiv!==null && firstAncestor!==null /*&& myVdo.paused*/ && myVdo.readyState>0 && captions.length==done_t && aseek==0 && isOneCol && vfr){
 			let res;
 			let ent=false;
 			let psRect=absBoundingClientRect(psDiv);
@@ -1650,7 +1647,12 @@ window.addEventListener('pointermove', function (event) {
 					ent=true;
 				}
 			}
-			if(ent){
+			if(scrubEnt===true && ent===false){
+				scrubEnt=ent;
+				scrl.click();
+				rst=true;
+			}else if(ent===true){
+				scrubEnt=ent;
 				let cap1=res*done_t;
 				let cap_el1=Math.floor(cap1);
 				
@@ -1700,9 +1702,11 @@ window.addEventListener('pointermove', function (event) {
 					last_psTime[1]=true;
 					//myVdo.currentTime=last_psTime[0];
 			}else{
+				scrubEnt=ent;
 				rst=true;
 			}
 		}else{
+			scrubEnt=false;
 			rst=true;
 		}
 		
@@ -2077,6 +2081,7 @@ function LnkOp()
 				}catch(e){;}
 				psDiv=null;
 			}
+			scrubEnt=false;
 			last_psTime=[null,false];
 			isOneCol=false;
 			setStyle(document.documentElement,'min-height',doc_minHeight+'px');
@@ -2234,6 +2239,7 @@ myVdo.addEventListener("ratechange", (event) => {
 			}catch(e){;}
 			psDiv=null;
 		}
+		scrubEnt=false;
 		last_psTime=[null,false];
 		isOneCol=false;
 		setStyle(document.documentElement,'min-height',doc_minHeight+'px');
@@ -2459,26 +2465,6 @@ myVdo.addEventListener("timeupdate", (event)=>{
 		tu2(event);
 		suppressTU=(suppressTU===true)?false:suppressTU;
 });	
-
-myVdo.addEventListener("play", (event)=>{
-	if(psDiv!==null){
-		setStyle(psDiv,'display','none');
-		if(isOneCol && vfr){
-			shiftVid(false);
-		}
-	}
-});
-
-myVdo.addEventListener("pause", (event)=>{
-	if(psDiv!==null && isOneCol && vfr){
-		setStyle(psDiv,'display','block');
-		let currThumb=Math.floor((myVdo.currentTime/myVdo.duration)*done_t);
-		let figSt=(currThumb/done_t)*100;
-		let figEnd=((currThumb+1)/done_t)*100;
-		setStyle(psDiv,'background',`linear-gradient(to right, #00ffff99 0%,#00ffff99 ${figSt}%,#ff000099 ${figSt}%,#ff000099 ${figEnd}%,#00ffff99 ${figEnd}%)`);
-		shiftVid(false);
-	}
-});
 
 myVdo.addEventListener("playing", (event)=>{
 	tu2(event);
