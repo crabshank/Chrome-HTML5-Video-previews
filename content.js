@@ -19,7 +19,7 @@ try {
 	var pointerScrub_var=0.023;
 	var isEnterScrub=0;
 	var oneCol_var=false;
-	var last_psTime=[null,false];
+	var last_psTime=[null,false,null];
 	var psDiv=null;
 	var relocVid_var= false;
 	var spdDef_var= false;
@@ -1630,7 +1630,7 @@ window.addEventListener('pointerdown', function (event) {
 			}catch(e){;}
 		}
 		currFigCaps=[];
-		last_psTime=[null,false];
+		last_psTime=[null,false,null];
 	}
 });
 
@@ -1671,6 +1671,7 @@ window.addEventListener('pointermove', function (event) {
 				let cvsEl=prg.parentElement.previousElementSibling;
 				figEl=cvsEl.parentElement;
 				last_psTime[0]=figEl;
+				last_psTime[2]=figEl.lastElementChild.lastElementChild;
 				let currFigCap=prg.nextElementSibling;
 				psDiv.title=currFigCap.innerText;
 				for(let i=0, len=currFigCaps.length; i<len; i++ ){
@@ -1714,7 +1715,7 @@ window.addEventListener('pointermove', function (event) {
 					}catch(e){;}
 			}
 			currFigCaps=[];
-			last_psTime=[null,false];
+			last_psTime=[null,false,null];
 		}
 });
 
@@ -2074,7 +2075,7 @@ function LnkOp()
 				psDiv=null;
 			}
 			scrubEnt=false;
-			last_psTime=[null,false];
+			last_psTime=[null,false,null];
 			isOneCol=false;
 			setStyle(document.documentElement,'min-height',doc_minHeight+'px');
 			//checkDur();
@@ -2232,7 +2233,7 @@ myVdo.addEventListener("ratechange", (event) => {
 			psDiv=null;
 		}
 		scrubEnt=false;
-		last_psTime=[null,false];
+		last_psTime=[null,false,null];
 		isOneCol=false;
 		setStyle(document.documentElement,'min-height',doc_minHeight+'px');
 		checkDur();
@@ -2305,13 +2306,16 @@ var tu2=(event) => {
 	}
  if(aseek==0){
 	for(let i=0;i<captions.length;i++){
-	setStyle(captions[i],'display','inline-table');
-	captions[i].innerText=captions[i].parentElement.parentElement.firstChild.attributes.timestamp_fmt.nodeValue;
-	setStyle(captions[i],'background-color',"#00000099");
+		let ci=captions[i];
+		setStyle(ci,'display','inline-table');
+		ci.innerText=ci.parentElement.parentElement.firstChild.attributes.timestamp_fmt.nodeValue;
+		if(ci!==last_psTime[2]){
+			setStyle(ci,'background-color',"#00000099");
+		}
 	}
 	
 		for(let i=0;i<progresses.length;i++){
-		setStyle(progresses[i],'display','none');
+			setStyle(progresses[i],'display','none');
 		}
 		figSize(null);
 		
