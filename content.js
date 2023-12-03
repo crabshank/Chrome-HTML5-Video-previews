@@ -757,6 +757,7 @@ input::-webkit-textfield-decoration-container {
 <input style="background-color: buttonface !important; visibility: initial !important;" id="genB" type="button" Value="Select video">
 <input style="background-color: buttonface !important; visibility: initial !important;" id="opnVd" type="button" Value="Open link">
 <input style="background-color: buttonface !important; visibility: initial !important;" id="hideThumbs" type="button" Value="Hide thumbs">
+<input style="background-color: buttonface !important; visibility: initial !important; display: none !important;" id="scroll_curr1" type="button" Value="Scroll to current thumb">
 `;
 
 if(typeof bgMsg.top !=='undefined'){
@@ -1127,8 +1128,9 @@ var scrl=ifrm3.contentWindow.document.querySelectorAll("button#scroll_curr")[0];
 var scrv= ifrm3.contentWindow.document.querySelectorAll("button#scroll_vid")[0];
 var spb= ifrm3.contentWindow.document.querySelectorAll("button#spdt")[0];
 var pip= ifrm3.contentWindow.document.querySelectorAll("button#pnp")[0];
-var curr  =ifrm3.contentWindow.document.querySelectorAll("div#currTime")[0];
+var curr=ifrm3.contentWindow.document.querySelectorAll("div#currTime")[0];
 
+var scrl1=ifrm.contentWindow.document.querySelectorAll("input#scroll_curr1")[0];
 var evry= ifrm.contentWindow.document.querySelectorAll("button#every")[0];
 var scanB= ifrm.contentWindow.document.querySelectorAll("input#scnB")[0];
 var gnrB= ifrm.contentWindow.document.querySelectorAll("input#genB")[0];
@@ -1751,6 +1753,9 @@ scrl.onclick=function(){
 	scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
 };
 
+scrl1.onclick=function(){
+	scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
+};
 
 scrv.onclick=function(){
 	scrollElMidPage(myVdo);
@@ -2064,6 +2069,7 @@ function LnkOp()
 			thumbs.innerHTML = '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;align-items: flex-end !important;"></section>';
 			threeSct=thumbs.firstChild;
 			setStyle(scrl,'display','none');
+			setStyle(scrl1,'display','none');
 			shiftBtns(true);
 			setStyle(rlcRsz,'display','none');
 			setStyle(mvdb,'display','none');
@@ -2222,6 +2228,7 @@ myVdo.addEventListener("ratechange", (event) => {
 		thumbs.innerHTML = '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;align-items: flex-end !important;"></section>';
 		threeSct=thumbs.firstChild;
 		setStyle(scrl,'display','none');
+		setStyle(scrl1,'display','none');
 		shiftBtns(true);
 		setStyle(rlcRsz,'display','none');
 		setStyle(mvdb,'display','none');
@@ -2551,6 +2558,7 @@ function thumbseek(bool){
 				}
 				shiftBtns(false);
 				setStyle(scrl,'display','');
+				setStyle(scrl1,'display','');
 				rsz_ifrm();
 				rsz();
 				ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
