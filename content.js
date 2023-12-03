@@ -1080,7 +1080,7 @@ function figSize(f,g,x){ //figure,
 			justSeek=false;
 			scrollElMidPage(f,ifrm2);
 		}
-		if(x!==null){
+		if(psDiv!==null && x!==null){
 			let figSt=(x/done_t)*100;
 			let figEnd=((x+1)/done_t)*100;
 			setStyle(psDiv,'background',`linear-gradient(to right, #00ffff99 0%,#00ffff99 ${figSt}%,#ff000099 ${figSt}%,#ff000099 ${figEnd}%,#00ffff99 ${figEnd}%)`);
