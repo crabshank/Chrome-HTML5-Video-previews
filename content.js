@@ -2256,7 +2256,7 @@ myVdo.addEventListener("ratechange", (event) => {
 		}
 	}
 		if(sndHide){
-			chrome.runtime.sendMessage({type: 'expand'}, function(response){});
+			chrome.runtime.sendMessage({type: 'expand',isVid:'true'}, function(response){});
 		}
 }
 
