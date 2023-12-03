@@ -625,7 +625,7 @@ function messageHdl(request, sender, sendResponse) {
 		if(document.URL==request.message && init===null){
 			handleBrowserActionClicked(request);
 			init=false;
-		}else if(init===false && fr_id!==null && fr_id!==0){ //hide
+		}else if(init===false && request.isVid!='true' && fr_id!==null && fr_id!==0){ //hide
 			setStyle(ifrm,'display','none');
 			setStyle(ifrm2,'display','none');
 			setStyle(ifrm3,'display','none');
@@ -644,7 +644,7 @@ function messageHdl(request, sender, sendResponse) {
 	if(init===null){
 	 handleBrowserActionClicked(request);
 		init=false;
-	}else if(init===false && fr_id!==null && fr_id!==0){ //hide
+	}else if(init===false && request.isVid!='true' && fr_id!==null && fr_id!==0){ //hide
 		setStyle(ifrm,'display','none');
 		setStyle(ifrm2,'display','none');
 		setStyle(ifrm3,'display','none');
@@ -1968,6 +1968,7 @@ if(allFrames.length>0){
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].src;
 						opt.setAttribute("index", '-'+j);
+						opt.setAttribute("isVid", false);
 						opt.setAttribute("link", frame[0].src);
 						opt.style.cssText='color: black !important;';
 						txtBx.appendChild(opt);	
@@ -1982,6 +1983,7 @@ if(allFrames.length>0){
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].getAttribute('data-src');
 						opt.setAttribute("index", '-'+j);
+						opt.setAttribute("isVid", false);
 						opt.setAttribute("link", frame[0].getAttribute('data-src'));
 						opt.style.cssText='color: black !important;';
 						txtBx.appendChild(opt);	
@@ -2001,6 +2003,7 @@ if(allFrames.length>0){
 	opt.setAttribute("index", index);
 	let lk=vidSrc(vid[0]);
 	opt.setAttribute("link", lk);
+	opt.setAttribute("isVid", true);
 	opt.style.cssText='color: black !important;';
     opt.textContent = '('+formatTime(vid[0].duration)+') - '+lk;
 	    txtBx.appendChild(opt);	
@@ -2088,9 +2091,9 @@ function LnkOp()
 			tbG=false;
 			frame_btn.innerHTML=24;
 			setStyle(evry,'display','none');
-			gnrB.value='Generate thumbs';
+			gnrB.value='Select video';
 			sndHide=false;
-			chrome.runtime.sendMessage({msg: txtBx[txtBx.selectedIndex].attributes.link.value, left: frct.left, right: frct.right, top: frct.top, bottom: frct.bottom, type: 'expand'}, function(response){
+			chrome.runtime.sendMessage({msg: txtBx[txtBx.selectedIndex].attributes.link.value,isVid: txtBx[txtBx.selectedIndex].getAttribute('isVid'), left: frct.left, right: frct.right, top: frct.top, bottom: frct.bottom, type: 'expand'}, function(response){
 			 gnrB.value='iFrame expanded!';
 			let x=[frEl,...allFrames[tIx_el][3]].filter(xi=>{ return !expnd.includes(xi)});
 			 expandFrame(x);
