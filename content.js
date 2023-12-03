@@ -27,6 +27,19 @@ try {
 	var allFrames=[];
 	var ifrm,ifrm2,ifrm3;
 	
+	function setStyle(el,prop,val,pat){
+		pat=(typeof(pat)==='undefined')?new RegExp(`(?<=(^\\s*|;\\s*))${prop}\\s*\:\\s*[^;]*;?`):new RegExp(pat);
+		let c=el.style.cssText;
+		let p=c.match(pat);
+		let nv=`${prop}: ${val} !important;`;
+		if(p===null){
+			let sc=(c.trim().endsWith(';'))?'':';';
+			el.style.cssText+=sc+nv;
+		}else if(p[0]!==nv){
+			el.style.cssText=c.replace(p[0],nv);
+		}
+	}
+	
 	function restore_options(){
 	if(typeof chrome.storage==='undefined'){
 		restore_options();
@@ -129,12 +142,12 @@ function getFloat(z){
 }
 
 function setFA_wh(wcs,setWH){
-	firstAncestor.style.setProperty('width',wcs['width'], 'important' );
-	firstAncestor.style.setProperty('min-width',wcs['min-width'], 'important' );
-	firstAncestor.style.setProperty('max-width',wcs['max-width'], 'important' );
-	firstAncestor.style.setProperty('height',wcs['height'], 'important' );
-	firstAncestor.style.setProperty('min-height',wcs['min-height'], 'important' );
-	firstAncestor.style.setProperty('max-height',wcs['max-height'], 'important' );
+	setStyle(firstAncestor,'width',wcs['width']);
+	setStyle(firstAncestor,'min-width',wcs['min-width']);
+	setStyle(firstAncestor,'max-width',wcs['max-width']);
+	setStyle(firstAncestor,'height',wcs['height']);
+	setStyle(firstAncestor,'min-height',wcs['min-height']);
+	setStyle(firstAncestor,'max-height',wcs['max-height']);
 	if(setWH===true){
 		firstAncestor_wh['width']=wcs['width'];
 		firstAncestor_wh['min-width']=wcs['min-width'];
@@ -502,23 +515,21 @@ function hasAncestor(el,p){
 function expandFrame(frs){
 			for(let i=0; i<frs.length; i++){
 				let fr=frs[i];
-				fr.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
+				setStyle(fr,'z-index',Number.MAX_SAFE_INTEGER);
 				 
 				 
-				fr.style.setProperty( 'margin', 0, 'important' );
-				fr.style.setProperty( 'border', 0, 'important' );
-				fr.style.setProperty( 'padding', 0, 'important' );
+				setStyle(fr,'margin',0);
+				setStyle(fr,'border',0);
+				setStyle(fr,'padding',0);
 		
-				fr.style.setProperty( 'max-height','-webkit-fill-available', 'important' );
-				fr.style.setProperty( 'max-width','-webkit-fill-available', 'important' );
-				fr.style.setProperty( 'min-height','100vh', 'important' );
-				//fr.style.setProperty( 'min-width','100vw', 'important' );
-				fr.style.setProperty( 'height','-webkit-fill-available', 'important' );
-				fr.style.setProperty( 'position','fixed', 'important' );
-				fr.style.setProperty( 'width','-webkit-fill-available', 'important' );
+				setStyle(fr,'max-height','-webkit-fill-available');
+				setStyle(fr,'max-width','-webkit-fill-available');
+				setStyle(fr,'min-height','100vh');
+				setStyle(fr,'height','-webkit-fill-available');
+				setStyle(fr,'position','fixed');
+				setStyle(fr,'width','-webkit-fill-available');
 
-				//fr.style.setProperty( 'top',  window.screen.availTop+'px', 'important' );
-				fr.style.setProperty( 'left',  '0px', 'important' );
+				setStyle(fr,'left','0px');
 			}
 }
 
@@ -535,9 +546,9 @@ function messageHdl(request, sender, sendResponse) {
 					x=[ifr0,...ifr[3]];
 					let hg=request.doc_minHeight+'px';
 					x.forEach(f=>{
-						f.style.setProperty( 'max-height',hg, 'important' );
-						f.style.setProperty( 'min-height',hg, 'important' );
-						f.style.setProperty( 'height',hg, 'important' );
+						setStyle(f,'max-height',hg);
+						setStyle(f,'min-height',hg);
+						setStyle(f,'height',hg);
 					});
 					break;
 				}
@@ -588,15 +599,13 @@ function messageHdl(request, sender, sendResponse) {
 			let fc=expndCSS[ix];
 			let hg=Math.abs(request.bottom-request.top);
 			let wd=Math.abs(request.right-request.left);
-			fr.style.setProperty( 'max-height', fc['max-height'], 'important' );
-			fr.style.setProperty( 'max-width', fc['max-width'], 'important' );
-			fr.style.setProperty(  'min-height', fc[' min-height'], 'important' );
-			//fr.style.setProperty(  'min-width', fc[ 'min-width'], 'important' );
-			fr.style.setProperty( 'height', fc['height'], 'important' );
-			fr.style.setProperty('width', fc['width'], 'important' );
-			//fr.style.setProperty( 'top', fc['top'], 'important' );
-			fr.style.setProperty(  'left', fc[ 'left'], 'important' );
-			fr.style.setProperty(  'z-index', fc[ 'z-index'], 'important' );
+			setStyle(fr,'max-height',fc['max-height']);
+			setStyle(fr,'max-width',fc['max-width']);
+			setStyle(fr,'min-height',fc[' min-height']);
+			setStyle(fr,'height',fc['height']);
+			setStyle(fr,'width',fc['width']);
+			setStyle(fr,'left',fc[ 'left']);
+			setStyle(fr,'z-index',fc[ 'z-index']);
 			expnd=removeEls(fr, expnd);
 			expndCSS=expndCSS.filter((c,idx)=>{return idx!==ix;})
 		}
@@ -611,14 +620,14 @@ function messageHdl(request, sender, sendResponse) {
 			handleBrowserActionClicked(request);
 			init=false;
 		}else if(init===false && fr_id!==0){ //hide
-			ifrm.style.setProperty( 'display', 'none', 'important' );
-			ifrm2.style.setProperty( 'display', 'none', 'important' );
-			ifrm3.style.setProperty( 'display', 'none', 'important' );
+			setStyle(ifrm,'display','none');
+			setStyle(ifrm2,'display','none');
+			setStyle(ifrm3,'display','none');
 			init=true;
 		}else if(init===true && fr_id!==0){ //show
-			ifrm.style.setProperty( 'display', 'flex', 'important' );
-			 ifrm2.style.setProperty( 'display', 'flex', 'important' );
-			 ifrm3.style.setProperty( 'display', 'flex', 'important' );
+			setStyle(ifrm,'display','flex');
+			 setStyle(ifrm2,'display','flex');
+			 setStyle(ifrm3,'display','flex');
 			 init=false;
 		}
 	}
@@ -630,14 +639,14 @@ function messageHdl(request, sender, sendResponse) {
 	 handleBrowserActionClicked(request);
 		init=false;
 	}else if(init===false && fr_id!==0){ //hide
-		ifrm.style.setProperty( 'display', 'none', 'important' );
-		ifrm2.style.setProperty( 'display', 'none', 'important' );
-		ifrm3.style.setProperty( 'display', 'none', 'important' );
+		setStyle(ifrm,'display','none');
+		setStyle(ifrm2,'display','none');
+		setStyle(ifrm3,'display','none');
 		init=true;
 	}else if(init===true && fr_id!==0){ //show
-		ifrm.style.setProperty( 'display', 'flex', 'important' );
-		ifrm2.style.setProperty( 'display', 'flex', 'important' );
-		ifrm3.style.setProperty( 'display', 'flex', 'important' );
+		setStyle(ifrm,'display','flex');
+		setStyle(ifrm2,'display','flex');
+		setStyle(ifrm3,'display','flex');
 		init=false;
 	}
 	}else{
@@ -683,48 +692,48 @@ var controls_tag=document.createElement('style');
 hed.insertAdjacentElement('afterbegin',controls_tag);
 
 ifrm=document.createElement('iframe');
-ifrm.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
-ifrm.style.setProperty( 'width', '-webkit-fill-available', 'important' );
-ifrm.style.setProperty( 'margin', 0, 'important' );
-ifrm.style.setProperty( 'border', 0, 'important' );
-ifrm.style.setProperty( 'padding', 0, 'important' );
-ifrm.style.setProperty( 'display', 'flex', 'important' );
-ifrm.style.setProperty( 'visibility', 'visible', 'important' );
-ifrm.style.setProperty( 'position', 'absolute', 'important' );
-ifrm.style.setProperty( 'transform', 'translateY(0px)', 'important' );
+setStyle(ifrm,'z-index',Number.MAX_SAFE_INTEGER);
+setStyle(ifrm,'width','-webkit-fill-available');
+setStyle(ifrm,'margin',0);
+setStyle(ifrm,'border',0);
+setStyle(ifrm,'padding',0);
+setStyle(ifrm,'display','flex');
+setStyle(ifrm,'visibility','visible');
+setStyle(ifrm,'position','absolute');
+setStyle(ifrm,'transform','translateY(0px)');
 
 
-ifrm.style.setProperty( 'top', '0.37ch', 'important' );
-ifrm.style.setProperty( 'left', '0.66ch', 'important' );
+setStyle(ifrm,'top','0.37ch');
+setStyle(ifrm,'left','0.66ch');
 
 ifrm2=document.createElement('iframe');
-ifrm2.style.setProperty( 'position', 'absolute', 'important' );
-ifrm2.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
-ifrm2.style.setProperty( 'min-width', '-webkit-fill-available', 'important' );
-ifrm2.style.setProperty( 'width', '-webkit-fill-available', 'important' );
-ifrm2.style.setProperty( 'margin', 0, 'important' );
-ifrm2.style.setProperty( 'border', 0, 'important' );
-ifrm2.style.setProperty( 'padding', 0, 'important' );
-ifrm2.style.setProperty( 'min-height', '100vh', 'important' );
-ifrm2.style.setProperty( 'display', 'flex', 'important' );
-ifrm2.style.setProperty( 'visibility', 'visible', 'important' );
-ifrm2.style.setProperty( 'background', '#121212', 'important' );
-ifrm2.style.setProperty( 'transform', 'translateY(0px)', 'important' );
-ifrm2.style.setProperty( 'transform-origin', 'left top', 'important' );
+setStyle(ifrm2,'position','absolute');
+setStyle(ifrm2,'z-index',Number.MAX_SAFE_INTEGER);
+setStyle(ifrm2,'min-width','-webkit-fill-available');
+setStyle(ifrm2,'width','-webkit-fill-available');
+setStyle(ifrm2,'margin',0);
+setStyle(ifrm2,'border',0);
+setStyle(ifrm2,'padding',0);
+setStyle(ifrm2,'min-height','100vh');
+setStyle(ifrm2,'display','flex');
+setStyle(ifrm2,'visibility','visible');
+setStyle(ifrm2,'background','#121212');
+setStyle(ifrm2,'transform','translateY(0px)');
+setStyle(ifrm2,'transform-origin','left top');
 
 ifrm3=document.createElement('iframe');
-ifrm3.style.setProperty( 'position', 'absolute', 'important' );
-ifrm3.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
-ifrm3.style.setProperty( 'min-height', '100vh', 'important' );
-ifrm3.style.setProperty( 'min-width', '-webkit-fill-available', 'important' );
-ifrm3.style.setProperty( 'width', '-webkit-fill-available', 'important' );
-ifrm3.style.setProperty( 'margin', 0, 'important' );
-ifrm3.style.setProperty( 'border', 0, 'important' );
-ifrm3.style.setProperty( 'padding', 0, 'important' );
-ifrm3.style.setProperty( 'display', 'flex', 'important' );
-ifrm3.style.setProperty( 'visibility', 'visible', 'important' );
-ifrm3.style.setProperty( 'transform', 'translateY(0px)', 'important' );
-ifrm3.style.setProperty( 'transform-origin', 'left top', 'important' );
+setStyle(ifrm3,'position','absolute');
+setStyle(ifrm3,'z-index',Number.MAX_SAFE_INTEGER);
+setStyle(ifrm3,'min-height','100vh');
+setStyle(ifrm3,'min-width','-webkit-fill-available');
+setStyle(ifrm3,'width','-webkit-fill-available');
+setStyle(ifrm3,'margin',0);
+setStyle(ifrm3,'border',0);
+setStyle(ifrm3,'padding',0);
+setStyle(ifrm3,'display','flex');
+setStyle(ifrm3,'visibility','visible');
+setStyle(ifrm3,'transform','translateY(0px)');
+setStyle(ifrm3,'transform-origin','left top');
 
 let ht_a=`
 <style>
@@ -833,36 +842,36 @@ var ifrmRsz=()=>{
 	//let mxwb=bSectR.width;
 	let mxhb=bSectR.height;
 	
-	ifrm3.style.minWidth=bsw+'px';
-	ifrm3.style.width=bsw+'px';
-	ifrm3.style.maxWidth=bsw+'px';
+	setStyle(ifrm3,'min-width',bsw+'px');
+	setStyle(ifrm3,'width',bsw+'px');
+	setStyle(ifrm3,'max-width',bsw+'px');
 
-	ifrm3.style.minHeight=mxhb+'px';
-	ifrm3.style.height=mxhb+'px';
-	ifrm3.style.maxHeight=mxhb+'px';
+	setStyle(ifrm3,'min-height',mxhb+'px');
+	setStyle(ifrm3,'height',mxhb+'px');
+	setStyle(ifrm3,'max-height',mxhb+'px');
 
 	let ifrm3R=absBoundingClientRect(ifrm3);
 	let wd=getScreenWidth(false);
 	
 	let i2w=wd-ifrm3R.width;
-	ifrm3.style.left=i2w+'px';
+	setStyle(ifrm3,'left',i2w+'px');
 	let ifrm2R=absBoundingClientRect(ifrm2);
 	let lbd=(typeof(scrv)!=='undefined')?parseFloat(window.getComputedStyle(scrv)['border-left-width'])-1:0;
 	i2w=i2w-ifrm2R.left-lbd;
-	sc1.style.minWidth=i2w+'px';
-	sc1.style.width=i2w+'px';
-	sc1.style.maxWidth=i2w+'px';
+	setStyle(sc1,'min-width',i2w+'px');
+	setStyle(sc1,'width',i2w+'px');
+	setStyle(sc1,'max-width',i2w+'px');
 	
-	ifrm2.style.minWidth=i2w+'px';
-	ifrm2.style.width=i2w+'px';
-	ifrm2.style.maxWidth=i2w+'px';
+	setStyle(ifrm2,'min-width',i2w+'px');
+	setStyle(ifrm2,'width',i2w+'px');
+	setStyle(ifrm2,'max-width',i2w+'px');
 	
 	let td=(typeof thumbs!=='undefined')?true:false;
 	
 	if(td){
-				thumbs.style.minWidth=i2w+'px';
-				thumbs.style.width=i2w+'px';
-				thumbs.style.maxWidth=i2w+'px';
+				setStyle(thumbs,'min-width',i2w+'px');
+				setStyle(thumbs,'width',i2w+'px');
+				setStyle(thumbs,'max-width',i2w+'px');
 				let scts=[...thumbs.children];
 
 			for(let j = 0; j < scts.length; j++){
@@ -875,9 +884,9 @@ var ifrmRsz=()=>{
 						sctW+=figs[i].scrollWidth*parseFloat(figs[i].getAttribute('three_sect_zoom'));
 					}
 					fPrp=(sctW==0)?1:(i2w/(sctW/figs.length))* (1/3);
-					scts[j].style.zoom=fPrp;
+					setStyle(scts[j],'zoom',fPrp);
 				}else{
-					scts[j].style.zoom=i2w/(scts[j].getBoundingClientRect().width);
+					setStyle(scts[j],'zoom',i2w/(scts[j].getBoundingClientRect().width));
 				}
 			}
 	}
@@ -892,51 +901,51 @@ var ifrmRsz=()=>{
 	h=h-sc1R.top;
 	h=(h<0 ||  h<sc1R.height)?sc1R.height:h;
 	
-	ifrm2.style.minHeight=h+'px';
-	ifrm2.style.height=h+'px';
-	ifrm2.style.maxHeight=h+'px';
+	setStyle(ifrm2,'min-height',h+'px');
+	setStyle(ifrm2,'height',h+'px');
+	setStyle(ifrm2,'max-height',h+'px');
 
 }
 
 var rsz_ifrm=()=>{
 	let mainRct=absBoundingClientRect(main); 
 	if(!!firstAncestor){
-		firstAncestor.style.setProperty( 'transform-origin','left bottom','important' );
-		firstAncestor.style.setProperty( 'transform', 'scale(0.97) translateY('+mainRct.height+'px)','important' );
+		setStyle(firstAncestor,'transform-origin','left bottom');
+		setStyle(firstAncestor,'transform','scale(0.97) translateY('+mainRct.height+'px)');
 		let ifR=absBoundingClientRect(ifrm);
 		
 		let fprc=absBoundingClientRect(firstParent);
 		let vrc=absBoundingClientRect(myVdo);
 		
 		let tp=Math.max(fprc.bottom,vrc.bottom,ifR.bottom)+gapVid;
-		ifrm2.style.top=tp+'px';
-		ifrm3.style.top=tp+'px';
-		ifrm2.style.left='0.22%';
+		setStyle(ifrm2,'top',tp+'px');
+		setStyle(ifrm3,'top',tp+'px');
+		setStyle(ifrm2,'left','0.22%');
 	}
 	
-	ifrm.style.setProperty( 'height', (mainRct.height)+'px', 'important' );
+	setStyle(ifrm,'height',(mainRct.height)+'px');
 }
 
-ifrm.contentWindow.document.body.style.setProperty( 'margin', 0, 'important' );
-ifrm.contentWindow.document.body.style.setProperty( 'border', 0, 'important' );
-ifrm.contentWindow.document.body.style.setProperty( 'padding', 0, 'important' );
-ifrm.contentWindow.document.body.style.setProperty( 'display', 'inline-flex', 'important' );
-ifrm.contentWindow.document.documentElement.style.setProperty( 'display', 'inline-table', 'important' );
+setStyle(ifrm.contentWindow.document.body,'margin',0);
+setStyle(ifrm.contentWindow.document.body,'border',0);
+setStyle(ifrm.contentWindow.document.body,'padding',0);
+setStyle(ifrm.contentWindow.document.body,'display','inline-flex');
+setStyle(ifrm.contentWindow.document.documentElement,'display','inline-table');
 
-ifrm2.contentWindow.document.body.style.setProperty( 'margin', 0, 'important' );
-ifrm2.contentWindow.document.body.style.setProperty( 'border', 0, 'important' );
-ifrm2.contentWindow.document.body.style.setProperty( 'padding', 0, 'important' );
-ifrm2.contentWindow.document.body.style.setProperty( 'overflow', 'hidden', 'important' );
+setStyle(ifrm2.contentWindow.document.body,'margin',0);
+setStyle(ifrm2.contentWindow.document.body,'border',0);
+setStyle(ifrm2.contentWindow.document.body,'padding',0);
+setStyle(ifrm2.contentWindow.document.body,'overflow','hidden');
 
-ifrm3.contentWindow.document.body.style.setProperty( 'margin', 0, 'important' );
-ifrm3.contentWindow.document.body.style.setProperty( 'border', 0, 'important' );
-ifrm3.contentWindow.document.body.style.setProperty( 'padding', 0, 'important' );
+setStyle(ifrm3.contentWindow.document.body,'margin',0);
+setStyle(ifrm3.contentWindow.document.body,'border',0);
+setStyle(ifrm3.contentWindow.document.body,'padding',0);
 
 var main=ifrm.contentWindow.document.getElementsByTagName("main")[0];
 let mainRct=absBoundingClientRect(main);
 
-ifrm.style.setProperty( 'min-height', (mainRct.height)+'px', 'important' );
-ifrm.style.setProperty( 'height', (mainRct.height)+'px', 'important' );
+setStyle(ifrm,'min-height',(mainRct.height)+'px');
+setStyle(ifrm,'height',(mainRct.height)+'px');
 
 let scrBr=`
 <style>
@@ -962,13 +971,13 @@ let allNodes=[...document.querySelectorAll('*')];
 	});
 
 
-ifrm2.style.setProperty( 'top', maxBtm+'px', 'important' );
-ifrm3.style.setProperty( 'top', maxBtm+'px', 'important' );
+setStyle(ifrm2,'top',maxBtm+'px');
+setStyle(ifrm3,'top',maxBtm+'px');
 ifrm.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
 
 var sc1=ifrm2.contentWindow.document.getElementsByTagName("section")[0];
-sc1.style.setProperty( 'min-width', '100%', 'important' );
-sc1.style.setProperty( 'width', '100%', 'important' );
+setStyle(sc1,'min-width','100%');
+setStyle(sc1,'width','100%');
 var frame_btn=ifrm.contentWindow.document.querySelectorAll("span#frames")[0];
 var three_Plus=ifrm.contentWindow.document.querySelectorAll("button#three_plus")[0];
 var three_Neg=ifrm.contentWindow.document.querySelectorAll("button#three_neg")[0];
@@ -1019,9 +1028,9 @@ ifrmRsz();
 
 /*let sc1w=(absBoundingClientRect(bSect).left-mgLft).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 
- sc1.style.minWidth=sc1w+'px';
- sc1.style.width=sc1w+'px';
- sc1.style.maxWidth=sc1w+'px';*/
+ setStyle(sc1,'min-width',sc1w+'px');
+ setStyle(sc1,'width',sc1w+'px');
+ setStyle(sc1,'max-width',sc1w+'px');*/
 let suppressScr=false;
 //let zeroRsz=false;
 function scrollElMidPage(el){
@@ -1049,8 +1058,8 @@ function figSize(f,g,x){ //figure,
 			let allFigs=thumbs.getElementsByTagName('FIGURE');
 			for(let i=0, len=allFigs.length; i<len; i++){
 				let fi=allFigs[i];
-				fi.style.zoom=fi.getAttribute('three_sect_zoom');
-				fi.style.height="";
+				setStyle(fi,'zoom',fi.getAttribute('three_sect_zoom'));
+				setStyle(fi,'height',"");
 			}
 		}
 		/*if(zeroRsz===true){
@@ -1075,13 +1084,13 @@ function figSize(f,g,x){ //figure,
 			for(let i=0, len=allFigs.length; i<len; i++){
 				let fi=allFigs[i];
 				if(fi.parentElement!==sct){
-						fi.style.zoom=fi.getAttribute('three_sect_zoom');
+						setStyle(fi,'zoom',fi.getAttribute('three_sect_zoom'));
 				}else{
 					if(f!==fi){
-						fi.style.zoom=getFloat(fi.getAttribute('three_sect_zoom'))*0.75;
-						fi.style.height=(fi.getBoundingClientRect().height*2)+'px'; //*1.5*(1/0.75)
+						setStyle(fi,'zoom',getFloat(fi.getAttribute('three_sect_zoom'))*0.75);
+						setStyle(fi,'height',(fi.getBoundingClientRect().height*2)+'px'); //*1.5*(1/0.75)
 					}else{
-						fi.style.zoom=getFloat(fi.getAttribute('three_sect_zoom'))*1.5;
+						setStyle(fi,'zoom',getFloat(fi.getAttribute('three_sect_zoom'))*1.5);
 					}
 				}
 			}
@@ -1105,11 +1114,11 @@ function figSize(f,g,x){ //figure,
 	}
 }
 
-thumbs.style.setProperty('transform-origin','top left', 'important' );
+setStyle(thumbs,'transform-origin','top left');
 var threeSct=thumbs.firstChild;
-thumbs.style.setProperty( 'margin', 0, 'important' );
-thumbs.style.setProperty( 'border', 0, 'important' );
-thumbs.style.setProperty( 'padding', 0, 'important' );
+setStyle(thumbs,'margin',0);
+setStyle(thumbs,'border',0);
+setStyle(thumbs,'padding',0);
 
 var scrl=ifrm3.contentWindow.document.querySelectorAll("button#scroll_curr")[0];
 var scrv= ifrm3.contentWindow.document.querySelectorAll("button#scroll_vid")[0];
@@ -1141,8 +1150,8 @@ hide_thumbs.onclick=()=>{
 	}
 	tHidden=!tHidden;
 	hide_thumbs.value=t;
-	ifrm2.style.display=d;
-	ifrm3.style.display=d;
+	setStyle(ifrm2,'display',d);
+	setStyle(ifrm3,'display',d);
 	if(s===true){
 		ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
 		if(tHidden_vfr===true){
@@ -1202,16 +1211,16 @@ var ancsRsz= ()=>{
 		vfr=false;
 		let ifrc=absBoundingClientRect(main);
 	
-		firstAncestor.style.setProperty( 'transform-origin','left bottom','important'  );
-		firstAncestor.style.setProperty( 'transform', 'scale(0.97) translateY('+ifrc.height+'px)','important'  );
+		setStyle(firstAncestor,'transform-origin','left bottom');
+		setStyle(firstAncestor,'transform','scale(0.97) translateY('+ifrc.height+'px)');
 		let ifR=absBoundingClientRect(ifrm);
 		let fprc=absBoundingClientRect(firstParent);
 		let vrc=absBoundingClientRect(myVdo);
 		
 		let tp=Math.max(fprc.bottom,vrc.bottom,ifR.bottom)+gapVid;
-		ifrm2.style.top=tp+'px';
-		ifrm3.style.top=tp+'px';
-		ifrm2.style.left='0.22%';
+		setStyle(ifrm2,'top',tp+'px');
+		setStyle(ifrm3,'top',tp+'px');
+		setStyle(ifrm2,'left','0.22%');
 		ifrmRsz();
 	}else{
 		firstParent=null;
@@ -1224,7 +1233,7 @@ function scrollHdl(){
 	let scrollTop=getScrollY();
 	let ifrm2R=absBoundingClientRect(ifrm2);
 	scrollTop=( (scrollTop>ifrm2R.top)? scrollTop : ifrm2R.top );
-	ifrm3.style.top=(scrollTop+1)+'px';
+	setStyle(ifrm3,'top',(scrollTop+1)+'px');
 }
 			
 var shiftVid=(force_default_place)=>{
@@ -1270,11 +1279,11 @@ var shiftVid=(force_default_place)=>{
 								if(typeof(firstAncestor_wh['width']!=='undefined')){
 									setFA_wh(firstAncestor_wh);
 								}
-								firstAncestor.style.setProperty('position','fixed', 'important' );	
-								firstAncestor.style.setProperty('top','1px', 'important' );	
-								firstAncestor.style.setProperty('left','-2px', 'important' );
-								firstAncestor.style.setProperty('transform-origin','top left', 'important' );
-								firstAncestor.style.setProperty( 'z-index', Number.MAX_SAFE_INTEGER, 'important' );
+								setStyle(firstAncestor,'position','fixed');	
+								setStyle(firstAncestor,'top','1px');	
+								setStyle(firstAncestor,'left','-2px');
+								setStyle(firstAncestor,'transform-origin','top left');
+								setStyle(firstAncestor,'z-index',Number.MAX_SAFE_INTEGER);
 								let mvl=(firstAncestorIFR!==null)?firstAncestorIFR:myVdo;
 								myVdoR=mvl.getBoundingClientRect();
 								let faRect=firstAncestor.getBoundingClientRect();
@@ -1293,7 +1302,7 @@ var shiftVid=(force_default_place)=>{
 									s*=(shgt/sch);
 								}							
 									
-								firstAncestor.style.setProperty('transform','scale('+s+')','important' );
+								setStyle(firstAncestor,'transform','scale('+s+')');
 								myVdoR=absBoundingClientRect(mvl);
 								myVdoR.centre_y=myVdoR.top+myVdoR.height*0.5;
 								wScl=myVdoR.width/myVdo.videoWidth;
@@ -1306,7 +1315,7 @@ var shiftVid=(force_default_place)=>{
 								tx=((ifrm2R.right+vw2)-myVdoR.left)/s;
 								ty=(ifrm3R.top-myVdoR.vid_top+1)/s;
 								// myVdoR.top/left unaffected by scale because of transform-origin
-								firstAncestor.style.setProperty('transform','scale('+s+') translateX('+(tx)+'px) translateY('+(ty)+'px)', 'important' );
+								setStyle(firstAncestor,'transform','scale('+s+') translateX('+(tx)+'px) translateY('+(ty)+'px)');
 								
 								if(pointerScrub_var!==0){
 									myVdoR=absBoundingClientRect(mvl);
@@ -1314,13 +1323,13 @@ var shiftVid=(force_default_place)=>{
 									wScl=myVdoR.width/myVdo.videoWidth;
 									hScld=wScl*myVdo.videoHeight;
 									myVdoR.vid_bottom=myVdoR.centre_y+0.5*(hScld);
-									psDiv.style.setProperty('top',((
+									setStyle(psDiv,'top',((
 										myVdoR.vid_bottom+psGap
-									))+'px', 'important' );
-									psDiv.style.setProperty('left',((
+									))+'px');
+									setStyle(psDiv,'left',((
 										myVdoR.left
-									))+'px', 'important' );
-									psDiv.style.setProperty('width',`${myVdoR.width}px`,'important');
+									))+'px');
+									setStyle(psDiv,'width',`${myVdoR.width}px`);
 								}
 							}
 		}
@@ -1469,7 +1478,7 @@ var checkDur = function() {
 				evry.innerText='9 frames';
 			}
 			ev_t=t;
-			evry.style.display='initial';
+			setStyle(evry,'display','initial');
 			}
 	}
 	if(vMut!==null){
@@ -1482,34 +1491,33 @@ var checkDur = function() {
 	myVdo.currentTime=0;
 
 	if(!tTrkFlg){
-	bSect.style.width='min-content';
-	bSect.style.minWidth='';
-	bSect.style.maxWidth='';
+	setStyle(bSect,'width','min-content');
+	setStyle(bSect,'min-width','');
+	setStyle(bSect,'max-width','');
 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
 	let bSectR=absBoundingClientRect(bSect);
 	let bsrw=bSectR.width
 	bsw=(bsrw>bsw)?bsrw:bsw;
-	bSect.style.width=bsw+'px';
-	bSect.style.minWidth=bsw+'px';
-	bSect.style.maxWidth=bsw+'px';
+	setStyle(bSect,'width',bsw+'px');
+	setStyle(bSect,'min-width',bsw+'px');
+	setStyle(bSect,'max-width',bsw+'px');
 	ifrmRsz();
 	}
 }
 
 function shiftBtns(bool){
 	try{
-	//curr.style.top=(parseFloat(pip.style.top)+4)+'px';
 		if(bool){
 			let r=absBoundingClientRect(mvdb);
-			pip.style.top=(r.top-r.height-2)+'px';
+			setStyle(pip,'top',(r.top-r.height-2)+'px');
 			r=absBoundingClientRect(oneCol);
-			oneCol.style.top=(r.top-r.height-2)+'px';
+			setStyle(oneCol,'top',(r.top-r.height-2)+'px');
 			r=absBoundingClientRect(pip);
-			spb.style.top=(r.top-r.height-2)+'px';
+			setStyle(spb,'top',(r.top-r.height-2)+'px');
 			r=absBoundingClientRect(spb);
-			scrv.style.top=(r.top-r.height-2)+'px';
+			setStyle(scrv,'top',(r.top-r.height-2)+'px');
 			r=absBoundingClientRect(scrv);
-			scrl.style.top=(r.top-r.height-2)+'px';
+			setStyle(scrl,'top',(r.top-r.height-2)+'px');
 		}
 	}catch(e){;}
 }
@@ -1613,8 +1621,8 @@ window.addEventListener('pointerdown', function (event) {
 				let fgi=currFigCaps[i];
 				let fi=fgi[0];
 				let pi=fgi[1];
-				fi.style.setProperty('background-color','#00000099','important');
-				fi.style.setProperty('color','white','important');
+				setStyle(fi,'background-color','#00000099');
+				setStyle(fi,'color','white');
 				pi.className='';
 			}catch(e){;}
 		}
@@ -1662,15 +1670,15 @@ window.addEventListener('pointermove', function (event) {
 						let fgi=currFigCaps[i];
 						let fi=fgi[0];
 						let pi=fgi[1];
-						fi.style.setProperty('background-color','#00000099','important');
-						fi.style.setProperty('color','white','important');
+						setStyle(fi,'background-color','#00000099');
+						setStyle(fi,'color','white');
 						pi.className='';
 					}catch(e){;}
 				}
 				currFigCaps=[];
 				try{
-					currFigCap.style.setProperty('background-color','#00ffff99','important');
-					currFigCap.style.setProperty('color','red','important');
+					setStyle(currFigCap,'background-color','#00ffff99');
+					setStyle(currFigCap,'color','red');
 					prg.className='scrub';
 					currFigCaps.push([currFigCap,prg]);
 				}catch(e){;}
@@ -1704,8 +1712,8 @@ window.addEventListener('pointermove', function (event) {
 						let fgi=currFigCaps[i];
 						let fi=fgi[0];
 						let pi=fgi[1];
-						fi.style.setProperty('background-color','#00000099','important');
-						fi.style.setProperty('color','white','important');
+						setStyle(fi,'background-color','#00000099');
+						setStyle(fi,'color','white');
 						pi.className='';
 					}catch(e){;}
 			}
@@ -1813,9 +1821,9 @@ rsz_ifrm();
 				t += 3;
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
 				/*if(ev_t>-1 && t!=ev_t){
-					evry.style.display='initial';
+					setStyle(evry,'display','initial');
 				}else{
-					evry.style.display='none';
+					setStyle(evry,'display','none');
 				}*/
 		}
 	}
@@ -1825,9 +1833,9 @@ rsz_ifrm();
 		t=(t<6)?3:t-3;
 		frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
 			/*if(ev_t>-1 && t!=ev_t){
-				evry.style.display='initial';
+				setStyle(evry,'display','initial');
 			}else{
-				evry.style.display='none';
+				setStyle(evry,'display','none');
 			}*/
 		}
 	}	
@@ -1844,9 +1852,9 @@ rsz_ifrm();
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
 			}
 			/*if(ev_t>-1 && t!=ev_t){
-				evry.style.display='initial';
+				setStyle(evry,'display','initial');
 			}else{
-				evry.style.display='none';
+				setStyle(evry,'display','none');
 			}*/
 	}
 
@@ -1954,7 +1962,7 @@ if(allFrames.length>0){
 			 try{
 				 
 				 if(!!frame[0].src && frame[0].src!='' && frame[0].src!='about:blank' && frame[0].src!='javascript:false'&& frame[0].src!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2 && frame[0]!=ifrm3){
-					 	frame[0].style.setProperty( 'visibility', 'visible', 'important' );
+					 	setStyle(frame[0],'visibility','visible');
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].src;
 						opt.setAttribute("index", '-'+j);
@@ -1968,7 +1976,7 @@ if(allFrames.length>0){
 
 				try{
 				 if(!!frame[0].getAttribute('data-src') && frame[0].getAttribute('data-src')!='' && frame[0].getAttribute('data-src')!='about:blank' && frame[0].getAttribute('data-src')!='javascript:false'&& frame[0].getAttribute('data-src')!='javascript:true' && frame[0]!==ifrm && frame[0]!=ifrm2 && frame[0]!=ifrm3){
-					 	frame[0].style.setProperty( 'visibility', 'visible', 'important' );
+					 	setStyle(frame[0],'visibility','visible');
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].getAttribute('data-src');
 						opt.setAttribute("index", '-'+j);
@@ -2058,11 +2066,11 @@ function LnkOp()
 			curr_thumb=0;
 			thumbs.innerHTML = '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;align-items: flex-end !important;"></section>';
 			threeSct=thumbs.firstChild;
-			scrl.style.display='none';
+			setStyle(scrl,'display','none');
 			shiftBtns(true);
-			rlcRsz.style.display='none';
-			mvdb.style.display='none';
-			oneCol.style.display='none';
+			setStyle(rlcRsz,'display','none');
+			setStyle(mvdb,'display','none');
+			setStyle(oneCol,'display','none');
 			if(pointerScrub_var!==0){
 				try{
 					elRemover(psDiv);
@@ -2071,11 +2079,11 @@ function LnkOp()
 			}
 			last_psTime=[null,false];
 			isOneCol=false;
-			document.documentElement.style.setProperty('min-height',doc_minHeight+'px','important');
+			setStyle(document.documentElement,'min-height',doc_minHeight+'px');
 			//checkDur();
 			tbG=false;
 			frame_btn.innerHTML=24;
-			evry.style.display='none';
+			setStyle(evry,'display','none');
 			gnrB.value='Generate thumbs';
 			sndHide=false;
 			chrome.runtime.sendMessage({msg: txtBx[txtBx.selectedIndex].attributes.link.value, left: frct.left, right: frct.right, top: frct.top, bottom: frct.bottom, type: 'expand'}, function(response){
@@ -2098,7 +2106,7 @@ function LnkOp()
 		loadFlag=false;
 		ttmp=0;
 		ev_t=-1;
-		document.documentElement.style.setProperty('min-height',doc_minHeight+'px','important');
+		setStyle(document.documentElement,'min-height',doc_minHeight+'px');
 		/*let txtVal=txtBx.value;
 		alert(txtVal);  
 		vid.src = txtVal;      
@@ -2112,7 +2120,7 @@ function LnkOp()
 			
 		shiftBtns(true);
 
-		thumbs.style.setProperty( 'visibility', 'visible', 'important' );
+		setStyle(thumbs,'visibility','visible');
 		vrc= absBoundingClientRect(myVdo);
 
 		ifrm.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
@@ -2145,16 +2153,16 @@ myVdo.playbackRate=1;
 		
 myVdo.addEventListener("timeupdate", (event) => {
 	if(!tTrkFlg){
-	bSect.style.width='min-content';
-	bSect.style.minWidth='';
-	bSect.style.maxWidth='';
+	setStyle(bSect,'width','min-content');
+	setStyle(bSect,'min-width','');
+	setStyle(bSect,'max-width','');
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
 	let bSectR=absBoundingClientRect(bSect);
 	let bsrw=bSectR.width
 	bsw=(bsrw>bsw)?bsrw:bsw;
-	bSect.style.width=bsw+'px';
-	bSect.style.minWidth=bsw+'px';
-	bSect.style.maxWidth=bsw+'px';
+	setStyle(bSect,'width',bsw+'px');
+	setStyle(bSect,'min-width',bsw+'px');
+	setStyle(bSect,'max-width',bsw+'px');
 	ifrmRsz();
 	}
 });		
@@ -2170,16 +2178,16 @@ myVdo.addEventListener("loadedmetadata", (event) => {
 
 myVdo.addEventListener("ratechange", (event) => {
 	if(!tTrkFlg){
-	bSect.style.width='min-content';
-	bSect.style.minWidth='';
-	bSect.style.maxWidth='';
+	setStyle(bSect,'width','min-content');
+	setStyle(bSect,'min-width','');
+	setStyle(bSect,'max-width','');
  	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
 	let bSectR=absBoundingClientRect(bSect);
 	let bsrw=bSectR.width
 	bsw=(bsrw>bsw)?bsrw:bsw;
-	bSect.style.width=bsw+'px';
-	bSect.style.minWidth=bsw+'px';
-	bSect.style.maxWidth=bsw+'px';
+	setStyle(bSect,'width',bsw+'px');
+	setStyle(bSect,'min-width',bsw+'px');
+	setStyle(bSect,'max-width',bsw+'px');
 	ifrmRsz();
 	}
 	if(myVdo.readyState>2){
@@ -2192,13 +2200,11 @@ myVdo.addEventListener("ratechange", (event) => {
 			 try{
 					if(!myVdo_el[1].includes(frame[2]) && myVdo_el[1]!='' && frame[0]!==ifrm && frame[0]!==ifrm2 && frame[0]!==ifrm3 && typeof(frame[0].style)!=='undefined'){
 						if(typeof frame[0].style.setProperty!=='undefined'){
-							frame[0].style.setProperty( 'display', 'none', 'important' );
+							setStyle(frame[0],'display','none');
 						}else{
-							frame[0].style.display='none';
+							setStyle(frame[0],'display','none');
 						}
-					}/*else{
-						//node.style.setProperty( 'pointer-events', '', 'important' );
-					}*/
+					}
 			 }catch(e){;}
 		 }
 
@@ -2217,11 +2223,11 @@ myVdo.addEventListener("ratechange", (event) => {
 		curr_thumb=0;
 		thumbs.innerHTML = '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;align-items: flex-end !important;"></section>';
 		threeSct=thumbs.firstChild;
-		scrl.style.display='none';
+		setStyle(scrl,'display','none');
 		shiftBtns(true);
-		rlcRsz.style.display='none';
-		mvdb.style.display='none';
-		oneCol.style.display='none';
+		setStyle(rlcRsz,'display','none');
+		setStyle(mvdb,'display','none');
+		setStyle(oneCol,'display','none');
 		if(pointerScrub_var!==0){
 			try{
 				elRemover(psDiv);
@@ -2230,7 +2236,7 @@ myVdo.addEventListener("ratechange", (event) => {
 		}
 		last_psTime=[null,false];
 		isOneCol=false;
-		document.documentElement.style.setProperty('min-height',doc_minHeight+'px','important');
+		setStyle(document.documentElement,'min-height',doc_minHeight+'px');
 		checkDur();
 		tbG=true;
 		gnrB.value='Generate thumbs';
@@ -2271,43 +2277,43 @@ progresses=[];
 aseek=1;
 
 if(!tTrkFlg){
-	bSect.style.width='min-content';
-	bSect.style.minWidth='';
-	bSect.style.maxWidth='';
+	setStyle(bSect,'width','min-content');
+	setStyle(bSect,'min-width','');
+	setStyle(bSect,'max-width','');
 	curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
 	let bSectR=absBoundingClientRect(bSect);
 	let bsrw=bSectR.width
 	bsw=(bsrw>bsw)?bsrw:bsw;
-	bSect.style.width=bsw+'px';
-	bSect.style.minWidth=bsw+'px';
-	bSect.style.maxWidth=bsw+'px';
+	setStyle(bSect,'width',bsw+'px');
+	setStyle(bSect,'min-width',bsw+'px');
+	setStyle(bSect,'max-width',bsw+'px');
 	ifrmRsz();
 }
 
 var tu2=(event) => {
 	let chg=false;
 	if(!tTrkFlg){
-		bSect.style.width='min-content';
-		bSect.style.minWidth='';
-		bSect.style.maxWidth='';
+		setStyle(bSect,'width','min-content');
+		setStyle(bSect,'min-width','');
+		setStyle(bSect,'max-width','');
 		curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
 		let bSectR=absBoundingClientRect(bSect);
 		let bsrw=bSectR.width
 		bsw=(bsrw>bsw)?bsrw:bsw;
-		bSect.style.width=bsw+'px';
-		bSect.style.minWidth=bsw+'px';
-		bSect.style.maxWidth=bsw+'px';
+		setStyle(bSect,'width',bsw+'px');
+		setStyle(bSect,'min-width',bsw+'px');
+		setStyle(bSect,'max-width',bsw+'px');
 		ifrmRsz();
 	}
  if(aseek==0){
 	for(let i=0;i<captions.length;i++){
-	captions[i].style.display='inline-table';
+	setStyle(captions[i],'display','inline-table');
 	captions[i].innerText=captions[i].parentElement.parentElement.firstChild.attributes.timestamp_fmt.nodeValue;
-	captions[i].style.backgroundColor="#00000099";
+	setStyle(captions[i],'background-color',"#00000099");
 	}
 	
 		for(let i=0;i<progresses.length;i++){
-		progresses[i].style.display='none';
+		setStyle(progresses[i],'display','none');
 		}
 		figSize(null);
 		
@@ -2334,12 +2340,12 @@ if (cap_el+1<captions.length){
 var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 	if(nowFlag>-1){
 			//captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
-			captions[nowFlag].style.display="none";
-			progresses[nowFlag].style.display="";
+			setStyle(captions[nowFlag],'display',"none");
+			setStyle(progresses[nowFlag],'display',"");
 			figSize(progresses[nowFlag].parentElement.parentElement,chg,nowFlag);
 			progresses[nowFlag].title=perc+"%";
 			curr_thumb=nowFlag;
-			captions[nowFlag].style.backgroundColor="#0004ff99";
+			setStyle(captions[nowFlag],'background-color',"#0004ff99");
 			if(suppressTU===false){
 				progresses[nowFlag].value=perc_r;
 			}
@@ -2350,12 +2356,12 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			
 	}else if (cap==cap_el){
 			//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
-			captions[cap_el].style.display="none";
-			progresses[cap_el].style.display="";
+			setStyle(captions[cap_el],'display',"none");
+			setStyle(progresses[cap_el],'display',"");
 			figSize(progresses[cap_el].parentElement.parentElement,chg,cap_el);
 			progresses[cap_el].title=perc+"%";
 			curr_thumb=cap_el;
-			captions[cap_el].style.backgroundColor="#0004ff99";
+			setStyle(captions[cap_el],'background-color',"#0004ff99");
 			if(suppressTU===false){
 			progresses[cap_el].value=perc_r;
 			}
@@ -2367,12 +2373,12 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 		until=formatTime(until,1);
 			captions[cap_el+1].innerText=attr_next.timestamp_fmt.nodeValue+" (NEXT) ["+until+"]";
 			//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
-			captions[cap_el].style.display="none";
-			progresses[cap_el].style.display="";
+			setStyle(captions[cap_el],'display',"none");
+			setStyle(progresses[cap_el],'display',"");
 			figSize(progresses[cap_el].parentElement.parentElement,chg,cap_el);
 			progresses[cap_el].title=perc+"%";
 			curr_thumb=cap_el;
-			captions[cap_el].style.backgroundColor="#006115c7";
+			setStyle(captions[cap_el],'background-color',"#006115c7");
 			if(suppressTU===false){
 			progresses[cap_el].value=perc_r;
 			}
@@ -2384,12 +2390,12 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 
 	if(nowFlag>-1){
 			//captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
-			captions[nowFlag].style.display="none";
-			progresses[nowFlag].style.display="";
+			setStyle(captions[nowFlag],'display',"none");
+			setStyle(progresses[nowFlag],'display',"");
 			figSize(progresses[nowFlag].parentElement.parentElement,chg,nowFlag);
 			progresses[nowFlag].title=perc+"%";
 			curr_thumb=nowFlag;
-			captions[nowFlag].style.backgroundColor="#0004ff99";
+			setStyle(captions[nowFlag],'background-color',"#0004ff99");
 			if(suppressTU===false){
 					progresses[nowFlag].value=perc_r;
 			}
@@ -2399,12 +2405,12 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 	}else if (cap==cap_el){
 		if(cap_el>=captions.length){
 			//captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+100+".0%]";
-			captions.at(-1).style.display="none";
-			progresses.at(-1).style.display="";
+			setStyle(captions.at(-1),'display',"none");
+			setStyle(progresses.at(-1),'display',"");
 			figSize(progresses.at(-1).parentElement.parentElement,chg,progresses.length-1);
 			progresses[captions.length-1].title="100.0%";
 			curr_thumb=captions.length-1;
-			captions[captions.length-1].style.backgroundColor="#006115c7";	
+			setStyle(captions[captions.length-1],'background-color',"#006115c7");	
 			if(suppressTU===false){
 			progresses[captions.length-1].value=1;
 			}
@@ -2413,12 +2419,12 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			}
 		}else{
 		//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
-		captions[cap_el].style.display="none";
-		progresses[cap_el].style.display="";
+		setStyle(captions[cap_el],'display',"none");
+		setStyle(progresses[cap_el],'display',"");
 		figSize(progresses[cap_el].parentElement.parentElement,chg,cap_el);
 		progresses[cap_el].title=perc+"%";
 		curr_thumb=cap_el;
-		captions[cap_el].style.backgroundColor="#0004ff99";
+		setStyle(captions[cap_el],'background-color',"#0004ff99");
 		if(suppressTU===false){
 		progresses[cap_el].value=perc_r;
 		}
@@ -2428,12 +2434,12 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 		}
 	}else{
 			//captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
-			captions.at(-1).style.display="none";
-			progresses.at(-1).style.display="";
+			setStyle(captions.at(-1),'display',"none");
+			setStyle(progresses.at(-1),'display',"");
 			figSize(progresses.at(-1).parentElement.parentElement,chg,progresses.length-1);
 			progresses[captions.length-1].title=perc+"%";
 			curr_thumb=captions.length-1;
-			captions[captions.length-1].style.backgroundColor="#006115c7";
+			setStyle(captions[captions.length-1],'background-color',"#006115c7");
 			if(suppressTU===false){
 			progresses[captions.length-1].value=perc_r;
 			}
@@ -2456,7 +2462,7 @@ myVdo.addEventListener("timeupdate", (event)=>{
 
 myVdo.addEventListener("play", (event)=>{
 	if(psDiv!==null){
-		psDiv.style.setProperty('display','none','important');
+		setStyle(psDiv,'display','none');
 		if(isOneCol && vfr){
 			shiftVid(false);
 		}
@@ -2465,11 +2471,11 @@ myVdo.addEventListener("play", (event)=>{
 
 myVdo.addEventListener("pause", (event)=>{
 	if(psDiv!==null && isOneCol && vfr){
-		psDiv.style.setProperty('display','block','important');
+		setStyle(psDiv,'display','block');
 		let currThumb=Math.floor((myVdo.currentTime/myVdo.duration)*done_t);
 		let figSt=(currThumb/done_t)*100;
 		let figEnd=((currThumb+1)/done_t)*100;
-		psDiv.style.setProperty('background',`linear-gradient(to right, #00ffff99 0%,#00ffff99 ${figSt}%,#ff000099 ${figSt}%,#ff000099 ${figEnd}%,#00ffff99 ${figEnd}%)`,'important');
+		setStyle(psDiv,'background',`linear-gradient(to right, #00ffff99 0%,#00ffff99 ${figSt}%,#ff000099 ${figSt}%,#ff000099 ${figEnd}%,#00ffff99 ${figEnd}%)`);
 		shiftVid(false);
 	}
 });
@@ -2518,7 +2524,6 @@ function thumbseek(bool){
 			time_track =[ttmp*(myVdo.duration/t),ttmp];
 			vhw.h=myVdo.videoHeight;
 			vhw.w=myVdo.videoWidth;
-			//myVdo.style.height=(10000*(vhw.h/(vhw.w+vhw.h))/80).toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"vw";
 			gnrB.value='Generating thumbs';
 			generateThumbnail();
 			ttmp++;
@@ -2527,16 +2532,16 @@ function thumbseek(bool){
 			let tm=t_b-t_a;
 			mx=(tm>mx)?tm:mx;
 			tTrkFlg=true;
-			bSect.style.width='min-content';
-			bSect.style.minWidth='';
-			bSect.style.maxWidth='';
+			setStyle(bSect,'width','min-content');
+			setStyle(bSect,'min-width','');
+			setStyle(bSect,'max-width','');
 			curr.innerText= formatTime(myVdo.currentTime)+"\n"+ttmp+"/"+done_t;
 			let bSectR=absBoundingClientRect(bSect);
 			let bsrw=bSectR.width
 			bsw=(bsrw>bsw)?bsrw:bsw;
-			bSect.style.width=bsw+'px';
-			bSect.style.minWidth=bsw+'px';
-			bSect.style.maxWidth=bsw+'px';
+			setStyle(bSect,'width',bsw+'px');
+			setStyle(bSect,'min-width',bsw+'px');
+			setStyle(bSect,'max-width',bsw+'px');
 			ifrmRsz();
 			if(ttmp===1){
 				ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
@@ -2554,8 +2559,8 @@ function thumbseek(bool){
 				vidSeek=false;
 				myVdo.currentTime=0;
 				//zeroRsz=true;
-				mvdb.style.display='block';
-				oneCol.style.display='block';
+				setStyle(mvdb,'display','block');
+				setStyle(oneCol,'display','block');
 				if(pointerScrub_var!==0){
 					psDiv=document.createElement('div');
 					psDiv.style.cssText="all: initial !important; min-height: 9px !important; height: "+(pointerScrub_var*window.screen.height)+"px !important; display: none !important; position: absolute !important;  top: 0px !important;  left: 0px !important; transform-origin: top left !important; background: #00ffff99 !important; z-index: "+(Number.MAX_SAFE_INTEGER)+" !important;";
@@ -2563,7 +2568,7 @@ function thumbseek(bool){
 					firstAncestor.insertAdjacentElement('afterend',psDiv);
 				}
 				shiftBtns(false);
-				scrl.style.display='';
+				setStyle(scrl,'display','');
 				rsz_ifrm();
 				rsz();
 				ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
@@ -2594,28 +2599,28 @@ function thumbseek(bool){
 								let fgs=[...si.children];
 								let ls=si;
 								let fg0=fgs[0];
-								fg0.style.height='';
-								fg0.style.zoom=1;
+								setStyle(fg0,'height','');
+								setStyle(fg0,'zoom',1);
 								let sz=tw/(fg0.getBoundingClientRect().width*getFloat(fg0.style.zoom));
-								si.style.zoom=sz;
+								setStyle(si,'zoom',sz);
 							for(let j=1, len_j=fgs.length; j<len_j; j++){
 								let fj=fgs[j];
-								fj.style.height='';
-								fj.style.zoom=1;
+								setStyle(fj,'height','');
+								setStyle(fj,'zoom',1);
 								let ns=document.createElement('section');
 								ls.insertAdjacentElement('afterend',ns);
 								ns.style.cssText=si.style.cssText;
-								ns.style.zoom=tw/(fj.getBoundingClientRect().width*getFloat(fj.style.zoom));
+								setStyle(ns,'zoom',tw/(fj.getBoundingClientRect().width*getFloat(fj.zoom)));
 								ns.insertAdjacentElement('afterbegin',fj);
 								ls=ns;
 							}
 						}
 						if(psDiv!==null){
-							psDiv.style.setProperty('display','block','important');
+							setStyle(psDiv,'display','block');
 							let currThumb=Math.floor((myVdo.currentTime/myVdo.duration)*done_t);
 							let figSt=(currThumb/done_t)*100;
 							let figEnd=((currThumb+1)/done_t)*100;
-							psDiv.style.setProperty('background',`linear-gradient(to right, #00ffff99 0%,#00ffff99 ${figSt}%,#ff000099 ${figSt}%,#ff000099 ${figEnd}%,#00ffff99 ${figEnd}%)`,'important');
+							setStyle(psDiv,'background',`linear-gradient(to right, #00ffff99 0%,#00ffff99 ${figSt}%,#ff000099 ${figSt}%,#ff000099 ${figEnd}%,#00ffff99 ${figEnd}%)`);
 						}
 					}else{
 						let rem=[];
@@ -2627,13 +2632,13 @@ function thumbseek(bool){
 							rem.push(si1);
 							rem.push(si2);
 							let f1=si1.firstElementChild;
-							f1.style.zoom=f1.getAttribute('three_sect_zoom');
+							setStyle(f1,'zoom',f1.getAttribute('three_sect_zoom'));
 							si.insertAdjacentElement('beforeend',f1);
 							let f2=si2.firstElementChild;
-							f2.style.zoom=f2.getAttribute('three_sect_zoom');
+							setStyle(f2,'zoom',f2.getAttribute('three_sect_zoom'));
 							si.insertAdjacentElement('beforeend',f2);
-							si.style.zoom=1;
-							si.style.zoom=tw/si.getBoundingClientRect().width;
+							setStyle(si,'zoom',1);
+							setStyle(si,'zoom',tw/si.getBoundingClientRect().width);
 						}
 						for(let i=0, len_i=rem.length; i<len_i; i++){
 							elRemover(rem[i]);
@@ -2641,15 +2646,15 @@ function thumbseek(bool){
 						figSize(currentFig,true);
 						//rsz();
 						if(psDiv!==null){
-							psDiv.style.setProperty('display','none','important')
+							setStyle(psDiv,'display','none')
 						}
 					}
 					
 					let sh=thumbs.scrollHeight;
 					
-					ifrm2.style.minHeight=sh+'px';
-					ifrm2.style.height=sh+'px';
-					ifrm2.style.maxHeight=sh+'px';
+					setStyle(ifrm2,'min-height',sh+'px');
+					setStyle(ifrm2,'height',sh+'px');
+					setStyle(ifrm2,'max-height',sh+'px');
 					let faRect=absBoundingClientRect(firstAncestor);
 					
 					doc_minHeight=Math.max(
@@ -2659,7 +2664,7 @@ function thumbseek(bool){
 						absBoundingClientRect(ifrm3).bottom,
 						faRect.bottom/( faRect.height / firstAncestor.offsetHeight)
 					);
-					document.documentElement.style.setProperty('min-height',doc_minHeight+'px','important');
+					setStyle(document.documentElement,'min-height',doc_minHeight+'px');
 					chrome.runtime.sendMessage({doc_minHeight:doc_minHeight, url:window.location.href, type: 'size'}, function(response){;});
 					scrollElMidPage(captions[curr_thumb].parentElement.parentElement);
 					
@@ -2674,14 +2679,14 @@ function thumbseek(bool){
 					}
 					doc_minHeight=(doc_minHeight===null)?parseFloat(window.getComputedStyle(document.documentElement)['min-height']):doc_minHeight;
 					doc_minHeight=(doc_minHeight===null || isNaN(doc_minHeight))?0:doc_minHeight;
-					rlcRsz.style.display=(vfr)?'block':'none';
+					setStyle(rlcRsz,'display',(vfr)?'block':'none');
 					ifrmRsz();
 					shb2=false;
 					shiftBtns2(false);
 					if(vfr){
 						scrollElMidPage(captions[curr_thumb].parentElement.parentElement);
 					}else{
-						document.documentElement.style.setProperty('min-height',doc_minHeight+'px','important');
+						setStyle(document.documentElement,'min-height',doc_minHeight+'px');
 						chrome.runtime.sendMessage({doc_minHeight:doc_minHeight, url:window.location.href, type: 'size'}, function(response){;});
 					}
 				};
@@ -2860,13 +2865,13 @@ var pgb=ifrm2.contentWindow.document.createElement("progress");
 pgb.max=1;
 pgb.value=0;
 pgb.title='0.0%';
-pgb.style.display='none';
-pgb.style.transformOrigin='top';
-pgs.style.display='contents';
-pgs.style.width='inherit';
-pgs.style.position='absolute';
+setStyle(pgb,'display','none');
+setStyle(pgb,'transform-origin','top');
+setStyle(pgs,'display','contents');
+setStyle(pgs,'width','inherit');
+setStyle(pgs,'position','absolute');
 var c = ifrm2.contentWindow.document.createElement("canvas");
-c.style.alignSelf='end';
+setStyle(c,'align-self','end');
 
 var ctx = c.getContext("2d");
 
@@ -2876,8 +2881,8 @@ let v_height = vhw.h;
 c.width= v_width;
 c.height=v_height;   
 
-f.style.width= v_width;
-f.style.height=v_height;
+setStyle(f,'width',v_width);
+setStyle(f,'height',v_height);
 
 
 
@@ -2888,9 +2893,11 @@ c.setAttribute('timestamp_fmt', format_time);
 ctx.drawImage(myVdo, 0, 0, v_width, v_height);
 
 let ifw=getScreenWidth(false);
-ifrm2.style.setProperty=('min-width',ifw+'px','important');
-ifrm2.style.setProperty=('width',ifw+'px','important');
-ifrm2.style.setProperty=('max-width',ifw+'px','important');
+
+setStyle(ifrm2,'min-width',ifw+'px');
+setStyle(ifrm2,'width',ifw+'px');
+setStyle(ifrm2,'max-width',ifw+'px');
+
 
 try{
 	let fprc=absBoundingClientRect(firstParent);
@@ -2899,8 +2906,8 @@ try{
 	let btm=Math.max(fprc.bottom,vrc.bottom,ifR.bottom);
 	if(parseFloat(ifrm2.style.top)<parseFloat(btm+gapVid)){
 		let tp=btm+gapVid;
-		ifrm2.style.setProperty( 'top', tp+'px', 'important' );
-		ifrm3.style.setProperty( 'top', tp+'px', 'important' );
+		setStyle(ifrm2,'top',tp+'px');
+		setStyle(ifrm3,'top',tp+'px');
 	}
 }catch(e){
 							
@@ -2919,9 +2926,9 @@ if (threeSct.children.length===3){
 
 threeSct.appendChild(f);
 
-f.style.setProperty( 'margin', 0, 'important' );
-f.style.setProperty( 'border', 0, 'important' );
-f.style.setProperty( 'padding', 0, 'important' );
+setStyle(f,'margin',0);
+setStyle(f,'border',0);
+setStyle(f,'padding',0);
 f.setAttribute('three_sect_zoom',1);
 
 f.appendChild(c);
@@ -2934,11 +2941,9 @@ progresses.push(pgb);
 f.style.cssText="display: inline-grid !important; margin: 0 0 0 0 !important;";
 ct.style.cssText+="color: white  !important; font-size: 169%  !important; display: inline-table !important; position: absolute !important; transform-origin: top left !important; font-family: Microsoft JhengHei UI !important";
 
-//ct.style.setProperty( 'transform', 'scale('+().toLocaleString('en', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+')', 'important' );
-
 let wcs_f=window.getComputedStyle(f);
-pgb.style.width=wcs_f.width;
-pgb.style.height=`${(parseFloat(wcs_f.height)*0.02)}px`;
+setStyle(pgb,'width',wcs_f.width);
+setStyle(pgb,'height',`${(parseFloat(wcs_f.height)*0.02)}px`);
 
 if(threeSct.children.length>1){
 	let ch3=[...threeSct.children];
@@ -2962,7 +2967,7 @@ if(threeSct.children.length>1){
 			if(swk!==wMax){
 				let c3k=ch3[k];
 				let z3=wMax/chSW[k];
-				c3k.style.zoom=z3;
+				setStyle(c3k,'zoom',z3);
 				c3k.setAttribute('three_sect_zoom',z3);
 			}
 		}
@@ -2971,7 +2976,7 @@ if(threeSct.children.length>1){
 
 rsz();
 
-ct.style.setProperty( 'zoom', (f.scrollWidth/ct.clientWidth)*0.2,'important' );
+setStyle(ct,'zoom',(f.scrollWidth/ct.clientWidth)*0.2);
 
   f.onclick= function(e){
     var index = captions.indexOf(this.lastElementChild.lastElementChild);
@@ -3043,8 +3048,8 @@ alert('Video not loaded!');
 
 }
 
-document.documentElement.style.setProperty('overflow','visible','important');
-document.body.style.setProperty('overflow','scroll','important');
+setStyle(document.documentElement,'overflow','visible');
+setStyle(document.body,'overflow','scroll');
 
 document.body.insertAdjacentElement('afterbegin',ifrm);
 
