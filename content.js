@@ -1039,20 +1039,26 @@ ifrmRsz();
  setStyle(sc1,'max-width',sc1w+'px');*/
 let suppressScr=false;
 //let zeroRsz=false;
-function scrollElMidPage(el){
-	let vpos='center';
-	let epp=el.parentElement.parentElement;
-	let elp=el.parentElement;
-	let t=el;
-	if(epp===thumbs){
-		t=elp;
-		if(epp.firstElementChild===elp){
-			vpos='start';
-		}else if(epp.lastElementChild===elp){
-			vpos='end';
+function scrollElMidPage(el,p){
+	if(typeof(p)!=='undefined'){
+		p.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
+		sy=getScrollY();
+		scrollElMidPage(el);
+		sy2=getScrollY();
+		if(sy2<sy){
+			p.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
+		}else{
+			p.scrollIntoView({behavior: "instant", block: 'end', inline: "start"});
+			sy=getScrollY();
+			if(sy<sy2){
+				el.scrollIntoView({behavior: "instant", block: 'end', inline: "start"});
+			}else{
+				scrollElMidPage(el);
+			}
 		}
+	}else{
+		el.scrollIntoView({behavior: "instant", block: 'center', inline: "start"});
 	}
-	t.scrollIntoView({behavior: "instant", block: vpos, inline: "start"});
 }
 
 var thumbs=ifrm2.contentWindow.document.querySelectorAll("div#thumbs")[0];
@@ -1072,7 +1078,7 @@ function figSize(f,g,x){ //figure,
 		currentFig=f;
 		if(justSeek===true){
 			justSeek=false;
-			scrollElMidPage(f);
+			scrollElMidPage(f,ifrm2);
 		}
 		if(x!==null){
 			let figSt=(x/done_t)*100;
@@ -1101,13 +1107,13 @@ function figSize(f,g,x){ //figure,
 			if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
 				scrollElMidPage(myVdo);
 			}else{
-				scrollElMidPage(f);
+				scrollElMidPage(f,ifrm2);
 			}	
 		}
 	}
 	ifrmRsz();
 	if(g===true){
-		scrollElMidPage(f);
+		scrollElMidPage(f,ifrm2);
 	}
 }
 
@@ -1258,7 +1264,7 @@ var shiftVid=(force_default_place)=>{
 							/*try{
 								if(postRsz){
 									postRsz=false;
-									scrollElMidPage(currentFig);
+									scrollElMidPage(currentFig,ifrm2);
 								}
 							}catch(e){;}*/
 							let ifrm2R=absBoundingClientRect(ifrm2);
@@ -1684,21 +1690,7 @@ window.addEventListener('pointermove', function (event) {
 					prg.className='scrub';
 					currFigCaps.push([currFigCap,prg]);
 				}catch(e){;}
-				ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
-				sy=getScrollY();
-				scrollElMidPage(figEl);
-				sy2=getScrollY();
-				if(sy2<sy){
-					ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
-				}else{
-					ifrm2.scrollIntoView({behavior: "instant", block: 'end', inline: "start"});
-					sy=getScrollY();
-					if(sy<sy2){
-						figEl.scrollIntoView({behavior: "instant", block: 'end', inline: "start"});
-					}else{
-						scrollElMidPage(figEl);
-					}
-				}
+					scrollElMidPage(figEl,ifrm2);
 					last_psTime[1]=true;
 					//myVdo.currentTime=last_psTime[0];
 			}else{
@@ -1755,7 +1747,7 @@ secs=(secs==10)?" "+(floorSecs+1)+".0s":" "+floorSecs+"."+Math.max(0,secs).toLoc
   }
 
 scrl.onclick=function(){
-	scrollElMidPage(captions[curr_thumb].parentElement.parentElement);
+	scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
 };
 
 
@@ -2652,7 +2644,7 @@ function thumbseek(bool){
 					);
 					setStyle(document.documentElement,'min-height',doc_minHeight+'px');
 					chrome.runtime.sendMessage({doc_minHeight:doc_minHeight, url:window.location.href, type: 'size'}, function(response){;});
-					scrollElMidPage(captions[curr_thumb].parentElement.parentElement);
+					scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
 					
 				}
 				
@@ -2670,7 +2662,7 @@ function thumbseek(bool){
 					shb2=false;
 					shiftBtns2(false);
 					if(vfr){
-						scrollElMidPage(captions[curr_thumb].parentElement.parentElement);
+						scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
 					}else{
 						setStyle(document.documentElement,'min-height',doc_minHeight+'px');
 						chrome.runtime.sendMessage({doc_minHeight:doc_minHeight, url:window.location.href, type: 'size'}, function(response){;});
@@ -2720,7 +2712,7 @@ function thumbseek(bool){
 								skip(event);						
 								let t=captions[curr_thumb].parentElement.parentElement;
 								suppressScr=true;
-								//scrollElMidPage(t);
+								//scrollElMidPage(t,ifrm2);
 							//}
 							figSk=false;
 						}
@@ -2974,7 +2966,7 @@ setStyle(ct,'zoom',(f.scrollWidth/ct.clientWidth)*0.2);
 /*if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
 			scrollElMidPage(myVdo);
 }else{
-	scrollElMidPage(this);
+	scrollElMidPage(this,ifrm2);
 }*/
 suppressScr=true;
 	  }else{
@@ -3015,7 +3007,7 @@ suppressScr=true;
 /*if(!myVdo.ownerDocument.pictureInPictureElement && vfr){
 			scrollElMidPage(myVdo);
 }else{
-	scrollElMidPage(this);
+	scrollElMidPage(this,ifrm2);
 }*/
 suppressScr=true;
 	  }
