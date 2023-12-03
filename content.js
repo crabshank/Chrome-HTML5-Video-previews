@@ -625,12 +625,12 @@ function messageHdl(request, sender, sendResponse) {
 		if(document.URL==request.message && init===null){
 			handleBrowserActionClicked(request);
 			init=false;
-		}else if(init===false && fr_id!==0){ //hide
+		}else if(init===false && fr_id!==null && fr_id!==0){ //hide
 			setStyle(ifrm,'display','none');
 			setStyle(ifrm2,'display','none');
 			setStyle(ifrm3,'display','none');
 			init=true;
-		}else if(init===true && fr_id!==0){ //show
+		}else if(init===true && fr_id!==null && fr_id!==0){ //show
 			setStyle(ifrm,'display','flex');
 			 setStyle(ifrm2,'display','flex');
 			 setStyle(ifrm3,'display','flex');
@@ -644,12 +644,12 @@ function messageHdl(request, sender, sendResponse) {
 	if(init===null){
 	 handleBrowserActionClicked(request);
 		init=false;
-	}else if(init===false && fr_id!==0){ //hide
+	}else if(init===false && fr_id!==null && fr_id!==0){ //hide
 		setStyle(ifrm,'display','none');
 		setStyle(ifrm2,'display','none');
 		setStyle(ifrm3,'display','none');
 		init=true;
-	}else if(init===true && fr_id!==0){ //show
+	}else if(init===true && fr_id!==null && fr_id!==0){ //show
 		setStyle(ifrm,'display','flex');
 		setStyle(ifrm2,'display','flex');
 		setStyle(ifrm3,'display','flex');
