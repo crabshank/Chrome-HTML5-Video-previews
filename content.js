@@ -1288,7 +1288,7 @@ var shiftVid=(force_default_place)=>{
 								setStyle(firstAncestor,'top','1px');	
 								setStyle(firstAncestor,'left','-2px');
 								setStyle(firstAncestor,'transform-origin','top left');
-								setStyle(firstAncestor,'z-index',Number.MAX_SAFE_INTEGER);
+								setStyle(firstAncestor,'z-index',Number.MAX_SAFE_INTEGER-1);
 								let mvl=(firstAncestorIFR!==null)?firstAncestorIFR:myVdo;
 								myVdoR=mvl.getBoundingClientRect();
 								let faRect=firstAncestor.getBoundingClientRect();
