@@ -1284,6 +1284,7 @@ var shiftVid=(force_default_place)=>{
 								if(typeof(firstAncestor_wh['width']!=='undefined')){
 									setFA_wh(firstAncestor_wh);
 								}
+								setStyle(firstAncestor,'transition','none');	
 								setStyle(firstAncestor,'position','fixed');	
 								setStyle(firstAncestor,'top','1px');	
 								setStyle(firstAncestor,'left','-2px');
