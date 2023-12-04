@@ -2300,73 +2300,132 @@ if(!tTrkFlg){
 }
 
 var tu2=(event) => {
-	let chg=false;
-	if(!tTrkFlg){
-		setStyle(bSect,'width','min-content');
-		setStyle(bSect,'min-width','');
-		setStyle(bSect,'max-width','');
-		curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
-		let bSectR=absBoundingClientRect(bSect);
-		let bsrw=bSectR.width
-		bsw=(bsrw>bsw)?bsrw:bsw;
-		setStyle(bSect,'width',bsw+'px');
-		setStyle(bSect,'min-width',bsw+'px');
-		setStyle(bSect,'max-width',bsw+'px');
-		ifrmRsz();
-	}
- if(aseek==0){
-	for(let i=0;i<captions.length;i++){
-		let ci=captions[i];
-		setStyle(ci,'display','inline-table');
-		ci.innerText=ci.parentElement.parentElement.firstChild.attributes.timestamp_fmt.nodeValue;
-		if(ci!==last_psTime[2]){
-			setStyle(ci,'background-color',"#00000099");
+		let chg=false;
+		if(!tTrkFlg){
+			setStyle(bSect,'width','min-content');
+			setStyle(bSect,'min-width','');
+			setStyle(bSect,'max-width','');
+			curr.innerText= formatTime(myVdo.currentTime)+"\n("+myVdo.playbackRate.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+"x)";
+			let bSectR=absBoundingClientRect(bSect);
+			let bsrw=bSectR.width
+			bsw=(bsrw>bsw)?bsrw:bsw;
+			setStyle(bSect,'width',bsw+'px');
+			setStyle(bSect,'min-width',bsw+'px');
+			setStyle(bSect,'max-width',bsw+'px');
+			ifrmRsz();
 		}
-	}
-	
-		for(let i=0;i<progresses.length;i++){
-			setStyle(progresses[i],'display','none');
-		}
-		figSize(null);
-		
-if(myVdo.readyState>0){
-	cap=(cap!=-1)?cap:myVdo.currentTime*(done_t)/myVdo.duration;
-	cap_el=Math.floor(cap);
-	perc_r=Math.min(1,Math.max(0,cap-cap_el));
-	perc=(perc_r*100).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+	 if(aseek==0){
 
-	
-if(captions.length==done_t){
-
-if (cap_el<captions.length){
-var attr=captions[cap_el].parentElement.previousSibling.attributes;
-}else if (cap_el>=captions.length){
-var attr=captions[captions.length-1].parentElement.previousSibling.attributes;
-}
-
-if(nowFlag>-1){
-var attr_now=captions[nowFlag].parentElement.previousSibling.attributes;
-}
-
-if (cap_el+1<captions.length){
-var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
-	if(nowFlag>-1){
-			//captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
-			setStyle(captions[nowFlag],'display',"none");
-			setStyle(progresses[nowFlag],'display',"");
-			figSize(progresses[nowFlag].parentElement.parentElement,chg,nowFlag);
-			progresses[nowFlag].title=perc+"%";
-			curr_thumb=nowFlag;
-			setStyle(captions[nowFlag],'background-color',"#0004ff99");
-			if(suppressTU===false){
-				progresses[nowFlag].value=perc_r;
-			}
-			captions[nowFlag].parentElement.parentElement.onmousemove=function (e) {
-			pgBar(nowFlag,progresses[nowFlag],e,attr,attr_next.timestamp.nodeValue);
-			}
-			nowFlag=-1;
+			figSize(null);
 			
-	}else if (cap==cap_el){
+	if(myVdo.readyState>0){
+		cap=(cap!=-1)?cap:myVdo.currentTime*(done_t)/myVdo.duration;
+		cap_el=Math.floor(cap);
+		perc_r=Math.min(1,Math.max(0,cap-cap_el));
+		perc=(perc_r*100).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+
+		
+	if(captions.length==done_t){
+		 let now_next={now:[], next:[]};
+	if (cap_el<captions.length){
+	var attr=captions[cap_el].parentElement.previousSibling.attributes;
+	}else if (cap_el>=captions.length){
+	var attr=captions[captions.length-1].parentElement.previousSibling.attributes;
+	}
+
+	if(nowFlag>-1){
+	var attr_now=captions[nowFlag].parentElement.previousSibling.attributes;
+	}
+
+	if (cap_el+1<captions.length){
+	var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
+		if(nowFlag>-1){
+				//captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
+				setStyle(captions[nowFlag],'display',"none");
+				setStyle(progresses[nowFlag],'display',"");
+				figSize(progresses[nowFlag].parentElement.parentElement,chg,nowFlag);
+				progresses[nowFlag].title=perc+"%";
+				curr_thumb=nowFlag;
+				setStyle(captions[nowFlag],'background-color',"#0004ff99");
+				now_next.now=[captions[nowFlag],progresses[nowFlag]];
+				if(suppressTU===false){
+					progresses[nowFlag].value=perc_r;
+				}
+				captions[nowFlag].parentElement.parentElement.onmousemove=function (e) {
+				pgBar(nowFlag,progresses[nowFlag],e,attr,attr_next.timestamp.nodeValue);
+				}
+				nowFlag=-1;
+				
+		}else if (cap==cap_el){
+				//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
+				setStyle(captions[cap_el],'display',"none");
+				setStyle(progresses[cap_el],'display',"");
+				figSize(progresses[cap_el].parentElement.parentElement,chg,cap_el);
+				progresses[cap_el].title=perc+"%";
+				curr_thumb=cap_el;
+				setStyle(captions[cap_el],'background-color',"#0004ff99");
+				now_next.now=[captions[cap_el],progresses[cap_el]];
+				if(suppressTU===false){
+				progresses[cap_el].value=perc_r;
+				}
+				captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
+				pgBar(cap_el,progresses[cap_el],e,attr,attr_next.timestamp.nodeValue);
+				}
+		}else{
+			var until=(cap_el<captions.length)?Math.max(0,attr_next.timestamp.nodeValue-myVdo.currentTime):Math.max(0,myVdo.duration-myVdo.currentTime);
+			until=formatTime(until,1);
+				captions[cap_el+1].innerText=attr_next.timestamp_fmt.nodeValue+" (NEXT) ["+until+"]";
+				//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
+				setStyle(captions[cap_el],'display',"none");
+				setStyle(progresses[cap_el],'display',"");
+				figSize(progresses[cap_el].parentElement.parentElement,chg,cap_el);
+				progresses[cap_el].title=perc+"%";
+				curr_thumb=cap_el;
+				setStyle(captions[cap_el+1],'background-color',"#006115c7");
+				now_next.now=[captions[cap_el],progresses[cap_el]];
+				now_next.next=[captions[cap_el+1],progresses[cap_el+1]];
+				if(suppressTU===false){
+				progresses[cap_el].value=perc_r;
+				}
+				captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
+				pgBar(cap_el,progresses[cap_el],e,attr,attr_next.timestamp.nodeValue);
+				}
+		}
+	}else{
+
+		if(nowFlag>-1){
+				//captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
+				setStyle(captions[nowFlag],'display',"none");
+				setStyle(progresses[nowFlag],'display',"");
+				figSize(progresses[nowFlag].parentElement.parentElement,chg,nowFlag);
+				progresses[nowFlag].title=perc+"%";
+				curr_thumb=nowFlag;
+				setStyle(captions[nowFlag],'background-color',"#0004ff99");
+				now_next.now=[captions[nowFlag],progresses[nowFlag]];
+				if(suppressTU===false){
+						progresses[nowFlag].value=perc_r;
+				}
+				captions[nowFlag].parentElement.parentElement.onmousemove=function (e) {
+				pgBar(nowFlag,progresses[nowFlag],e,attr,myVdo.duration);
+				}
+		}else if (cap==cap_el){
+			if(cap_el>=captions.length){
+				//captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+100+".0%]";
+				setStyle(captions.at(-1),'display',"none");
+				setStyle(progresses.at(-1),'display',"");
+				figSize(progresses.at(-1).parentElement.parentElement,chg,progresses.length-1);
+				progresses[captions.length-1].title="100.0%";
+				curr_thumb=captions.length-1;
+				setStyle(captions[captions.length-1],'background-color',"#006115c7");
+				now_next.now=[captions[captions.length-1],progresses.at(-1)];
+				now_next.next=[captions[captions.length-1],progresses.at(-1)];
+				if(suppressTU===false){
+				progresses[captions.length-1].value=1;
+				}
+				captions[captions.length-1].parentElement.parentElement.onmousemove=function (e) {
+				pgBar(captions.length-1,progresses[captions.length-1],e,attr,myVdo.duration);
+				}
+			}else{
 			//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
 			setStyle(captions[cap_el],'display',"none");
 			setStyle(progresses[cap_el],'display',"");
@@ -2374,97 +2433,56 @@ var attr_next=captions[cap_el+1].parentElement.previousSibling.attributes;
 			progresses[cap_el].title=perc+"%";
 			curr_thumb=cap_el;
 			setStyle(captions[cap_el],'background-color',"#0004ff99");
+			now_next.now=[captions[cap_el],progresses[cap_el]];
 			if(suppressTU===false){
 			progresses[cap_el].value=perc_r;
 			}
-			captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
-			pgBar(cap_el,progresses[cap_el],e,attr,attr_next.timestamp.nodeValue);
-			}
-	}else{
-		var until=(cap_el<captions.length)?Math.max(0,attr_next.timestamp.nodeValue-myVdo.currentTime):Math.max(0,myVdo.duration-myVdo.currentTime);
-		until=formatTime(until,1);
-			captions[cap_el+1].innerText=attr_next.timestamp_fmt.nodeValue+" (NEXT) ["+until+"]";
-			//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
-			setStyle(captions[cap_el],'display',"none");
-			setStyle(progresses[cap_el],'display',"");
-			figSize(progresses[cap_el].parentElement.parentElement,chg,cap_el);
-			progresses[cap_el].title=perc+"%";
-			curr_thumb=cap_el;
-			setStyle(captions[cap_el],'background-color',"#006115c7");
-			if(suppressTU===false){
-			progresses[cap_el].value=perc_r;
-			}
-			captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
-			pgBar(cap_el,progresses[cap_el],e,attr,attr_next.timestamp.nodeValue);
-			}
-	}
-}else{
-
-	if(nowFlag>-1){
-			//captions[nowFlag].innerText=attr_now.timestamp_fmt.nodeValue+" (NOW!)";
-			setStyle(captions[nowFlag],'display',"none");
-			setStyle(progresses[nowFlag],'display',"");
-			figSize(progresses[nowFlag].parentElement.parentElement,chg,nowFlag);
-			progresses[nowFlag].title=perc+"%";
-			curr_thumb=nowFlag;
-			setStyle(captions[nowFlag],'background-color',"#0004ff99");
-			if(suppressTU===false){
-					progresses[nowFlag].value=perc_r;
-			}
-			captions[nowFlag].parentElement.parentElement.onmousemove=function (e) {
-			pgBar(nowFlag,progresses[nowFlag],e,attr,myVdo.duration);
-			}
-	}else if (cap==cap_el){
-		if(cap_el>=captions.length){
-			//captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+100+".0%]";
-			setStyle(captions.at(-1),'display',"none");
-			setStyle(progresses.at(-1),'display',"");
-			figSize(progresses.at(-1).parentElement.parentElement,chg,progresses.length-1);
-			progresses[captions.length-1].title="100.0%";
-			curr_thumb=captions.length-1;
-			setStyle(captions[captions.length-1],'background-color',"#006115c7");	
-			if(suppressTU===false){
-			progresses[captions.length-1].value=1;
-			}
-			captions[captions.length-1].parentElement.parentElement.onmousemove=function (e) {
-			pgBar(captions.length-1,progresses[captions.length-1],e,attr,myVdo.duration);
+				captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
+				pgBar(cap_el,progresses[cap_el],e,attr,myVdo.duration);
+				}
 			}
 		}else{
-		//captions[cap_el].innerText=attr.timestamp_fmt.nodeValue+" (NOW!)";
-		setStyle(captions[cap_el],'display',"none");
-		setStyle(progresses[cap_el],'display',"");
-		figSize(progresses[cap_el].parentElement.parentElement,chg,cap_el);
-		progresses[cap_el].title=perc+"%";
-		curr_thumb=cap_el;
-		setStyle(captions[cap_el],'background-color',"#0004ff99");
-		if(suppressTU===false){
-		progresses[cap_el].value=perc_r;
+				//captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
+				setStyle(captions.at(-1),'display',"none");
+				setStyle(progresses.at(-1),'display',"");
+				figSize(progresses.at(-1).parentElement.parentElement,chg,progresses.length-1);
+				progresses[captions.length-1].title=perc+"%";
+				curr_thumb=captions.length-1;
+				setStyle(captions[captions.length-1],'background-color',"#006115c7");
+				now_next.now=[captions[captions.length-1],progresses.at(-1)];
+				now_next.next=[captions[captions.length-1],progresses.at(-1)];
+				if(suppressTU===false){
+				progresses[captions.length-1].value=perc_r;
+				}
+				captions[captions.length-1].parentElement.parentElement.onmousemove=function(e) {
+				pgBar(captions.length-1,progresses[captions.length-1],e,attr,myVdo.duration);
+				}
 		}
-			captions[cap_el].parentElement.parentElement.onmousemove=function (e) {
-			pgBar(cap_el,progresses[cap_el],e,attr,myVdo.duration);
-			}
-		}
-	}else{
-			//captions[captions.length-1].innerText=attr.timestamp_fmt.nodeValue+" (LAST) ["+perc+"%]";
-			setStyle(captions.at(-1),'display',"none");
-			setStyle(progresses.at(-1),'display',"");
-			figSize(progresses.at(-1).parentElement.parentElement,chg,progresses.length-1);
-			progresses[captions.length-1].title=perc+"%";
-			curr_thumb=captions.length-1;
-			setStyle(captions[captions.length-1],'background-color',"#006115c7");
-			if(suppressTU===false){
-			progresses[captions.length-1].value=perc_r;
-			}
-			captions[captions.length-1].parentElement.parentElement.onmousemove=function(e) {
-			pgBar(captions.length-1,progresses[captions.length-1],e,attr,myVdo.duration);
-			}
+			
 	}
+	for(let i=0;i<captions.length;i++){
+			let ci=captions[i];
+			let cin=(ci===now_next.now[0])?true:false;
+			if(cin===false){
+				setStyle(ci,'display','inline-table');
+			}
+			if(ci!==last_psTime[2] && cin===false && ci!==now_next.next[0]){
+				ci.innerText=ci.parentElement.parentElement.firstChild.attributes.timestamp_fmt.nodeValue;
+				setStyle(ci,'background-color',"#00000099");
+			}
+		}
 		
-}
-}
-cap=-1;
-}
-}
+			for(let i=0;i<progresses.length;i++){
+				let pi=progresses[i];
+				if(pi!==now_next.now[1]){
+					setStyle(pi,'display','none');
+				}
+			}
+	
+	}
+	cap=-1;
+	}
+	}
 }
 
 myVdo.addEventListener("timeupdate", (event)=>{
