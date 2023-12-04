@@ -2346,7 +2346,6 @@ var tu2=(event) => {
 				figSize(progresses[nowFlag].parentElement.parentElement,chg,nowFlag);
 				progresses[nowFlag].title=perc+"%";
 				curr_thumb=nowFlag;
-				setStyle(captions[nowFlag],'background-color',"#0004ff99");
 				now_next.now=[captions[nowFlag],progresses[nowFlag]];
 				if(suppressTU===false){
 					progresses[nowFlag].value=perc_r;
@@ -2363,7 +2362,6 @@ var tu2=(event) => {
 				figSize(progresses[cap_el].parentElement.parentElement,chg,cap_el);
 				progresses[cap_el].title=perc+"%";
 				curr_thumb=cap_el;
-				setStyle(captions[cap_el],'background-color',"#0004ff99");
 				now_next.now=[captions[cap_el],progresses[cap_el]];
 				if(suppressTU===false){
 				progresses[cap_el].value=perc_r;
@@ -2381,7 +2379,6 @@ var tu2=(event) => {
 				figSize(progresses[cap_el].parentElement.parentElement,chg,cap_el);
 				progresses[cap_el].title=perc+"%";
 				curr_thumb=cap_el;
-				setStyle(captions[cap_el+1],'background-color',"#006115c7");
 				now_next.now=[captions[cap_el],progresses[cap_el]];
 				now_next.next=[captions[cap_el+1],progresses[cap_el+1]];
 				if(suppressTU===false){
@@ -2400,7 +2397,6 @@ var tu2=(event) => {
 				figSize(progresses[nowFlag].parentElement.parentElement,chg,nowFlag);
 				progresses[nowFlag].title=perc+"%";
 				curr_thumb=nowFlag;
-				setStyle(captions[nowFlag],'background-color',"#0004ff99");
 				now_next.now=[captions[nowFlag],progresses[nowFlag]];
 				if(suppressTU===false){
 						progresses[nowFlag].value=perc_r;
@@ -2416,7 +2412,6 @@ var tu2=(event) => {
 				figSize(progresses.at(-1).parentElement.parentElement,chg,progresses.length-1);
 				progresses[captions.length-1].title="100.0%";
 				curr_thumb=captions.length-1;
-				setStyle(captions[captions.length-1],'background-color',"#006115c7");
 				now_next.now=[captions[captions.length-1],progresses.at(-1)];
 				now_next.next=[captions[captions.length-1],progresses.at(-1)];
 				if(suppressTU===false){
@@ -2432,7 +2427,6 @@ var tu2=(event) => {
 			figSize(progresses[cap_el].parentElement.parentElement,chg,cap_el);
 			progresses[cap_el].title=perc+"%";
 			curr_thumb=cap_el;
-			setStyle(captions[cap_el],'background-color',"#0004ff99");
 			now_next.now=[captions[cap_el],progresses[cap_el]];
 			if(suppressTU===false){
 			progresses[cap_el].value=perc_r;
@@ -2448,7 +2442,6 @@ var tu2=(event) => {
 				figSize(progresses.at(-1).parentElement.parentElement,chg,progresses.length-1);
 				progresses[captions.length-1].title=perc+"%";
 				curr_thumb=captions.length-1;
-				setStyle(captions[captions.length-1],'background-color',"#006115c7");
 				now_next.now=[captions[captions.length-1],progresses.at(-1)];
 				now_next.next=[captions[captions.length-1],progresses.at(-1)];
 				if(suppressTU===false){
@@ -2466,8 +2459,10 @@ var tu2=(event) => {
 			if(cin===false){
 				setStyle(ci,'display','inline-table');
 			}
-			if(ci!==last_psTime[2] && cin===false && ci!==now_next.next[0]){
+			if(cin===false && ci!==now_next.next[0]){
 				ci.innerText=ci.parentElement.parentElement.firstChild.attributes.timestamp_fmt.nodeValue;
+			}
+			if(ci!==last_psTime[2]){
 				setStyle(ci,'background-color',"#00000099");
 			}
 		}
