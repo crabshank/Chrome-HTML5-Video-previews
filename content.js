@@ -1053,6 +1053,7 @@ ifrmRsz();
 let suppressScr=false;
 //let zeroRsz=false;
 function scrollElMidPage(el,p){
+	suppressScrEvt=false;
 	if(typeof(p)!=='undefined'){
 		p.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
 		sy=getScrollY();
@@ -1091,8 +1092,7 @@ function figSize(f,g,x){ //figure,
 		currentFig=f;
 		if(justSeek===true){
 			justSeek=false;
-			suppressScrEvt=true;
-scrollElMidPage(f,ifrm2);
+			scrollElMidPage(f,ifrm2);
 		}
 		if(psDiv!==null && x!==null && typeof(x)!=='undefined'){
 			let figSt=(x/done_t)*100;
@@ -1119,18 +1119,15 @@ scrollElMidPage(f,ifrm2);
 		if(suppressScr===true){
 			suppressScr=false;
 			if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
-				suppressScrEvt=true;
-scrollElMidPage(myVdo);
+				scrollElMidPage(myVdo);
 			}else{
-				suppressScrEvt=true;
-scrollElMidPage(f,ifrm2);
+				scrollElMidPage(f,ifrm2);
 			}	
 		}
 	}
 	ifrmRsz();
 	if(g===true){
-		suppressScrEvt=true;
-scrollElMidPage(f,ifrm2);
+		scrollElMidPage(f,ifrm2);
 	}
 }
 
@@ -1281,8 +1278,7 @@ var shiftVid=(force_default_place)=>{
 							/*try{
 								if(postRsz){
 									postRsz=false;
-									suppressScrEvt=true;
-scrollElMidPage(currentFig,ifrm2);
+									scrollElMidPage(currentFig,ifrm2);
 								}
 							}catch(e){;}*/
 							let ifrm2R=absBoundingClientRect(ifrm2);
@@ -1712,8 +1708,7 @@ window.addEventListener('pointermove', function (event) {
 					prg.className='scrub';
 					currFigCaps.push([currFigCap,prg]);
 				}catch(e){;}
-					suppressScrEvt=true;
-scrollElMidPage(figEl,ifrm2);
+					scrollElMidPage(figEl,ifrm2);
 					last_psTime[1]=true;
 					//myVdo.currentTime=last_psTime[0];
 			}else{
@@ -1770,18 +1765,15 @@ secs=(secs==10)?" "+(floorSecs+1)+".0s":" "+floorSecs+"."+Math.max(0,secs).toLoc
   }
 
 scrl.onclick=function(){
-	suppressScrEvt=true;
-scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
+	scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
 };
 
 scrl1.onclick=function(){
-	suppressScrEvt=true;
-scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
+	scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
 };
 
 scrv.onclick=function(){
-	suppressScrEvt=true;
-scrollElMidPage(myVdo);
+	scrollElMidPage(myVdo);
 };
 
 mxsp.onwheel= (event) => {
@@ -2695,8 +2687,7 @@ function thumbseek(bool){
 					);
 					setStyle(document.documentElement,'min-height',doc_minHeight+'px');
 					chrome.runtime.sendMessage({doc_minHeight:doc_minHeight, url:window.location.href, type: 'size'}, function(response){;});
-					suppressScrEvt=true;
-scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
+					scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
 					
 				}
 				
@@ -2714,8 +2705,7 @@ scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
 					shb2=false;
 					shiftBtns2(false);
 					if(vfr){
-						suppressScrEvt=true;
-scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
+						scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
 					}else{
 						setStyle(document.documentElement,'min-height',doc_minHeight+'px');
 						chrome.runtime.sendMessage({doc_minHeight:doc_minHeight, url:window.location.href, type: 'size'}, function(response){;});
@@ -2773,8 +2763,7 @@ scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
 								skip(event);						
 								let t=captions[curr_thumb].parentElement.parentElement;
 								suppressScr=true;
-								//suppressScrEvt=true;
-scrollElMidPage(t,ifrm2);
+								//scrollElMidPage(t,ifrm2);
 							//}
 							figSk=false;
 						}
@@ -3026,11 +3015,9 @@ setStyle(ct,'zoom',(f.scrollWidth/ct.clientWidth)*0.2);
 	vidSeek=false;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
 /*if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
-			suppressScrEvt=true;
-scrollElMidPage(myVdo);
+			scrollElMidPage(myVdo);
 }else{
-	suppressScrEvt=true;
-scrollElMidPage(this,ifrm2);
+	scrollElMidPage(this,ifrm2);
 }*/
 suppressScr=true;
 	  }else{
@@ -3069,11 +3056,9 @@ suppressScr=true;
 	vidSeek=false;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
 /*if(!myVdo.ownerDocument.pictureInPictureElement && vfr){
-			suppressScrEvt=true;
-scrollElMidPage(myVdo);
+			scrollElMidPage(myVdo);
 }else{
-	suppressScrEvt=true;
-scrollElMidPage(this,ifrm2);
+	scrollElMidPage(this,ifrm2);
 }*/
 suppressScr=true;
 	  }
