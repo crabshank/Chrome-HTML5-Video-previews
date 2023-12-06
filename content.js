@@ -26,6 +26,7 @@ try {
 	var currFigCaps=[];
 	var allFrames=[];
 	var scrubEnt=false;
+	var suppressScrEvt=false;
 	var ifrm,ifrm2,ifrm3;
 	
 	function setStyle(el,prop,val,pat){
@@ -1055,7 +1056,7 @@ function scrollElMidPage(el,p){
 	if(typeof(p)!=='undefined'){
 		p.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
 		sy=getScrollY();
-		scrollElMidPage(el);
+		el.scrollIntoView({behavior: "instant", block: 'center', inline: "start"});
 		sy2=getScrollY();
 		if(sy2<sy){
 			p.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
@@ -1065,7 +1066,7 @@ function scrollElMidPage(el,p){
 			if(sy<sy2){
 				el.scrollIntoView({behavior: "instant", block: 'end', inline: "start"});
 			}else{
-				scrollElMidPage(el);
+				el.scrollIntoView({behavior: "instant", block: 'center', inline: "start"});
 			}
 		}
 	}else{
@@ -1090,7 +1091,8 @@ function figSize(f,g,x){ //figure,
 		currentFig=f;
 		if(justSeek===true){
 			justSeek=false;
-			scrollElMidPage(f,ifrm2);
+			suppressScrEvt=true;
+scrollElMidPage(f,ifrm2);
 		}
 		if(psDiv!==null && x!==null && typeof(x)!=='undefined'){
 			let figSt=(x/done_t)*100;
@@ -1117,15 +1119,18 @@ function figSize(f,g,x){ //figure,
 		if(suppressScr===true){
 			suppressScr=false;
 			if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
-				scrollElMidPage(myVdo);
+				suppressScrEvt=true;
+scrollElMidPage(myVdo);
 			}else{
-				scrollElMidPage(f,ifrm2);
+				suppressScrEvt=true;
+scrollElMidPage(f,ifrm2);
 			}	
 		}
 	}
 	ifrmRsz();
 	if(g===true){
-		scrollElMidPage(f,ifrm2);
+		suppressScrEvt=true;
+scrollElMidPage(f,ifrm2);
 	}
 }
 
@@ -1276,7 +1281,8 @@ var shiftVid=(force_default_place)=>{
 							/*try{
 								if(postRsz){
 									postRsz=false;
-									scrollElMidPage(currentFig,ifrm2);
+									suppressScrEvt=true;
+scrollElMidPage(currentFig,ifrm2);
 								}
 							}catch(e){;}*/
 							let ifrm2R=absBoundingClientRect(ifrm2);
@@ -1706,7 +1712,8 @@ window.addEventListener('pointermove', function (event) {
 					prg.className='scrub';
 					currFigCaps.push([currFigCap,prg]);
 				}catch(e){;}
-					scrollElMidPage(figEl,ifrm2);
+					suppressScrEvt=true;
+scrollElMidPage(figEl,ifrm2);
 					last_psTime[1]=true;
 					//myVdo.currentTime=last_psTime[0];
 			}else{
@@ -1763,15 +1770,18 @@ secs=(secs==10)?" "+(floorSecs+1)+".0s":" "+floorSecs+"."+Math.max(0,secs).toLoc
   }
 
 scrl.onclick=function(){
-	scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
+	suppressScrEvt=true;
+scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
 };
 
 scrl1.onclick=function(){
-	scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
+	suppressScrEvt=true;
+scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
 };
 
 scrv.onclick=function(){
-	scrollElMidPage(myVdo);
+	suppressScrEvt=true;
+scrollElMidPage(myVdo);
 };
 
 mxsp.onwheel= (event) => {
@@ -2685,7 +2695,8 @@ function thumbseek(bool){
 					);
 					setStyle(document.documentElement,'min-height',doc_minHeight+'px');
 					chrome.runtime.sendMessage({doc_minHeight:doc_minHeight, url:window.location.href, type: 'size'}, function(response){;});
-					scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
+					suppressScrEvt=true;
+scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
 					
 				}
 				
@@ -2703,7 +2714,8 @@ function thumbseek(bool){
 					shb2=false;
 					shiftBtns2(false);
 					if(vfr){
-						scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
+						suppressScrEvt=true;
+scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
 					}else{
 						setStyle(document.documentElement,'min-height',doc_minHeight+'px');
 						chrome.runtime.sendMessage({doc_minHeight:doc_minHeight, url:window.location.href, type: 'size'}, function(response){;});
@@ -2739,10 +2751,18 @@ function thumbseek(bool){
 					}, {capture: false, passive:false});
 
 					ifrm2.ownerDocument.addEventListener("scroll", (event) => {
-						shiftBtns2();
+						if(suppressScrEvt===false){
+							shiftBtns2();
+						}else{
+							suppressScrEvt=false;
+						}
 					}, {capture: true, passive:false});
 					ifrm2.ownerDocument.addEventListener("scroll", (event) => {
-						shiftBtns2();
+						if(suppressScrEvt===false){
+							shiftBtns2();
+						}else{
+							suppressScrEvt=false;
+						}
 					}, {capture: false, passive:false});
 					
 		function figSkipper(event){
@@ -2753,7 +2773,8 @@ function thumbseek(bool){
 								skip(event);						
 								let t=captions[curr_thumb].parentElement.parentElement;
 								suppressScr=true;
-								//scrollElMidPage(t,ifrm2);
+								//suppressScrEvt=true;
+scrollElMidPage(t,ifrm2);
 							//}
 							figSk=false;
 						}
@@ -3005,9 +3026,11 @@ setStyle(ct,'zoom',(f.scrollWidth/ct.clientWidth)*0.2);
 	vidSeek=false;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
 /*if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
-			scrollElMidPage(myVdo);
+			suppressScrEvt=true;
+scrollElMidPage(myVdo);
 }else{
-	scrollElMidPage(this,ifrm2);
+	suppressScrEvt=true;
+scrollElMidPage(this,ifrm2);
 }*/
 suppressScr=true;
 	  }else{
@@ -3046,9 +3069,11 @@ suppressScr=true;
 	vidSeek=false;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
 /*if(!myVdo.ownerDocument.pictureInPictureElement && vfr){
-			scrollElMidPage(myVdo);
+			suppressScrEvt=true;
+scrollElMidPage(myVdo);
 }else{
-	scrollElMidPage(this,ifrm2);
+	suppressScrEvt=true;
+scrollElMidPage(this,ifrm2);
 }*/
 suppressScr=true;
 	  }
