@@ -126,7 +126,6 @@ let init=null;
 var g_ancestors=[];
 var firstAncestor=null;
 var firstAncestorIFR=null;
-var firstAncestor_zIndex=null;
 var firstAncestor_wh={};
 var firstParent=null;
 var vfr=false;
@@ -548,7 +547,10 @@ function messageHdl(request, sender, sendResponse) {
 			for(let i=allFrames.length-1; i>=0; i--){
 				let ifr=allFrames[i];
 				let ifr0=ifr[0];
-				if (ifr0.src===request.url || ifr0.getAttribute('data-src')===request.url){
+				let c=[false,false];
+				try{if(ifr0.src===request.url){c[0]=true;}}catch(e){;}
+				try{if(ifr0.getAttribute('data-src')===request.url){c[1]=true;}}catch(e){;}
+				if ( c[0] || c[1] ){
 					x=[ifr0,...ifr[3]];
 					let hg=request.doc_minHeight+'px';
 					x.forEach(f=>{
@@ -564,10 +566,13 @@ function messageHdl(request, sender, sendResponse) {
 			
 					let xfr=null;
 		for(let i=0; i<expnd.length; i++){
-			if (expnd[i].src===request.message || expnd[i].getAttribute('data-src')===request.message){
-				xfr=expnd[i];
-				break;
-			}
+				let c=[false,false];
+				try{if(expnd[i].src===request.message){c[0]=true;}}catch(e){;}
+				try{if(expnd[i].getAttribute('data-src')===request.message){c[1]=true;}}catch(e){;}
+				if ( c[0] || c[1] ){
+					xfr=expnd[i];
+					break;
+				}
 		}
 		
 		if(!xfr){
@@ -575,13 +580,16 @@ function messageHdl(request, sender, sendResponse) {
 		for(let i=allFrames.length-1; i>=0; i--){
 			let ifr=allFrames[i];
 			let ifr0=ifr[0];
-			if (ifr0.src===request.message || ifr0.getAttribute('data-src')===request.message){
-				x=[ifr0,...ifr[3]].filter(xi=>{ return !expnd.includes(xi)});
-				expnd.push(...x);
-				let xc=x.map(f=>{return window.getComputedStyle(f)});
-				expndCSS.push(...xc);
-				break;
-			}
+				let c=[false,false];
+				try{if(ifr0.src===request.message){c[0]=true;}}catch(e){;}
+				try{if(ifr0.getAttribute('data-src')===request.message){c[1]=true;}}catch(e){;}
+				if ( c[0] || c[1] ){
+					x=[ifr0,...ifr[3]].filter(xi=>{ return !expnd.includes(xi)});
+					expnd.push(...x);
+					let xc=x.map(f=>{return window.getComputedStyle(f)});
+					expndCSS.push(...xc);
+					break;
+				}
 		}
 			
 			if(x.length>0){
@@ -592,7 +600,10 @@ function messageHdl(request, sender, sendResponse) {
 		for(let i=allFrames.length-1; i>=0; i--){
 			let ifr=allFrames[i];
 			let ifr0=ifr[0];
-			if (ifr0.src===request.message || ifr0.getAttribute('data-src')===request.message){
+			let c=[false,false];
+			try{if(ifr0.src===request.message){c[0]=true;}}catch(e){;}
+			try{if(ifr0.getAttribute('data-src')===request.message){c[1]=true;}}catch(e){;}
+			if ( c[0] || c[1] ){
 				x=[ifr0,...ifr[3]];
 				break;
 			}
@@ -1230,7 +1241,6 @@ var ancsRsz= ()=>{
 	}else{
 		firstParent=null;
 		firstAncestor=null;
-		firstAncestor_zIndex=null;
 	}
 }
 
@@ -1289,7 +1299,9 @@ var shiftVid=(force_default_place)=>{
 								setStyle(firstAncestor,'top','1px');	
 								setStyle(firstAncestor,'left','-2px');
 								setStyle(firstAncestor,'transform-origin','top left');
-								setStyle(firstAncestor,'z-index',Number.MAX_SAFE_INTEGER-1);
+								setStyle(firstAncestor,'z-index',Number.MAX_SAFE_INTEGER);
+								let zi=parseInt(window.getComputedStyle(firstAncestor)['z-index']);
+								setStyle(firstAncestor,'z-index',zi-1);
 								let mvl=(firstAncestorIFR!==null)?firstAncestorIFR:myVdo;
 								myVdoR=mvl.getBoundingClientRect();
 								let faRect=firstAncestor.getBoundingClientRect();
@@ -3017,7 +3029,7 @@ suppressScr=true;
 			let pfz=getFloat(fz);
 			//let z=( isNaN(pfz) || isOneCol )?1:0.01*pfz;
 			let fct=getFloat(t.parentElement.style.zoom);
-			let pv=e.offsetX/(rct.width*fct*pfz) ;
+			let pv=e.offsetX/(rct.width*fct*pfz);
 			prg.value=pv;
 			let nxt=(index===captions.length-1)?myVdo.duration:parseFloat(captions[index+1].parentElement.previousElementSibling.getAttribute('timestamp'));
 			suppressTU=true;
@@ -3060,7 +3072,7 @@ setStyle(document.body,'overflow','scroll');
 
 document.body.insertAdjacentElement('afterbegin',ifrm);
 
-ifrm.src = "about:blank";
+//ifrm.src = "";
 
 ifrm.contentWindow.document.open();
 ifrm.contentWindow.document.write(ht_a);
@@ -3068,7 +3080,7 @@ ifrm.contentWindow.document.close();
 
 document.body.insertAdjacentElement('beforeend',ifrm2);
 
-ifrm2.src = "about:blank";
+//ifrm2.src = "";
 
 ifrm2.contentWindow.document.open();
 ifrm2.contentWindow.document.write(ht_c);
@@ -3076,7 +3088,7 @@ ifrm2.contentWindow.document.close();
 
 ifrm2.insertAdjacentElement('afterend',ifrm3);
 
-ifrm3.src = "about:blank";
+//ifrm3.src = "";
 
 ifrm3.contentWindow.document.open();
 ifrm3.contentWindow.document.write(ht_d);
