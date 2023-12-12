@@ -1330,7 +1330,7 @@ var shiftVid=(force_default_place)=>{
 								let hlf=0.5*(hScld);
 								myVdoR.vid_top=myVdoR.centre_y-hlf;
 								myVdoR.vid_bottom=myVdoR.centre_y+hlf;
-								controls_tag.innerHTML=`video::-webkit-media-controls {transform: translateY(${(myVdoR.vid_bottom-myVdoR.bottom)/s}px) !important;}`;//-
+								controls_tag.innerHTML=`*{transition: none !important;} video::-webkit-media-controls {transform: translateY(${(myVdoR.vid_bottom-myVdoR.bottom)/s}px) !important;}`;//-
 								
 								tx=((ifrm2R.right+vw2)-myVdoR.left)/s;
 								ty=(ifrm3R.top-myVdoR.vid_top+1)/s;
