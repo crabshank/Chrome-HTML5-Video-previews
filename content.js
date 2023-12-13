@@ -710,6 +710,7 @@ var controls_tag=document.createElement('style');
 hed.insertAdjacentElement('afterbegin',controls_tag);
 
 ifrm=document.createElement('iframe');
+setStyle(ifrm,'transition','none');
 setStyle(ifrm,'z-index',Number.MAX_SAFE_INTEGER);
 setStyle(ifrm,'width','-webkit-fill-available');
 setStyle(ifrm,'margin',0);
@@ -725,6 +726,7 @@ setStyle(ifrm,'top','0.37ch');
 setStyle(ifrm,'left','0.66ch');
 
 ifrm2=document.createElement('iframe');
+setStyle(ifrm2,'transition','none');
 setStyle(ifrm2,'position','absolute');
 setStyle(ifrm2,'z-index',Number.MAX_SAFE_INTEGER);
 setStyle(ifrm2,'min-width','-webkit-fill-available');
@@ -740,6 +742,7 @@ setStyle(ifrm2,'transform','translateY(0px)');
 setStyle(ifrm2,'transform-origin','left top');
 
 ifrm3=document.createElement('iframe');
+setStyle(ifrm3,'transition','none');
 setStyle(ifrm3,'position','absolute');
 setStyle(ifrm3,'z-index',Number.MAX_SAFE_INTEGER);
 setStyle(ifrm3,'min-height','100vh');
@@ -2583,7 +2586,7 @@ function thumbseek(bool){
 				setStyle(oneCol,'display','block');
 				if(pointerScrub_var!==0){
 					psDiv=document.createElement('div');
-					psDiv.style.cssText="all: initial !important; min-height: 9px !important; height: "+(pointerScrub_var*window.screen.height)+"px !important; display: none !important; position: absolute !important;  top: 0px !important;  left: 0px !important; transform-origin: top left !important; background: #00ffff99 !important; z-index: "+(Number.MAX_SAFE_INTEGER)+" !important;";
+					psDiv.style.cssText="all: initial !important; transition: none !important; min-height: 9px !important; height: "+(pointerScrub_var*window.screen.height)+"px !important; display: none !important; position: absolute !important;  top: 0px !important;  left: 0px !important; transform-origin: top left !important; background: #00ffff99 !important; z-index: "+(Number.MAX_SAFE_INTEGER)+" !important;";
 					psDiv.title="Hover over to scrub through thumbs";
 					firstAncestor.insertAdjacentElement('afterend',psDiv);
 				}
