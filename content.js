@@ -1065,7 +1065,7 @@ function scrollElMidPage(el,p){
 			p.scrollIntoView({behavior: "instant", block: 'end', inline: "start"});
 			sy=getScrollY();
 			if(sy<sy2){
-				el.scrollIntoView({behavior: "instant", block: 'end', inline: "start"});
+				p.scrollIntoView({behavior: "instant", block: 'end', inline: "start"});
 			}else{
 				el.scrollIntoView({behavior: "instant", block: 'center', inline: "start"});
 			}
