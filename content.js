@@ -27,7 +27,6 @@ try {
 	var allFrames=[];
 	var scrubEnt=false;
 	var ifrm,ifrm2,ifrm3;
-	var justResized=false;
 	
 	function setStyle(el,prop,val,pat){
 		pat=(typeof(pat)==='undefined')?new RegExp(`(?<=(^\\s*|;\\s*))${prop}\\s*\:\\s*[^;]*;?`):new RegExp(pat);
