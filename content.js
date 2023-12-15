@@ -1680,11 +1680,11 @@ window.addEventListener('pointermove', function (event) {
 					ent=true;
 				}else{
 					//NOT IN DIV
-					last_psTime[0]=null;
+					last_psTime=[null,false,null];
 				}
 			}else{
 				//NOT IN DIV
-				last_psTime[0]=null;
+				last_psTime=[null,false,null];
 			}
 			if(scrubEnt===true && ent===false){
 				scrubEnt=ent;
@@ -1733,7 +1733,7 @@ window.addEventListener('pointermove', function (event) {
 			}
 		}else{
 			//NOT IN DIV
-			last_psTime[0]=null;
+			last_psTime=[null,false,null];
 			scrubEnt=false;
 			rst=true;
 		}
