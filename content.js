@@ -1056,6 +1056,9 @@ ifrmRsz();
 let suppressScr=false;
 //let zeroRsz=false;
 function scrollElMidPage(el,p){
+	if(last_psTime[0]!==null){
+		el=last_psTime[0];
+	}
 	suppressScrEvt=false;
 	if(typeof(p)!=='undefined'){
 		p.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
@@ -1304,7 +1307,7 @@ var shiftVid=(force_default_place)=>{
 								setStyle(firstAncestor,'top','1px');	
 								setStyle(firstAncestor,'left','-2px');
 								setStyle(firstAncestor,'transform-origin','top left');
-								setStyle(firstAncestor,'z-index',Number.MAX_SAFE_INTEGER);
+								
 								let zi=parseInt(window.getComputedStyle(firstAncestor)['z-index']);
 								setStyle(firstAncestor,'z-index',zi-1);
 								let mvl=(firstAncestorIFR!==null)?firstAncestorIFR:myVdo;
@@ -1669,9 +1672,19 @@ window.addEventListener('pointermove', function (event) {
 			if(evY>=vrt && evY<=vrb){
 				let ivLerp= (evY - vrt)/(vrb - vrt);
 				if(evX>=vrl && evX<=vrr){
+					//IN DIV
+					if(last_psTime[0]===null){
+						last_psTime[0]={};
+					}
 					res= (evX - vrl)/(vrr - vrl);
 					ent=true;
+				}else{
+					//NOT IN DIV
+					last_psTime[0]=null;
 				}
+			}else{
+				//NOT IN DIV
+				last_psTime[0]=null;
 			}
 			if(scrubEnt===true && ent===false){
 				scrubEnt=ent;
@@ -1719,6 +1732,8 @@ window.addEventListener('pointermove', function (event) {
 				rst=true;
 			}
 		}else{
+			//NOT IN DIV
+			last_psTime[0]=null;
 			scrubEnt=false;
 			rst=true;
 		}
@@ -2719,7 +2734,7 @@ function thumbseek(bool){
 							if(!wndWh){
 								wndWh=true;
 								let sk=false;
-								if( event.composedPath().includes(myVdo) ){
+								if( event.composedPath().includes(myVdo) || last_psTime[0]!==null){
 									sk=true;
 								}else{
 									let vr=absBoundingClientRect(myVdo);
