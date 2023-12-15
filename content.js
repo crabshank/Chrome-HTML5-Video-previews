@@ -1309,8 +1309,9 @@ var shiftVid=(force_default_place)=>{
 								setStyle(firstAncestor,'transform-origin','top left');
 								
 								let zi=parseInt(window.getComputedStyle(firstAncestor)['z-index']);
-								setStyle(firstAncestor,'z-index',zi-1);
+								setStyle(firstAncestor,'z-index',zi-2);
 								let mvl=(firstAncestorIFR!==null)?firstAncestorIFR:myVdo;
+								setStyle(mvl,'z-index',zi-1);
 								myVdoR=mvl.getBoundingClientRect();
 								let faRect=firstAncestor.getBoundingClientRect();
 								s=fGap/((myVdoR.width/faRect.width)*firstAncestor.clientWidth);
