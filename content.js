@@ -1140,54 +1140,45 @@ function scrollElMidPage(el,p){
 var thumbs=ifrm2.contentWindow.document.querySelectorAll("div#thumbs")[0];
 
 
-function figSize(f,g,x){ //figure,
-	if(f===null){
-		if(!isOneCol){
-			let allFigs=thumbs.getElementsByTagName('FIGURE');
-			for(let i=0, len=allFigs.length; i<len; i++){
-				let fi=allFigs[i];
-				setStyle(fi,'zoom',fi.getAttribute('three_sect_zoom'));
-				setStyle(fi,'height',"");
-			}
-			ifrmRsz();
-		}
-	}else{
-		currentFig=f;
-		if(justSeek===true){
-			justSeek=false;
-			scrollElMidPage(f,ifrm2);
-		}
-		if(psCvs!==null && x!==null && typeof(x)!=='undefined'){
-			let figSt=x/done_t;
-			let figEnd=(x+1)/done_t;
-			drawCvsPerc([figSt,figEnd]);
-		}
-		if(!isOneCol){
-			let sct=f.parentElement;
-			let allFigs=thumbs.getElementsByTagName('FIGURE');
-			for(let i=0, len=allFigs.length; i<len; i++){
-				let fi=allFigs[i];
-				if(fi.parentElement!==sct){
-						setStyle(fi,'zoom',fi.getAttribute('three_sect_zoom'));
+function figSize(f,g,x){
+	currentFig=f;
+	if(justSeek===true){
+		justSeek=false;
+		scrollElMidPage(f,ifrm2);
+	}
+	if(psCvs!==null && x!==null && typeof(x)!=='undefined'){
+		let figSt=x/done_t;
+		let figEnd=(x+1)/done_t;
+		drawCvsPerc([figSt,figEnd]);
+	}
+	if(!isOneCol){
+		let sct=f.parentElement;
+		let allFigs=thumbs.getElementsByTagName('FIGURE');
+		for(let i=0, len=allFigs.length; i<len; i++){
+			let fi=allFigs[i];
+			if(fi.parentElement!==sct){
+					setStyle(fi,'height',"");
+					setStyle(fi,'zoom',fi.getAttribute('three_sect_zoom'));
+			}else{
+				if(f!==fi){
+					setStyle(fi,'height',"");
+					setStyle(fi,'zoom',getFloat(fi.getAttribute('three_sect_zoom'))*0.75);
+					setStyle(fi,'height',(fi.getBoundingClientRect().height*2)+'px'); //*1.5*(1/0.75)
 				}else{
-					if(f!==fi){
-						setStyle(fi,'zoom',getFloat(fi.getAttribute('three_sect_zoom'))*0.75);
-						setStyle(fi,'height',(fi.getBoundingClientRect().height*2)+'px'); //*1.5*(1/0.75)
-					}else{
-						setStyle(fi,'zoom',getFloat(fi.getAttribute('three_sect_zoom'))*1.5);
-					}
+					setStyle(fi,'height',"");
+					setStyle(fi,'zoom',getFloat(fi.getAttribute('three_sect_zoom'))*1.5);
 				}
 			}
-			ifrmRsz();
 		}
-		if(suppressScr===true){
-			suppressScr=false;
-			if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
-				scrollElMidPage(myVdo);
-			}else{
-				scrollElMidPage(f,ifrm2);
-			}	
-		}
+		ifrmRsz();
+	}
+	if(suppressScr===true){
+		suppressScr=false;
+		if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
+			scrollElMidPage(myVdo);
+		}else{
+			scrollElMidPage(f,ifrm2);
+		}	
 	}
 	if(g===true){
 		scrollElMidPage(f,ifrm2);
@@ -2414,9 +2405,7 @@ var tu2=(event) => {
 			ifrmRsz(true);
 		}
 	 if(aseek==0){
-
-			figSize(null);
-			
+	
 	if(myVdo.readyState>0){
 		cap=(cap!=-1)?cap:myVdo.currentTime*(done_t)/myVdo.duration;
 		cap_el=Math.floor(cap);
