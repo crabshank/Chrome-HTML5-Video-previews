@@ -2716,6 +2716,7 @@ function thumbseek(bool){
 							let figSt=currThumb/done_t;
 							let figEnd=(currThumb+1)/done_t;
 							drawCvsPerc([figSt,figEnd]);
+							ifrmRsz();
 						}
 					}else{
 						let rem=[];
@@ -2741,7 +2742,8 @@ function thumbseek(bool){
 						figSize(currentFig,true);
 						//ifrmRsz();
 						if(psCvs!==null){
-							setStyle(psCvs,'display','none')
+							setStyle(psCvs,'display','none');
+							ifrmRsz();
 						}
 					}
 					
@@ -3172,7 +3174,6 @@ ifrm3.contentWindow.document.close();
 pageScript();
 
 }
-
 
 } catch (e) {	
   console.error(e);
