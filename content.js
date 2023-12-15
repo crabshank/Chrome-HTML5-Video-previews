@@ -27,7 +27,7 @@ try {
 	var allFrames=[];
 	var scrubEnt=false;
 	var ifrm,ifrm2,ifrm3;
-	
+	var last_rng=[null,null]
 	function setPix(pixels, x, y, r, g, b, a, width) {
 		let index = 4 * (x + y * width);
 		pixels[index+0] = r;
@@ -36,31 +36,37 @@ try {
 		pixels[index+3] =a;
 	}
 	function drawCvsPerc(rng){
-		let ctx = psCvs.getContext('2d', {willReadFrequently: true});
-		ctx.globalCompositeOperation = "source-over";
-		let canvasWidth = psCvs.width;
-		let canvasHeight = psCvs.height;
-		let iData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
-		let pixels = iData.data;
-		let xds=Math.ceil(rng[0]*canvasWidth);
-		let xdt=Math.floor(rng[1]*canvasWidth);
-		for (let x=0; x<xds; ++x){
-				for (let y=canvasHeight-1; y>=0; --y){
-					setPix(pixels, x, y, 0,255,255,153, canvasWidth);
-				}
+		if(rng===true || (rng[0]!==last_rng[0] || rng[1]!==last_rng[1]) ){
+			if(rng!==true){
+				last_rng=rng;
+			}else{
+				rng=last_rng;
+			}
+			let ctx = psCvs.getContext('2d', {willReadFrequently: true});
+			ctx.globalCompositeOperation = "source-over";
+			let canvasWidth = psCvs.width;
+			let canvasHeight = psCvs.height;
+			let iData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+			let pixels = iData.data;
+			let xds=Math.ceil(rng[0]*canvasWidth);
+			let xdt=Math.floor(rng[1]*canvasWidth);
+			for (let x=0; x<xds; ++x){
+					for (let y=canvasHeight-1; y>=0; --y){
+						setPix(pixels, x, y, 0,255,255,153, canvasWidth);
+					}
+			}
+			for (let x=xds; x<=xdt; ++x){
+					for (let y=canvasHeight-1; y>=0; --y){
+						setPix(pixels, x, y, 255,0,0,153, canvasWidth);
+					}
+			}
+			for (let x=xdt+1; x<canvasWidth; ++x){
+					for (let y=canvasHeight-1; y>=0; --y){
+						setPix(pixels, x, y, 0,255,255,153, canvasWidth);
+					}
+			}
+			ctx.putImageData(iData, 0, 0);
 		}
-		for (let x=xds; x<=xdt; ++x){
-				for (let y=canvasHeight-1; y>=0; --y){
-					setPix(pixels, x, y, 255,0,0,153, canvasWidth);
-				}
-		}
-		for (let x=xdt+1; x<canvasWidth; ++x){
-				for (let y=canvasHeight-1; y>=0; --y){
-					setPix(pixels, x, y, 0,255,255,153, canvasWidth);
-				}
-		}
-		ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-		ctx.putImageData(iData, 0, 0);
 	}
 	function setStyle(el,prop,val,pat){
 		pat=(typeof(pat)==='undefined')?new RegExp(`(?<=(^\\s*|;\\s*))${prop}\\s*\:\\s*[^;]*;?`):new RegExp(pat);
@@ -840,6 +846,19 @@ progress {
 	border-radius: 0;
     height: 0.9em;
 }
+figcaption{
+	color: white  !important;
+	background-color: #00000099 !important;
+	font-size: 169%  !important; 
+	display: inline-table !important; 
+	position: absolute !important;
+	transform-origin: top left !important; 
+	font-family: Microsoft JhengHei UI !important;
+}
+figcaption.red{
+	color: red !important;
+	background-color: #00ffff99 !important;
+}
 </style>
 
 <section style="display: inline-flex !important;display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;">
@@ -888,7 +907,7 @@ var tbG=false;
 var gapVid=9;
 var shiftBtns2=null;
 
-var ifrmRsz=()=>{
+var ifrmRsz=(nf2)=>{
 
 	 let scR=absBoundingClientRect(sc1);
 
@@ -910,56 +929,61 @@ var ifrmRsz=()=>{
 	
 	let i2w=wd-ifrm3R.width;
 	setStyle(ifrm3,'left',i2w+'px');
-	let ifrm2R=absBoundingClientRect(ifrm2);
-	let lbd=(typeof(scrv)!=='undefined')?parseFloat(window.getComputedStyle(scrv)['border-left-width'])-1:0;
-	i2w=i2w-ifrm2R.left-lbd;
-	setStyle(sc1,'min-width',i2w+'px');
-	setStyle(sc1,'width',i2w+'px');
-	setStyle(sc1,'max-width',i2w+'px');
-	
-	setStyle(ifrm2,'min-width',i2w+'px');
-	setStyle(ifrm2,'width',i2w+'px');
-	setStyle(ifrm2,'max-width',i2w+'px');
-	
-	let td=(typeof thumbs!=='undefined')?true:false;
-	
-	if(td){
-				setStyle(thumbs,'min-width',i2w+'px');
-				setStyle(thumbs,'width',i2w+'px');
-				setStyle(thumbs,'max-width',i2w+'px');
-				let scts=[...thumbs.children];
-
-			for(let j = 0; j < scts.length; j++){
-				
-				let figs=[...scts[j].children];
-
-				if(!isOneCol){
-					let sctW=0;
-					for (let i = 0; i < figs.length; i++) {
-						sctW+=figs[i].scrollWidth*parseFloat(figs[i].getAttribute('three_sect_zoom'));
-					}
-					fPrp=(sctW==0)?1:(i2w/(sctW/figs.length))* (1/3);
-					setStyle(scts[j],'zoom',fPrp);
-				}else{
-					setStyle(scts[j],'zoom',i2w/(scts[j].getBoundingClientRect().width));
-				}
-			}
-	}
+	if(nf2!==true){
+		let ifrm2R=absBoundingClientRect(ifrm2);
+		let lbd=(typeof(scrv)!=='undefined')?parseFloat(window.getComputedStyle(scrv)['border-left-width'])-1:0;
+		i2w=i2w-ifrm2R.left-lbd;
+		setStyle(sc1,'min-width',i2w+'px');
+		setStyle(sc1,'width',i2w+'px');
+		setStyle(sc1,'max-width',i2w+'px');
 		
-	if(shiftBtns2!==null){
-		shiftBtns2(false);
-	}
-	
-	
-	let sc1R=absBoundingClientRect(sc1);
-	let h=getScreenHeight(false);
-	h=h-sc1R.top;
-	h=(h<0 ||  h<sc1R.height)?sc1R.height:h;
-	
-	setStyle(ifrm2,'min-height',h+'px');
-	setStyle(ifrm2,'height',h+'px');
-	setStyle(ifrm2,'max-height',h+'px');
+		setStyle(ifrm2,'min-width',i2w+'px');
+		setStyle(ifrm2,'width',i2w+'px');
+		setStyle(ifrm2,'max-width',i2w+'px');
+		
+		let td=(typeof thumbs!=='undefined')?true:false;
+		
+		if(td){
+					setStyle(thumbs,'min-width',i2w+'px');
+					setStyle(thumbs,'width',i2w+'px');
+					setStyle(thumbs,'max-width',i2w+'px');
+					let scts=[...thumbs.children];
 
+				for(let j = 0; j < scts.length; j++){
+					
+					let figs=[...scts[j].children];
+
+					if(!isOneCol){
+						let sctW=0;
+						for (let i = 0; i < figs.length; i++) {
+							sctW+=figs[i].scrollWidth*parseFloat(figs[i].getAttribute('three_sect_zoom'));
+						}
+						fPrp=(sctW==0)?1:(i2w/(sctW/figs.length))* (1/3);
+						setStyle(scts[j],'zoom',fPrp);
+					}else{
+						setStyle(scts[j],'zoom',i2w/(scts[j].getBoundingClientRect().width));
+					}
+				}
+		}
+			
+		if(shiftBtns2!==null){
+			shiftBtns2(false);
+		}
+		
+		
+		let sc1R=absBoundingClientRect(sc1);
+		let h=getScreenHeight(false);
+		h=h-sc1R.top;
+		h=(h<0 ||  h<sc1R.height)?sc1R.height:h;
+		
+		setStyle(ifrm2,'min-height',h+'px');
+		setStyle(ifrm2,'height',h+'px');
+		setStyle(ifrm2,'max-height',h+'px');
+	}else{
+		if(shiftBtns2!==null){
+			shiftBtns2(false);
+		}
+	}
 }
 
 var rsz_ifrm=()=>{
@@ -1398,7 +1422,12 @@ var shiftVid=(force_default_place,justScroll)=>{
 								setStyle(psCvs,'left',((
 									myVdoR.left
 								))+'px');
-								setStyle(psCvs,'width',`${myVdoR.width}px`);
+								//setStyle(psCvs,'width',`${myVdoR.width}px`);
+								let fw=Math.floor(myVdoR.width);
+								if(fw!==psCvs.width){
+									psCvs.width=fw;
+									drawCvsPerc(true);
+								}
 							}
 						}
 		}
@@ -1566,7 +1595,7 @@ var checkDur = function() {
 	setStyle(bSect,'width',bsw+'px');
 	setStyle(bSect,'min-width',bsw+'px');
 	setStyle(bSect,'max-width',bsw+'px');
-	ifrmRsz();
+	ifrmRsz(true);
 	}
 }
 
@@ -1686,8 +1715,7 @@ window.addEventListener('pointerdown', function (event) {
 				let fgi=currFigCaps[i];
 				let fi=fgi[0];
 				let pi=fgi[1];
-				setStyle(fi,'background-color','#00000099');
-				setStyle(fi,'color','white');
+				fi.className='';
 				pi.className='';
 			}catch(e){;}
 		}
@@ -1751,15 +1779,13 @@ window.addEventListener('pointermove', function (event) {
 						let fgi=currFigCaps[i];
 						let fi=fgi[0];
 						let pi=fgi[1];
-						setStyle(fi,'background-color','#00000099');
-						setStyle(fi,'color','white');
+						fi.className='';
 						pi.className='';
 					}catch(e){;}
 				}
 				currFigCaps=[];
 				try{
-					setStyle(currFigCap,'background-color','#00ffff99');
-					setStyle(currFigCap,'color','red');
+					currFigCap.className='red';
 					prg.className='scrub';
 					currFigCaps.push([currFigCap,prg]);
 				}catch(e){;}
@@ -1783,8 +1809,7 @@ window.addEventListener('pointermove', function (event) {
 						let fgi=currFigCaps[i];
 						let fi=fgi[0];
 						let pi=fgi[1];
-						setStyle(fi,'background-color','#00000099');
-						setStyle(fi,'color','white');
+						fi.className='';
 						pi.className='';
 					}catch(e){;}
 			}
@@ -2243,7 +2268,7 @@ myVdo.addEventListener("timeupdate", (event) => {
 	setStyle(bSect,'width',bsw+'px');
 	setStyle(bSect,'min-width',bsw+'px');
 	setStyle(bSect,'max-width',bsw+'px');
-	ifrmRsz();
+	ifrmRsz(true);
 	}
 });		
 
@@ -2268,7 +2293,7 @@ myVdo.addEventListener("ratechange", (event) => {
 	setStyle(bSect,'width',bsw+'px');
 	setStyle(bSect,'min-width',bsw+'px');
 	setStyle(bSect,'max-width',bsw+'px');
-	ifrmRsz();
+	ifrmRsz(true);
 	}
 	if(myVdo.readyState>2){
 	calcSp();
@@ -2369,7 +2394,7 @@ if(!tTrkFlg){
 	setStyle(bSect,'width',bsw+'px');
 	setStyle(bSect,'min-width',bsw+'px');
 	setStyle(bSect,'max-width',bsw+'px');
-	ifrmRsz();
+	ifrmRsz(true);
 }
 
 var tu2=(event) => {
@@ -2385,7 +2410,7 @@ var tu2=(event) => {
 			setStyle(bSect,'width',bsw+'px');
 			setStyle(bSect,'min-width',bsw+'px');
 			setStyle(bSect,'max-width',bsw+'px');
-			ifrmRsz();
+			ifrmRsz(true);
 		}
 	 if(aseek==0){
 
@@ -2536,7 +2561,7 @@ var tu2=(event) => {
 				ci.innerText=ci.parentElement.parentElement.firstChild.attributes.timestamp_fmt.nodeValue;
 			}
 			if(ci!==last_psTime[2]){
-				setStyle(ci,'background-color',"#00000099");
+				ci.className='';
 			}
 		}
 		
@@ -2620,7 +2645,7 @@ function thumbseek(bool){
 			setStyle(bSect,'width',bsw+'px');
 			setStyle(bSect,'min-width',bsw+'px');
 			setStyle(bSect,'max-width',bsw+'px');
-			ifrmRsz();
+			ifrmRsz(true);
 			if(ttmp===1){
 				ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
 			}
@@ -2641,7 +2666,8 @@ function thumbseek(bool){
 				setStyle(oneCol,'display','block');
 				if(pointerScrub_var!==0){
 					psCvs=document.createElement('CANVAS');
-					psCvs.style.cssText="all: initial !important; transition: none !important; min-height: 9px !important; height: "+(pointerScrub_var*window.screen.height)+"px !important; display: none !important; position: absolute !important;  top: 0px !important;  left: 0px !important; transform-origin: top left !important; background: #00ffff99 !important; z-index: "+(Number.MAX_SAFE_INTEGER)+" !important;";
+					psCvs.style.cssText="all: initial !important; transition: none !important; display: none !important; position: absolute !important;  top: 0px !important;  left: 0px !important; transform-origin: top left !important; background: #00ffff99 !important; z-index: "+(Number.MAX_SAFE_INTEGER)+" !important;";
+					psCvs.height=pointerScrub_var*window.screen.height;
 					psCvs.title="Hover over to scrub through thumbs";
 					firstAncestor.insertAdjacentElement('afterend',psCvs);
 				}
@@ -3018,7 +3044,6 @@ pgs.appendChild(ct);
 captions.push(ct);
 progresses.push(pgb);
 f.style.cssText="display: inline-grid !important; margin: 0 0 0 0 !important;";
-ct.style.cssText+="color: white  !important; font-size: 169%  !important; display: inline-table !important; position: absolute !important; transform-origin: top left !important; font-family: Microsoft JhengHei UI !important";
 
 let wcs_f=window.getComputedStyle(f);
 setStyle(pgb,'width',wcs_f.width);
