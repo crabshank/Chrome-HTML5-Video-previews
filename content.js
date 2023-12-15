@@ -1149,6 +1149,7 @@ function figSize(f,g,x){ //figure,
 				setStyle(fi,'zoom',fi.getAttribute('three_sect_zoom'));
 				setStyle(fi,'height',"");
 			}
+			ifrmRsz();
 		}
 	}else{
 		currentFig=f;
@@ -1177,6 +1178,7 @@ function figSize(f,g,x){ //figure,
 					}
 				}
 			}
+			ifrmRsz();
 		}
 		if(suppressScr===true){
 			suppressScr=false;
@@ -1187,7 +1189,6 @@ function figSize(f,g,x){ //figure,
 			}	
 		}
 	}
-	ifrmRsz();
 	if(g===true){
 		scrollElMidPage(f,ifrm2);
 	}
