@@ -20,7 +20,7 @@ try {
 	var isEnterScrub=0;
 	var oneCol_var=false;
 	var last_psTime=[null,false,null];
-	var psDiv=null;
+	var psCvs=null;
 	var relocVid_var= false;
 	var spdDef_var= false;
 	var currFigCaps=[];
@@ -28,6 +28,40 @@ try {
 	var scrubEnt=false;
 	var ifrm,ifrm2,ifrm3;
 	
+	function setPix(pixels, x, y, r, g, b, a, width) {
+		let index = 4 * (x + y * width);
+		pixels[index+0] = r;
+		pixels[index+1] = g;
+		pixels[index+2] = b;
+		pixels[index+3] =a;
+	}
+	function drawCvsPerc(rng){
+		let ctx = psCvs.getContext('2d', {willReadFrequently: true});
+		ctx.globalCompositeOperation = "source-over";
+		let canvasWidth = psCvs.width;
+		let canvasHeight = psCvs.height;
+		let iData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+		let pixels = iData.data;
+		let xds=Math.ceil(rng[0]*canvasWidth);
+		let xdt=Math.floor(rng[1]*canvasWidth);
+		for (let x=0; x<xds; ++x){
+				for (let y=canvasHeight-1; y>=0; --y){
+					setPix(pixels, x, y, 0,255,255,153, canvasWidth);
+				}
+		}
+		for (let x=xds; x<=xdt; ++x){
+				for (let y=canvasHeight-1; y>=0; --y){
+					setPix(pixels, x, y, 255,0,0,153, canvasWidth);
+				}
+		}
+		for (let x=xdt+1; x<canvasWidth; ++x){
+				for (let y=canvasHeight-1; y>=0; --y){
+					setPix(pixels, x, y, 0,255,255,153, canvasWidth);
+				}
+		}
+		ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+		ctx.putImageData(iData, 0, 0);
+	}
 	function setStyle(el,prop,val,pat){
 		pat=(typeof(pat)==='undefined')?new RegExp(`(?<=(^\\s*|;\\s*))${prop}\\s*\:\\s*[^;]*;?`):new RegExp(pat);
 		let c=el.style.cssText;
@@ -1098,10 +1132,10 @@ function figSize(f,g,x){ //figure,
 			justSeek=false;
 			scrollElMidPage(f,ifrm2);
 		}
-		if(psDiv!==null && x!==null && typeof(x)!=='undefined'){
-			let figSt=(x/done_t)*100;
-			let figEnd=((x+1)/done_t)*100;
-			setStyle(psDiv,'background',`linear-gradient(to right, #00ffff99 0%,#00ffff99 ${figSt}%,#ff000099 ${figSt}%,#ff000099 ${figEnd}%,#00ffff99 ${figEnd}%)`);
+		if(psCvs!==null && x!==null && typeof(x)!=='undefined'){
+			let figSt=x/done_t;
+			let figEnd=(x+1)/done_t;
+			drawCvsPerc([figSt,figEnd]);
 		}
 		if(!isOneCol){
 			let sct=f.parentElement;
@@ -1312,7 +1346,7 @@ var shiftVid=(force_default_place,justScroll)=>{
 								let faRect=firstAncestor.getBoundingClientRect();
 								s=fGap/((myVdoR.width/faRect.width)*firstAncestor.clientWidth);
 								
-								let psdr=(pointerScrub_var!==0)?psDiv.getBoundingClientRect():{height:0};
+								let psdr=(pointerScrub_var!==0)?psCvs.getBoundingClientRect():{height:0};
 								let shgt=document?.documentElement?. clientHeight-1-psGap-psdr.height;
 								myVdoR=mvl.getBoundingClientRect();
 								//centre
@@ -1358,13 +1392,13 @@ var shiftVid=(force_default_place,justScroll)=>{
 								wScl=myVdoR.width/myVdo.videoWidth;
 								hScld=wScl*myVdo.videoHeight;
 								myVdoR.vid_bottom=myVdoR.centre_y+0.5*(hScld);
-								setStyle(psDiv,'top',((
+								setStyle(psCvs,'top',((
 									myVdoR.vid_bottom+psGap
 								))+'px');
-								setStyle(psDiv,'left',((
+								setStyle(psCvs,'left',((
 									myVdoR.left
 								))+'px');
-								setStyle(psDiv,'width',`${myVdoR.width}px`);
+								setStyle(psCvs,'width',`${myVdoR.width}px`);
 							}
 						}
 		}
@@ -1664,10 +1698,10 @@ window.addEventListener('pointerdown', function (event) {
 
 window.addEventListener('pointermove', function (event) {
 		let rst=false;
-		if(psDiv!==null && firstAncestor!==null /*&& myVdo.paused*/ && myVdo.readyState>0 && captions.length==done_t && aseek==0 && isOneCol && vfr){
+		if(psCvs!==null && firstAncestor!==null /*&& myVdo.paused*/ && myVdo.readyState>0 && captions.length==done_t && aseek==0 && isOneCol && vfr){
 			let res;
 			let ent=false;
-			let psRect=absBoundingClientRect(psDiv);
+			let psRect=absBoundingClientRect(psCvs);
 			let evX=event.pageX;
 			let vrl=psRect.left;
 			let vrr=psRect.right;
@@ -1711,7 +1745,7 @@ window.addEventListener('pointermove', function (event) {
 				last_psTime[0]=figEl;
 				last_psTime[2]=figEl.lastElementChild.lastElementChild;
 				let currFigCap=prg.nextElementSibling;
-				psDiv.title=currFigCap.innerText;
+				psCvs.title=currFigCap.innerText;
 				for(let i=0, len=currFigCaps.length; i<len; i++ ){
 					try{
 						let fgi=currFigCaps[i];
@@ -2118,9 +2152,9 @@ function LnkOp()
 			setStyle(oneCol,'display','none');
 			if(pointerScrub_var!==0){
 				try{
-					elRemover(psDiv);
+					elRemover(psCvs);
 				}catch(e){;}
-				psDiv=null;
+				psCvs=null;
 			}
 			scrubEnt=false;
 			last_psTime=[null,false,null];
@@ -2277,9 +2311,9 @@ myVdo.addEventListener("ratechange", (event) => {
 		setStyle(oneCol,'display','none');
 		if(pointerScrub_var!==0){
 			try{
-				elRemover(psDiv);
+				elRemover(psCvs);
 			}catch(e){;}
-			psDiv=null;
+			psCvs=null;
 		}
 		scrubEnt=false;
 		last_psTime=[null,false,null];
@@ -2606,10 +2640,10 @@ function thumbseek(bool){
 				setStyle(mvdb,'display','block');
 				setStyle(oneCol,'display','block');
 				if(pointerScrub_var!==0){
-					psDiv=document.createElement('div');
-					psDiv.style.cssText="all: initial !important; transition: none !important; min-height: 9px !important; height: "+(pointerScrub_var*window.screen.height)+"px !important; display: none !important; position: absolute !important;  top: 0px !important;  left: 0px !important; transform-origin: top left !important; background: #00ffff99 !important; z-index: "+(Number.MAX_SAFE_INTEGER)+" !important;";
-					psDiv.title="Hover over to scrub through thumbs";
-					firstAncestor.insertAdjacentElement('afterend',psDiv);
+					psCvs=document.createElement('CANVAS');
+					psCvs.style.cssText="all: initial !important; transition: none !important; min-height: 9px !important; height: "+(pointerScrub_var*window.screen.height)+"px !important; display: none !important; position: absolute !important;  top: 0px !important;  left: 0px !important; transform-origin: top left !important; background: #00ffff99 !important; z-index: "+(Number.MAX_SAFE_INTEGER)+" !important;";
+					psCvs.title="Hover over to scrub through thumbs";
+					firstAncestor.insertAdjacentElement('afterend',psCvs);
 				}
 				shiftBtns(false);
 				setStyle(scrl,'display','');
@@ -2660,12 +2694,12 @@ function thumbseek(bool){
 								ls=ns;
 							}
 						}
-						if(psDiv!==null){
-							setStyle(psDiv,'display','block');
+						if(psCvs!==null){
+							setStyle(psCvs,'display','block');
 							let currThumb=Math.floor((myVdo.currentTime/myVdo.duration)*done_t);
-							let figSt=(currThumb/done_t)*100;
-							let figEnd=((currThumb+1)/done_t)*100;
-							setStyle(psDiv,'background',`linear-gradient(to right, #00ffff99 0%,#00ffff99 ${figSt}%,#ff000099 ${figSt}%,#ff000099 ${figEnd}%,#00ffff99 ${figEnd}%)`);
+							let figSt=currThumb/done_t;
+							let figEnd=(currThumb+1)/done_t;
+							drawCvsPerc([figSt,figEnd]);
 						}
 					}else{
 						let rem=[];
@@ -2690,8 +2724,8 @@ function thumbseek(bool){
 						}
 						figSize(currentFig,true);
 						//ifrmRsz();
-						if(psDiv!==null){
-							setStyle(psDiv,'display','none')
+						if(psCvs!==null){
+							setStyle(psCvs,'display','none')
 						}
 					}
 					
