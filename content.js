@@ -30,7 +30,7 @@ try {
 	var last_rng=[null,null]
 	function setPix(pixels, x, y, r, g, b, a, width) {
 		let index = 4 * (x + y * width);
-		pixels[index+0] = r;
+		pixels[index] = r;
 		pixels[index+1] = g;
 		pixels[index+2] = b;
 		pixels[index+3] =a;
