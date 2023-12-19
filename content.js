@@ -61,7 +61,7 @@ try {
 						setPix(pixels, x, y, 255,0,0,153, canvasWidth);
 					}
 			}
-			for (let x=xdt+1; x<canvasWidth; ++x){
+			for (let x=xdt+1; x<canvasWidth-1; ++x){
 					for (let y=canvasHeight-1; y>=0; --y){
 						setPix(pixels, x, y, 0,255,255,153, canvasWidth);
 					}
