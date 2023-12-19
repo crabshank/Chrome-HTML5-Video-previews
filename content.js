@@ -48,8 +48,9 @@ try {
 			let canvasHeight = psCvs.height;
 			let iData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
 			let pixels = iData.data;
-			let xds=Math.ceil(rng[0]*canvasWidth);
-			let xdt=Math.floor(rng[1]*canvasWidth);
+			let cwScl=canvasWidth-1;
+			let xds=Math.ceil(rng[0]*cwScl);
+			let xdt=Math.floor(rng[1]*cwScl);
 			for (let x=0; x<xds; ++x){
 					for (let y=canvasHeight-1; y>=0; --y){
 						setPix(pixels, x, y, 0,255,255,153, canvasWidth);
