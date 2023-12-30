@@ -1766,7 +1766,7 @@ window.addEventListener('pointermove', function (event) {
 				last_psTime[0]=figEl;
 				last_psTime[2]=figEl.lastElementChild.lastElementChild;
 				let currFigCap=prg.nextElementSibling;
-				psCvs.title=currFigCap.innerText;
+				psCvs.title=cvsEl.getAttribute('timestamp_fmt');
 				for(let i=0, len=currFigCaps.length; i<len; i++ ){
 					try{
 						let fgi=currFigCaps[i];
