@@ -6,6 +6,7 @@
   var  relocVid_var= document.getElementById('relocVid');
   var  pipDef_var= document.getElementById('pipDef');
   var spdDef_var= document.getElementById('spdDef');
+  var eg_scrub_var= document.getElementById('eg_scrub');
   var pointerScrub_var= document.getElementById('pointerScrub');
   var svbt= document.getElementById('save');
 
@@ -16,6 +17,13 @@ function unDef(v,d,r){
 		return (typeof v !=='undefined')?r:d;
 	}
 }
+function change_eg_bar(){
+	eg_scrub_var.style.height=`${parseFloat(pointerScrub_var.value)*window.screen.height}px`;
+}
+
+ pointerScrub_var.oninput=(e)=>{
+	change_eg_bar();
+ }
 
 var saver =function(){
 	 	plRate_var.value=(plRate_var.valueAsNumber>=1 && plRate_var.valueAsNumber<=16)?plRate_var.value:"6";
@@ -64,6 +72,7 @@ function restore_options()
 			spdDef_var.checked = unDef(items.spdDef_sett,false);
 			spdDef_var.checked = unDef(items.spdDef_sett,false);
 			pointerScrub_var.value = unDef(items.pointerScrub_sett,"0.023");
+			change_eg_bar();
 			svbt.onclick = () => saver();
 		}
 		else
