@@ -855,6 +855,7 @@ figcaption{
 	position: absolute !important;
 	transform-origin: top left !important; 
 	font-family: Microsoft JhengHei UI !important;
+	user-select: none !important;
 }
 figcaption.red{
 	color: red !important;
@@ -3081,13 +3082,13 @@ setStyle(ct,'zoom',(f.scrollWidth/ct.clientWidth)*0.2);
 	nowFlag=index;
 	cap=index;
 	vidSeek=false;
+	suppressScr=true;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
 /*if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
 			scrollElMidPage(myVdo);
 }else{
 	scrollElMidPage(this,ifrm2);
 }*/
-suppressScr=true;
 	  }else{
 			let t,cvs;
 			if(e.target.tagName==='CANVAS'){
@@ -3122,15 +3123,15 @@ suppressScr=true;
 	nowFlag=index;
 	cap=index;
 	vidSeek=false;
+	suppressScr=true;
+	suppressTU=false;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
 /*if(!myVdo.ownerDocument.pictureInPictureElement && vfr){
 			scrollElMidPage(myVdo);
 }else{
 	scrollElMidPage(this,ifrm2);
 }*/
-suppressScr=true;
 	  }
-	  window.getSelection().removeAllRanges();
 } 
 
 
