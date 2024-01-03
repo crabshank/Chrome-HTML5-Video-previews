@@ -1357,9 +1357,15 @@ var shiftVid=(force_default_place,justScroll)=>{
 								setStyle(firstAncestor,'transform-origin','top left');
 								
 							if(justScroll!==true){
-								let zi=parseInt(window.getComputedStyle(firstAncestor)['z-index']);
-								setStyle(firstAncestor,'z-index',zi-2);
+								let zi;
+								if(pointerScrub_var!==0){
+									zi=parseInt(window.getComputedStyle(psCvs)['z-index']);
+								}else{
+									setStyle(mvl,'z-index',Number.MAX_SAFE_INTEGER);
+									zi=parseInt(window.getComputedStyle(mvl)['z-index']);
+								}
 								setStyle(mvl,'z-index',zi-1);
+								setStyle(firstAncestor,'z-index',zi-2);
 								myVdoR=mvl.getBoundingClientRect();
 								let faRect=firstAncestor.getBoundingClientRect();
 								s=fGap/((myVdoR.width/faRect.width)*firstAncestor.clientWidth);
