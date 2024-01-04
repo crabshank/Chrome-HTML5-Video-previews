@@ -21,13 +21,15 @@ try {
 	var oneCol_var=false;
 	var last_psTime=[null,false,null];
 	var psCvs=null;
+	var psCvs_visible=false;
 	var relocVid_var= false;
 	var spdDef_var= false;
 	var currFigCaps=[];
 	var allFrames=[];
 	var scrubEnt=false;
 	var ifrm,ifrm2,ifrm3;
-	var last_rng=[null,null]
+	var last_rng=[null,null];
+	var psGap=5.5;
 	function setPix(pixels, x, y, r, g, b, a, width) {
 		let index = 4 * (x + y * width);
 		pixels[index] = r;
@@ -1148,7 +1150,7 @@ function figSize(f,g,x){
 		justSeek=false;
 		scrollElMidPage(f,ifrm2);
 	}
-	if(psCvs!==null && x!==null && typeof(x)!=='undefined'){
+	if(psCvs_visible===true && x!==null && typeof(x)!=='undefined'){
 		let figSt=x/done_t;
 		let figEnd=(x+1)/done_t;
 		drawCvsPerc([figSt,figEnd]);
@@ -1344,7 +1346,7 @@ var shiftVid=(force_default_place,justScroll)=>{
 							
 							if(!!firstAncestor){
 								let mvl=(firstAncestorIFR!==null)?firstAncestorIFR:myVdo;
-								let psGap=(pointerScrub_var!==0)?5.5:0;
+								psGap=(pointerScrub_var!==0)?5.5:0;
 								
 								firstAncestor.style.cssText='';
 								if(typeof(firstAncestor_wh['width']!=='undefined')){
@@ -1358,7 +1360,7 @@ var shiftVid=(force_default_place,justScroll)=>{
 								
 							if(justScroll!==true){
 								let zi;
-								if(pointerScrub_var!==0){
+								if(psCvs_visible===true){
 									zi=parseInt(window.getComputedStyle(psCvs)['z-index']);
 								}else{
 									setStyle(mvl,'z-index',Number.MAX_SAFE_INTEGER);
@@ -1370,7 +1372,7 @@ var shiftVid=(force_default_place,justScroll)=>{
 								let faRect=firstAncestor.getBoundingClientRect();
 								s=fGap/((myVdoR.width/faRect.width)*firstAncestor.clientWidth);
 								
-								let psdr=(pointerScrub_var!==0)?psCvs.getBoundingClientRect():{height:0};
+								let psdr=(psCvs_visible===true)?psCvs.getBoundingClientRect():{height:0};
 								let shgt=document?.documentElement?. clientHeight-1-psGap-psdr.height;
 								myVdoR=mvl.getBoundingClientRect();
 								//centre
@@ -1410,7 +1412,7 @@ var shiftVid=(force_default_place,justScroll)=>{
 								setStyle(firstAncestor,'transform','scale('+s+') translateX('+tx+'px) translateY('+ty+'px)');
 							}
 								
-							if(pointerScrub_var!==0){
+							if(psCvs_visible===true){
 								myVdoR=absBoundingClientRect(mvl);
 								myVdoR.centre_y=myVdoR.top+myVdoR.height*0.5;
 								wScl=myVdoR.width/myVdo.videoWidth;
@@ -1422,7 +1424,6 @@ var shiftVid=(force_default_place,justScroll)=>{
 								setStyle(psCvs,'left',((
 									myVdoR.left
 								))+'px');
-								//setStyle(psCvs,'width',`${myVdoR.width}px`);
 								let fw=Math.floor(myVdoR.width);
 								if(fw!==psCvs.width){
 									psCvs.width=fw;
@@ -1726,7 +1727,7 @@ window.addEventListener('pointerdown', function (event) {
 
 window.addEventListener('pointermove', function (event) {
 		let rst=false;
-		if(psCvs!==null && firstAncestor!==null /*&& myVdo.paused*/ && myVdo.readyState>0 && captions.length==done_t && aseek==0 && isOneCol && vfr){
+		if(psCvs_visible===true && firstAncestor!==null /*&& myVdo.paused*/ && myVdo.readyState>0 && captions.length==done_t && aseek==0 && isOneCol && vfr){
 			let res;
 			let ent=false;
 			let psRect=absBoundingClientRect(psCvs);
@@ -1821,7 +1822,9 @@ window.addEventListener('pointermove', function (event) {
 window.addEventListener('resize', function () {
 	ifrmRsz();
 	rsz_ifrm();
-	shiftBtns2(false);
+	if(shiftBtns2!==null){
+		shiftBtns2(false);
+	}
 	shiftBtns(true);
 });
 
@@ -2180,6 +2183,7 @@ function LnkOp()
 					elRemover(psCvs);
 				}catch(e){;}
 				psCvs=null;
+				psCvs_visible=false;
 			}
 			scrubEnt=false;
 			last_psTime=[null,false,null];
@@ -2339,6 +2343,7 @@ myVdo.addEventListener("ratechange", (event) => {
 				elRemover(psCvs);
 			}catch(e){;}
 			psCvs=null;
+			psCvs_visible=false;
 		}
 		scrubEnt=false;
 		last_psTime=[null,false,null];
@@ -2665,6 +2670,7 @@ function thumbseek(bool){
 				if(pointerScrub_var!==0){
 					psCvs=document.createElement('CANVAS');
 					psCvs.style.cssText="all: initial !important; transition: none !important; display: none !important; position: absolute !important;  top: 0px !important;  left: 0px !important; transform-origin: top left !important; background: #00ffff99 !important; z-index: "+(Number.MAX_SAFE_INTEGER)+" !important;";
+					psCvs_visible=false;
 					psCvs.height=pointerScrub_var*window.screen.height;
 					psCvs.title="Hover over to scrub through thumbs";
 					firstAncestor.insertAdjacentElement('afterend',psCvs);
@@ -2720,6 +2726,7 @@ function thumbseek(bool){
 						}
 						if(psCvs!==null){
 							setStyle(psCvs,'display','block');
+							psCvs_visible=true;
 							let currThumb=Math.floor((myVdo.currentTime/myVdo.duration)*done_t);
 							let figSt=currThumb/done_t;
 							let figEnd=(currThumb+1)/done_t;
@@ -2751,6 +2758,7 @@ function thumbseek(bool){
 						//ifrmRsz();
 						if(psCvs!==null){
 							setStyle(psCvs,'display','none');
+							psCvs_visible=false;
 							ifrmRsz();
 						}
 					}
@@ -2806,7 +2814,9 @@ function thumbseek(bool){
 									let vr=absBoundingClientRect(myVdo);
 									let esx=event.clientX+getScrollX();
 									let esy=event.clientY+getScrollY();
-									sk=(esx >= vr.left && esx <= vr.right && esy >= vr.top && esy <= vr.bottom && hasAncestor(myVdo,event.target) )?true:sk;
+									let pst=vr.bottom+psGap;
+									
+									sk=( (esx >= vr.left && esx <= vr.right) && ( (psCvs_visible===true && (esy >= (pst) && esy <= (pst+psCvs.height)) ) || ( (esy >= vr.top && esy <= vr.bottom) && hasAncestor(myVdo,event.target) ) )  )?true:sk;
 								}
 								if(sk){
 									skip(event);
