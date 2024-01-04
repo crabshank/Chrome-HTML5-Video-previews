@@ -1727,7 +1727,7 @@ window.addEventListener('pointerdown', function (event) {
 
 window.addEventListener('pointermove', function (event) {
 		let rst=false;
-		if(psCvs_visible===true && firstAncestor!==null /*&& myVdo.paused*/ && myVdo.readyState>0 && captions.length==done_t && aseek==0 && isOneCol && vfr){
+		if(psCvs_visible===true && myVdo.readyState>0 && captions.length==done_t && aseek==0){
 			let res;
 			let ent=false;
 			let psRect=absBoundingClientRect(psCvs);
