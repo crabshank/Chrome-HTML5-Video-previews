@@ -1694,7 +1694,6 @@ calcSp();
 
 function skip(event) {
 	event.preventDefault();
-	//event.stopPropagation();
 	if(event.deltaY>0){
 		vidSeek=false;
 	   myVdo.currentTime -= (myVdo.duration/t)*0.05;
@@ -2810,15 +2809,21 @@ function thumbseek(bool){
 								let sk=false;
 								if( event.composedPath().includes(myVdo) || last_psTime[0]!==null){
 									sk=true;
-								}else{
+								}
 									let vr=absBoundingClientRect(myVdo);
 									let esx=event.clientX+getScrollX();
 									let esy=event.clientY+getScrollY();
 									let pst=vr.bottom+psGap;
-									
-									sk=( (esx >= vr.left && esx <= vr.right) && ( (psCvs_visible===true && (esy >= (pst) && esy <= (pst+psCvs.height)) ) || ( (esy >= vr.top && esy <= vr.bottom) && hasAncestor(myVdo,event.target) ) )  )?true:sk;
-								}
+									let inLR=(esx >= vr.left && esx <= vr.right)?true:false;
+									let inCvsTB=(psCvs_visible===true && (esy >= (pst) && esy <= (pst+psCvs.height)) )?true:false;
+									let inVidTB=(esy >= vr.top && esy <= vr.bottom)?true:false;
+									if(!sk){
+										sk=( inLR && ( inCvsTB || ( inVidTB && hasAncestor(myVdo,event.target) ) )  )?true:sk;
+									}
 								if(sk){
+									if(inLR && inCvsTB){
+										event.stopPropagation();
+									}
 									skip(event);
 								}
 								wndWh=false;
