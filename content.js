@@ -1068,6 +1068,7 @@ var mxsp=ifrm.contentWindow.document.querySelectorAll("input#mxs")[0];
 
 
 var myVdo;
+var mvl;
 var vMut=null;
 var wndWh=false;
 var shb2=false;
@@ -1281,6 +1282,7 @@ var ancsRsz= ()=>{
 			}
 		}
 	}
+	mvl=(firstAncestorIFR!==null)?firstAncestorIFR:myVdo;
 	if(fa.ownerDocument===document){
 		firstParent=g_ancestors[((g_ancestors.length==1)?0:1)];
 		firstAncestor=fa;
@@ -1345,7 +1347,6 @@ var shiftVid=(force_default_place,justScroll)=>{
 							let s=fGap/myVdo.clientWidth;
 							
 							if(!!firstAncestor){
-								let mvl=(firstAncestorIFR!==null)?firstAncestorIFR:myVdo;
 								psGap=(pointerScrub_var!==0)?5.5:0;
 								
 								firstAncestor.style.cssText='';
@@ -2160,6 +2161,7 @@ function LnkOp()
 			
 			myVdo_el=[];
 			myVdo=null;
+			mvl=null;
 			firstAncestor=null;
 			firstAncestorIFR=null;
 			curr_thumb=0;
@@ -2223,13 +2225,12 @@ function LnkOp()
 		myVdo_el=vids[tIx_el];
 		myVdo=myVdo_el[0];
 		
-		
 		ancsRsz();
 			
 		shiftBtns(true);
 
 		setStyle(thumbs,'visibility','visible');
-		vrc= absBoundingClientRect(myVdo);
+		//vrc= absBoundingClientRect(myVdo);
 
 		ifrm.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
 		
@@ -2810,7 +2811,7 @@ function thumbseek(bool){
 								if( event.composedPath().includes(myVdo) || last_psTime[0]!==null){
 									sk=true;
 								}
-									let vr=absBoundingClientRect(myVdo);
+									let vr=absBoundingClientRect(mvl);
 									let esx=event.clientX+getScrollX();
 									let esy=event.clientY+getScrollY();
 									let pst=vr.bottom+psGap;
