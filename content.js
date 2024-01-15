@@ -1359,7 +1359,6 @@ var shiftVid=(force_default_place,justScroll)=>{
 								setStyle(firstAncestor,'left','-2px');
 								setStyle(firstAncestor,'transform-origin','top left');
 								
-							if(justScroll!==true){
 								let zi;
 								if(psCvs_visible===true){
 									zi=parseInt(window.getComputedStyle(psCvs)['z-index']);
@@ -1369,6 +1368,8 @@ var shiftVid=(force_default_place,justScroll)=>{
 								}
 								setStyle(mvl,'z-index',zi-1);
 								setStyle(firstAncestor,'z-index',zi-2);
+								
+							if(justScroll!==true){
 								myVdoR=mvl.getBoundingClientRect();
 								let faRect=firstAncestor.getBoundingClientRect();
 								s=fGap/((myVdoR.width/faRect.width)*firstAncestor.clientWidth);
