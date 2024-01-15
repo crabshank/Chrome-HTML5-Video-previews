@@ -1363,11 +1363,10 @@ var shiftVid=(force_default_place,justScroll)=>{
 								if(psCvs_visible===true){
 									zi=parseInt(window.getComputedStyle(psCvs)['z-index']);
 								}else{
-									setStyle(mvl,'z-index',Number.MAX_SAFE_INTEGER);
-									zi=parseInt(window.getComputedStyle(mvl)['z-index']);
+									setStyle(firstAncestor,'z-index',Number.MAX_SAFE_INTEGER);
+									zi=parseInt(window.getComputedStyle(firstAncestor)['z-index']);
 								}
-								setStyle(mvl,'z-index',zi-1);
-								setStyle(firstAncestor,'z-index',zi-2);
+								setStyle(firstAncestor,'z-index',zi-1);
 								
 							if(justScroll!==true){
 								myVdoR=mvl.getBoundingClientRect();
