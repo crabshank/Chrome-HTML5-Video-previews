@@ -13,6 +13,8 @@ try {
 		});
 	}
 	(async ()=>{ await get_ids(); })();
+	var scan_opts={};
+	var txtBx;
 	var plRate_var= 6;
 	var everyX_var= 30;
 	var relocScale_var="0.65";
@@ -585,7 +587,101 @@ function expandFrame(frs){
 function messageHdl(request, sender, sendResponse) {
 	//console.log(request);
 	if(typeof request.type !=='undefined'){
-		 if(request.type ==='size'){
+		 if(request.type ==='embeds_reply' && fr_id===0){
+			 let m=request.message;
+			 for (let j = 0, len_j=m.length; j <len_j ; j++) {
+					let mj=m[j];
+					if(scan_opts[mj]!==true){
+						let opt = document.createElement('option');
+						scan_opts[mj]=true;
+						opt.setAttribute("extracted_link", true);
+						opt.style.cssText='color: black !important;';
+						opt.textContent = '(Link only!) - '+mj;
+						txtBx.appendChild(opt);	
+					}
+				}
+		 }else if(request.type ==='get_embeds'){
+			 function findRegexIndices(string, substring, caseSensitive, indices) {
+				  var substringLen = substring.length,
+					  reg = new RegExp(substring, caseSensitive ? 'gi' : 'g'),
+					  result;
+
+				  while ((result = reg.exec(string))) {
+					  indices.push([result.index, result.index + substringLen]);
+				  }
+				  return indices;
+			}
+			
+			const schemes = ["https:", "http:", "ftp:"];
+			const extensions = ["m4a","ogv","m4p","m4v","m3u8", "m3u", "mp4", "webm",  "ogg", "mkv", "mpg", "mpeg", "3gp", "wmv", "mov", "avi", "flv", "vid"];
+			const unsafe = [32, 34, 39, 60, 62, 91, 93, 94, 96, 123, 124, 125, 338, 339, 352, 353, 376, 710, 8194, 8195, 8201, 8204, 8205, 8206, 8207, 8211, 8212, 8216, 8217, 8218, 8220, 8221, 8222, 8224, 8225, 8240, 8249, 8250, 8364];
+			
+			let check = [];
+			let scheme_ix = [];
+			let fnl=[];
+			
+			let str = document.documentElement.outerHTML.split('\\').join('');
+
+
+			for (let s = 0, len_s=schemes.length; s <len_s ; s++) {
+			  findRegexIndices(str, schemes[s], false, scheme_ix);
+			}
+
+			for (let j = 0, len_j=scheme_ix.length; j <len_j ; j++) {
+				let sxj=scheme_ix[j];
+				let sxj0=sxj[0];
+				let sxj1=sxj[1];
+				let past = false;
+				let strng = "";
+				let last_string = str.substring(sxj0,sxj1);
+				let cnt = 1;
+				while (past == false) {
+				  strng = str.substring(sxj0,sxj1 + cnt);
+
+				 for (let k = 0, len_k=unsafe.length; k <len_k ; k++) {
+					  if (strng.charCodeAt(strng.length - 1) == unsafe[k]) {
+						  k = unsafe.length - 1;
+						  past = true;
+						  check.push(last_string);
+					  }
+				  }
+				  last_string = strng;
+				  cnt++;
+				}
+		  }
+
+			for (let k = 0, len_k=check.length; k <len_k ; k++) {
+				  check[k] = check[k].split('\\').join('');
+				  let chk=check[k].toLocaleLowerCase();
+				  let fExt=false;
+				  for (let j = 0, len_j=extensions.length; j <len_j ; j++) {
+					let ej=extensions[j];
+					  if (chk.includes('.' + ej)) {
+						  let u=chk.split(' ').join('');
+						  let q=';';
+						  u=(u.endsWith(q))?u.slice(0,-q.length):u;
+						  q=')';
+						  u=(u.endsWith(q))?u.slice(0,-q.length):u; 
+						  q=';';
+						  u=(u.endsWith(q))?u.slice(0,-q.length):u;
+						  q='&quot';
+						  u=(u.endsWith(q))?u.slice(0,-q.length):u;
+						if(!fnl.includes(u)){
+							fnl.push(u);
+							console.log(ej+': '+u);
+						}
+						fExt=true;
+						break;
+					  }
+				  }
+					if(fExt===false && chk.includes('embed') && !fnl.includes(chk)){
+							fnl.push(chk);
+					}
+			}
+			
+			chrome.runtime.sendMessage({msg: fnl, type: 'embeds_reply'}, function(response){});
+			
+		 }else if(request.type ==='size'){
 			let x=[];
 			for(let i=allFrames.length-1; i>=0; i--){
 				let ifr=allFrames[i];
@@ -1262,7 +1358,7 @@ try{
 
 var sp_swtch=0;
 
-var txtBx = ifrm.contentWindow.document.querySelectorAll('select#txt_Bx')[0];
+txtBx = ifrm.contentWindow.document.querySelectorAll('select#txt_Bx')[0];
 //var pgrCSS = ifrm2.contentWindow.document.querySelectorAll('style#pgrB')[0];
 var vids=[];
 var vhw={w:0,h:0};
@@ -1517,7 +1613,14 @@ main.onwheel=(event)=>{
 }
 
 txtBx.onchange=()=>{
-	 gnrB.value='Select video';
+	let s=txtBx[txtBx.selectedIndex];
+	let b=s.getAttribute("extracted_link");
+	if(b=='true'){
+		setStyle(gnrB,'display','none');
+	}else{
+		gnrB.value='Select video';
+		setStyle(gnrB,'display','inline-block');
+	}
 }
 
 
@@ -1707,7 +1810,7 @@ function skip(event) {
 }
 
 window.addEventListener('pointerdown', function (event) {
-	if(last_psTime[0]!==null){
+	if(last_psTime[0]!==null && event.button===0){
 		event.preventDefault();
 		event.stopPropagation();
 		last_psTime[0].click();
@@ -1966,6 +2069,7 @@ function ifrScan()
 {	
 
 txtBx.innerHTML="";
+scan_opts={};
 gnrB.value='Select video';
 
 	function getContainedFrames(f){
@@ -2069,6 +2173,7 @@ if(allFrames.length>0){
 					 	setStyle(frame[0],'visibility','visible');
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].src;
+						scan_opts[opt.textContent]=true;
 						opt.setAttribute("index", '-'+j);
 						opt.setAttribute("isVid", false);
 						opt.setAttribute("link", frame[0].src);
@@ -2084,6 +2189,7 @@ if(allFrames.length>0){
 					 	setStyle(frame[0],'visibility','visible');
 						let opt = document.createElement('option');
 						opt.textContent=frame[0].getAttribute('data-src');
+						scan_opts[opt.textContent]=true;
 						opt.setAttribute("index", '-'+j);
 						opt.setAttribute("isVid", false);
 						opt.setAttribute("link", frame[0].getAttribute('data-src'));
@@ -2104,6 +2210,7 @@ if(allFrames.length>0){
     let opt = document.createElement('option');
 	opt.setAttribute("index", index);
 	let lk=vidSrc(vid[0]);
+	scan_opts[lk]=true;
 	opt.setAttribute("link", lk);
 	opt.setAttribute("isVid", true);
 	opt.style.cssText='color: black !important;';
@@ -2123,6 +2230,8 @@ if(allFrames.length>0){
 			}
 		}
   });
+  
+  chrome.runtime.sendMessage({type: "get_embeds"}, function(response) {;})
   
 }
 
