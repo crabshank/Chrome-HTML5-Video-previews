@@ -652,11 +652,12 @@ function messageHdl(request, sender, sendResponse) {
 
 			for (let k = 0, len_k=check.length; k <len_k ; k++) {
 				  check[k] = check[k].split('\\').join('');
-				  let chk=check[k].toLocaleLowerCase();
+				  let chk=check[k];
+				  let chkl=chk.toLocaleLowerCase();
 				  let fExt=false;
 				  for (let j = 0, len_j=extensions.length; j <len_j ; j++) {
 					let ej=extensions[j];
-					  if (chk.includes('.' + ej)) {
+					  if (chkl.includes('.' + ej)) {
 						  let u=chk.split(' ').join('');
 						  let q=';';
 						  u=(u.endsWith(q))?u.slice(0,-q.length):u;
@@ -674,7 +675,7 @@ function messageHdl(request, sender, sendResponse) {
 						break;
 					  }
 				  }
-					if(fExt===false && chk.includes('embed') && !fnl.includes(chk)){
+					if(fExt===false && chkl.includes('embed') && !fnl.includes(chk)){
 							fnl.push(chk);
 					}
 			}
