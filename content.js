@@ -594,7 +594,7 @@ function messageHdl(request, sender, sendResponse) {
 					if(scan_opts[mj]!==true){
 						let opt = document.createElement('option');
 						scan_opts[mj]=true;
-						opt.setAttribute("extracted_link", true);
+						opt.setAttribute("extracted_link", mj);
 						opt.style.cssText='color: black !important;';
 						opt.textContent = '(Link only!) - '+mj;
 						txtBx.appendChild(opt);	
@@ -1616,7 +1616,7 @@ main.onwheel=(event)=>{
 txtBx.onchange=()=>{
 	let s=txtBx[txtBx.selectedIndex];
 	let b=s.getAttribute("extracted_link");
-	if(b=='true'){
+	if(b!==null){
 		setStyle(gnrB,'display','none');
 	}else{
 		gnrB.value='Select video';
@@ -2238,15 +2238,20 @@ if(allFrames.length>0){
 
 function LnkOp()
 {
-	
-		if(txtBx.children.length>0){
-		let selIx=txtBx[txtBx.selectedIndex].getAttribute('index');
-		let tIx=parseInt(selIx);
-		let tIx_el=Math.abs(selIx);
+		let s=txtBx[txtBx.selectedIndex];
+		let mesg;
+		let elk=s.getAttribute("extracted_link");
+		if(elk!==null){
+			mesg=elk;
+		}else if(txtBx.children.length>0){
+			let selIx=s.getAttribute('index');
+			let tIx=parseInt(selIx);
+			let tIx_el=Math.abs(selIx);
 			let frEl=allFrames[tIx_el][0];
-			chrome.runtime.sendMessage({msg: txtBx[txtBx.selectedIndex].attributes.link.value, type: 'open'}, function(response){});
-			
-			}
+			mesg=s.attributes.link.value;
+		}
+	
+		chrome.runtime.sendMessage({msg: mesg, type: 'open'}, function(response){});
 	
 }
 	function changeValue()
