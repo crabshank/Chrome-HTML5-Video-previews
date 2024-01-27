@@ -2239,19 +2239,12 @@ if(allFrames.length>0){
 function LnkOp()
 {
 		let s=txtBx[txtBx.selectedIndex];
-		let mesg;
 		let elk=s.getAttribute("extracted_link");
 		if(elk!==null){
-			mesg=elk;
+			chrome.runtime.sendMessage({msg: elk, type: 'open'}, function(response){});
 		}else if(txtBx.children.length>0){
-			let selIx=s.getAttribute('index');
-			let tIx=parseInt(selIx);
-			let tIx_el=Math.abs(selIx);
-			let frEl=allFrames[tIx_el][0];
-			mesg=s.attributes.link.value;
+			chrome.runtime.sendMessage({msg: s.attributes.link.value, type: 'open'}, function(response){});
 		}
-	
-		chrome.runtime.sendMessage({msg: mesg, type: 'open'}, function(response){});
 	
 }
 	function changeValue()
