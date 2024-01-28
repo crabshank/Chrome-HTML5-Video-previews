@@ -596,7 +596,7 @@ function messageHdl(request, sender, sendResponse) {
 						scan_opts[mj]=true;
 						opt.setAttribute("extracted_link", mj);
 						opt.style.cssText='color: black !important;';
-						opt.textContent = '(Link only!) - '+mj;
+						opt.textContent = '(Link only) - '+mj;
 						txtBx.appendChild(opt);	
 					}
 				}
