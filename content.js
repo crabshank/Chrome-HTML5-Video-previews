@@ -357,7 +357,7 @@ function getScreenHeight(mx){
 }
 
 /*function setScrollY(y,dlt){	
-						let t = [		window?.pageYOffset,
+						let ty = [		window?.pageYOffset,
 											window?.scrollY,
 											document?.documentElement?.scrollTop,
 											document?.body?.parentNode?.scrollTop,
@@ -366,7 +366,7 @@ function getScreenHeight(mx){
 											0
 										].filter( (p)=>{return p>=0} );
 										
-	let mx=Math.max(...t);
+	let mx=Math.max(...ty);
 	let ix = t.indexOf(mx);
 	let dfy=(dlt)?y:y-mx;
 	
@@ -385,7 +385,7 @@ function getScreenHeight(mx){
 }	*/
 
 function getScrollY(){					
-	let t = [		window?.pageYOffset,
+	let ty = [		window?.pageYOffset,
 											window?.scrollY,
 											document?.documentElement?.scrollTop,
 											document?.body?.parentNode?.scrollTop,
@@ -394,11 +394,11 @@ function getScrollY(){
 											0
 										].filter( (p)=>{return p>=0} );
 										
-	return Math.max(...t);
+	return Math.max(...ty);
 }
 
 function getScrollX(){					
-	let t = [		window?.pageXOffset,
+	let tx = [		window?.pageXOffset,
 											window?.scrollX,
 											document?.documentElement?.scrollLeft,
 											document?.body?.parentNode?.scrollLeft,
@@ -407,7 +407,7 @@ function getScrollX(){
 											0
 										].filter( (p)=>{return p>=0} );
 										
-	return Math.max(...t);
+	return Math.max(...tx);
 }
 
 function absBoundingClientRect(el){
@@ -1302,6 +1302,8 @@ var curr=ifrm3.contentWindow.document.querySelectorAll("div#currTime")[0];
 
 var scrl1=ifrm.contentWindow.document.querySelectorAll("input#scroll_curr1")[0];
 var evry= ifrm.contentWindow.document.querySelectorAll("button#every")[0];
+evry.defaultTitle=evry.title+'.';
+
 var scanB= ifrm.contentWindow.document.querySelectorAll("input#scnB")[0];
 var gnrB= ifrm.contentWindow.document.querySelectorAll("input#genB")[0];
 
@@ -1315,16 +1317,16 @@ hide_thumbs.onclick=()=>{
 	}
 	let s=false;
 	let d='none';
-	let t='Show thumbs'
+	let tt='Show thumbs'
 	if(tHidden===true){
 		d='flex';
 		s=true;
-		t='Hide thumbs'
+		tt='Hide thumbs'
 	}else{
 		tHidden_vfr=og_vfr;
 	}
 	tHidden=!tHidden;
-	hide_thumbs.value=t;
+	hide_thumbs.value=tt;
 	setStyle(ifrm2,'display',d);
 	setStyle(ifrm3,'display',d);
 	if(s===true){
@@ -1536,15 +1538,16 @@ var shiftVid=(force_default_place,justScroll)=>{
 
 evry.onclick=()=>{
 	if (aseek==0){
-		if(evry.intrv!==null){
-			if(evry.intrv<0){
+			if(evry.intrv===null){
+				evry.val=9;
+				evry.innerText='9 frames';
+			}else if(evry.intrv<0){
 					evry.intrv=-0.5;
 					evry.innerText='At most every 0.5 secs';
 			}else{
 					evry.intrv=everyX_var;
 					evry.innerText=evry.innerText=`At least every ${everyX_var} secs`;
 			}
-		}
 		rsz_ifrm();
 		setEveryFrames();
 	}
@@ -1553,7 +1556,7 @@ evry.onclick=()=>{
 evry.onwheel=()=>{
 	event.preventDefault();
 	event.stopPropagation();
-	if(evry.intrv===null || aseek!=0){
+	if(aseek!=0){
 		return
 	}
 	
@@ -1561,6 +1564,9 @@ evry.onwheel=()=>{
 		if(evry.intrv<0){
 			evry.intrv=(evry.intrv<=-0.2)?evry.intrv+0.1:evry.intrv;
 			evry.innerText='At most every '+(	Math.abs(evry.intrv).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1})	)+' secs';
+		}else if(evry.intrv===null){
+			evry.val+=3;
+			evry.innerText=evry.val+' frames';
 		}else{
 			if(evry.intrv>=2){
 				evry.intrv-=1;
@@ -1573,6 +1579,9 @@ evry.onwheel=()=>{
 		if(evry.intrv<0){
 			evry.intrv-=0.1;
 			evry.innerText='At most every '+(	Math.abs(evry.intrv).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1})	)+' secs';
+		}else if(evry.intrv===null){
+			evry.val= evry.val>3? evry.val-3 : 3;
+			evry.innerText=evry.val+' frames';
 		}else{
 			evry.intrv+=1;
 			evry.innerText='At least every '+(evry.intrv)+((evry.intrv===1)?' sec':' secs');
@@ -1668,16 +1677,20 @@ var checkDur = function() {
 				t=Math.round(Math.ceil(((myVdo.duration)/(everyX_var*3)))*3);
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
 				evry.innerText=`At least every ${everyX_var} secs`;
+				evry.title='Wheel down/up to increase/decrease frames. '+evry.defaultTitle;
 			}else if(myVdo.duration<4.5){
 				evry.intrv=-0.5;
 				t=Math.round(Math.max(1,Math.floor((myVdo.duration*2)/3))*3); // 2 => (1/*0.5)
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
 				evry.innerText='At most every 0.5 secs';
+				evry.title='Wheel down/up to increase/decrease frames. '+evry.defaultTitle;
 			}else{ //>=4.5 && <270
 				evry.intrv=null;
+				evry.val=9;
 				t=9;
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
 				evry.innerText='9 frames';
+				evry.title='Wheel down/up to increase/decrease frames by 3. '+evry.defaultTitle;
 			}
 			ev_t=t;
 			setStyle(evry,'display','initial');
@@ -2050,7 +2063,11 @@ rsz_ifrm();
 	}	
 	
 	function setEveryFrames() {
-			if(myVdo.duration>=270){
+			if(evry.intrv===null){
+				t=evry.val;
+				let dt=myVdo.duration/evry.val;
+				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(dt,2):t;
+			}else if(myVdo.duration>=270){
 				t=Math.round(Math.ceil(((myVdo.duration)/(evry.intrv*3)))*3);
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;			
 			}else if(myVdo.duration<4.5){
@@ -3222,24 +3239,24 @@ setStyle(ct,'zoom',(f.scrollWidth/ct.clientWidth)*0.2);
 	scrollElMidPage(this,ifrm2);
 }*/
 	  }else{
-			let t,cvs;
+			let t_el,cvs;
 			if(e.target.tagName==='CANVAS'){
 				cvs=e.target;
-				t=cvs.parentElement;
+				t_el=cvs.parentElement;
 			}else{ //FIGURE
-				t=e.target;
-				cvs=t.firstElementChild;
-			} //t=figure
-			let prg=t.lastElementChild.firstElementChild;
+				t_el=e.target;
+				cvs=t_el.firstElementChild;
+			} //t_el=figure
+			let prg=t_el.lastElementChild.firstElementChild;
 			index = progresses.indexOf(prg);
 			nowFlag=index;
 			cap=index;
 			let cur=parseFloat(cvs.getAttribute('timestamp'));
 			let rct=absBoundingClientRect(prg);
-			let fz=t.style.zoom;
+			let fz=t_el.style.zoom;
 			let pfz=getFloat(fz);
 			//let z=( isNaN(pfz) || isOneCol )?1:0.01*pfz;
-			let fct=getFloat(t.parentElement.style.zoom);
+			let fct=getFloat(t_el.parentElement.style.zoom);
 			let pv=e.offsetX/(rct.width*fct*pfz);
 			prg.value=pv;
 			let nxt=(index===captions.length-1)?myVdo.duration:parseFloat(captions[index+1].parentElement.previousElementSibling.getAttribute('timestamp'));
