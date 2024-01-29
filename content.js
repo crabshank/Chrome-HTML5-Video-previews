@@ -84,8 +84,7 @@ try {
 			el.style.cssText+=sc+nv;
 		}else if(p[0]!==nv){
 			let px=p.index;
-			let z=px+p[0].length;
-			for(let i=px+1; i<z; ++i){
+			for(let i=px+1, z=px+p[0].length; i<z; ++i){
 				cs[i]='';
 			}
 			cs[px]=nv;
