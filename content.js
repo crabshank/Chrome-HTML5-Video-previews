@@ -1467,7 +1467,6 @@ var shiftVid=(force_default_place,justScroll)=>{
 									zi=parseInt(window.getComputedStyle(firstAncestor)['z-index']);
 								}
 								setStyle(firstAncestor,'z-index',zi-1);
-								setStyle(mvl,'z-index',zi-2);
 								
 							if(justScroll!==true){
 								myVdoR=mvl.getBoundingClientRect();
