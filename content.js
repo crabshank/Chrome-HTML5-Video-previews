@@ -83,10 +83,12 @@ try {
 			let sc=(c.trim().endsWith(';'))?'':';';
 			el.style.cssText+=sc+nv;
 		}else if(p[0]!==nv){
-			for(let i=p.index; i<p.index+p[0].length-1; ++i){
+			let px=p.index;
+			let z=px+p[0].length;
+			for(let i=px+1; i<z; ++i){
 				cs[i]='';
 			}
-			cs[p.index]=nv;
+			cs[px]=nv;
 			el.style.cssText=cs.join('');
 		}
 	}
