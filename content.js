@@ -601,6 +601,7 @@ function messageHdl(request, sender, sendResponse) {
 						txtBx.appendChild(opt);	
 					}
 				}
+				txtBx.dispatchEvent(new Event('change'));
 		 }else if(request.type ==='get_embeds'){
 			 function findRegexIndices(string, substring, caseSensitive, indices) {
 				  var substringLen = substring.length,
