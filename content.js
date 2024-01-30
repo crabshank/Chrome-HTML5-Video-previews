@@ -2221,8 +2221,6 @@ if(allFrames.length>0){
 
 			 }
 
-			
-
 	let pxs=0;
 	let drt=0;
 	  vids.forEach((vid,index) => {
@@ -2250,6 +2248,7 @@ if(allFrames.length>0){
 		}
   });
   
+  txtBx.dispatchEvent(new Event('change'));
   chrome.runtime.sendMessage({type: "get_embeds"}, function(response) {;})
   
 }
