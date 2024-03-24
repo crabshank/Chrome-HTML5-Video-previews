@@ -794,11 +794,15 @@ function messageHdl(request, sender, sendResponse) {
 	}else{
 	
 	if(window.location.href==request.message){
+		let cx=typeof(request.ctx)!=='undefined' ? true : false;
 		if(init===null){
 			handleBrowserActionClicked(request);
+			if(cx===false){
+				scanB.click();
+			}
 			init=false;
 		}
-		if(typeof(request.ctx)!=='undefined'){
+		if(cx===true){
 			scanB.click();
 			for(let i=0, len=txtBx.length; i<len; i++){
 				let ti=txtBx[i];
