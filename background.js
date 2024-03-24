@@ -5,8 +5,9 @@ function getUrl(tab) {
 try {
 
 var lastMsg=[];
+var ext_id=chrome.runtime.id;
 
-function send(message,dims,tabId) {
+function send(message,dims,tabId,ctx) {
 var msg={};
 
     if(dims){
@@ -25,12 +26,29 @@ var msg={};
       };
 		
 	}
+	if(typeof(ctx)!=='undefined'){
+		msg.ctx=ctx;
+	}
       chrome.tabs.sendMessage(tabId, msg);
     }
 
 
 chrome.action.onClicked.addListener((tab) => {
   send(getUrl(tab),false,tab.id);
+});
+
+let mId="prime_"+ext_id;
+let contexts = ["video"];
+chrome.contextMenus.create({
+	"title": "Select video - HTML5 Video previews page",
+	"contexts": contexts,
+	"id": mId
+})
+
+chrome.contextMenus.onClicked.addListener((info,tab) => {
+	if(info.menuItemId===mId){
+		send(getUrl(tab),false,tab.id,info.srcUrl);
+	}
 });
 
 function handleMessage(request, sender, sendResponse) {

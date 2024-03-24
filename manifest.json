@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "HTML5 Video previews page",
-  "version": "2024.1",
+  "version": "2024.3",
   "options_page":  "options.html",
     "content_scripts": [
     {
@@ -12,7 +12,7 @@
       "js": ["content.js"]
     }
   ],
-  "permissions": ["tabs","activeTab","storage"],
+  "permissions": ["tabs","activeTab","storage","contextMenus"],
   "background": {
     "service_worker": "background.js"
   },
