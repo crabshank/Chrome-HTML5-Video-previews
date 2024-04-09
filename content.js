@@ -21,7 +21,7 @@ try {
 	var pointerScrub_var=0.023;
 	var isEnterScrub=0;
 	var oneCol_var=false;
-	var last_psTime=[null,false,null];
+	var last_psTime=[null,false,null,null,null];
 	var psCvs=null;
 	var psCvs_visible=false;
 	var relocVid_var= false;
@@ -40,6 +40,8 @@ try {
 		pixels[index+3] =a;
 	}
 	function drawCvsPerc(rng){
+		let pnk=[last_psTime[3],last_psTime[4]];
+		
 		if(rng===true || (rng[0]!==last_rng[0] || rng[1]!==last_rng[1]) ){
 			if(rng!==true){
 				last_rng=rng;
@@ -56,19 +58,28 @@ try {
 			let xds=Math.ceil(rng[0]*cwScl);
 			let xdt=Math.floor(rng[1]*cwScl);
 			for (let x=0; x<xds; ++x){
-					for (let y=canvasHeight-1; y>=0; --y){
-						setPix(pixels, x, y, 0,255,255,153, canvasWidth);
-					}
-			}
-			for (let x=xds; x<=xdt; ++x){
-					for (let y=canvasHeight-1; y>=0; --y){
-						setPix(pixels, x, y, 255,0,0,153, canvasWidth);
-					}
+				for (let y=canvasHeight-1; y>=0; --y){
+					setPix(pixels, x, y, 0,255,255,153, canvasWidth);
+				}
 			}
 			for (let x=xdt+1; x<canvasWidth; ++x){
+				for (let y=canvasHeight-1; y>=0; --y){
+					setPix(pixels, x, y, 0,255,255,153, canvasWidth);
+				}
+			}
+			if(pnk[0]!==null && pnk[1]!==null){	
+				let xds1=Math.ceil(pnk[0]*cwScl);
+				let xdt1=Math.floor(pnk[1]*cwScl);
+				for (let x=xds1; x<=xdt1; ++x){
 					for (let y=canvasHeight-1; y>=0; --y){
-						setPix(pixels, x, y, 0,255,255,153, canvasWidth);
+						setPix(pixels, x, y, 224,91,205,153, canvasWidth);
 					}
+				}
+			}
+			for (let x=xds; x<=xdt; ++x){
+				for (let y=canvasHeight-1; y>=0; --y){
+						setPix(pixels, x, y, 255,0,0,153, canvasWidth);
+				}
 			}
 			ctx.putImageData(iData, 0, 0);
 		}
@@ -1863,7 +1874,9 @@ window.addEventListener('pointerdown', function (event) {
 			}catch(e){;}
 		}
 		currFigCaps=[];
-		last_psTime=[null,false,null];
+		last_psTime[0]=null;
+		last_psTime[1]=false;
+		last_psTime[2]=null;
 	}
 });
 
@@ -1890,11 +1903,15 @@ window.addEventListener('pointermove', function (event) {
 					ent=true;
 				}else{
 					//NOT IN DIV
-					last_psTime=[null,false,null];
+					last_psTime[0]=null;
+					last_psTime[1]=false;
+					last_psTime[2]=null;
 				}
 			}else{
 				//NOT IN DIV
-				last_psTime=[null,false,null];
+				last_psTime[0]=null;
+				last_psTime[1]=false;
+				last_psTime[2]=null;
 			}
 			if(scrubEnt===true && ent===false){
 				scrubEnt=ent;
@@ -1904,7 +1921,9 @@ window.addEventListener('pointermove', function (event) {
 				scrubEnt=ent;
 				let cap1=res*done_t;
 				let cap_el1=Math.floor(cap1);
-				
+				last_psTime[3]=cap_el1/done_t;
+				last_psTime[4]=(cap_el1+1)/done_t;
+				drawCvsPerc(true);
 				let sy,sy2,zeroRct,figEl,prg;
 				if (cap_el1+1<captions.length){
 					prg=progresses[cap_el1];
@@ -1941,7 +1960,9 @@ window.addEventListener('pointermove', function (event) {
 			}
 		}else{
 			//NOT IN DIV
-			last_psTime=[null,false,null];
+			last_psTime[0]=null;
+			last_psTime[1]=false;
+			last_psTime[2]=null;
 			scrubEnt=false;
 			rst=true;
 		}
@@ -1957,7 +1978,9 @@ window.addEventListener('pointermove', function (event) {
 					}catch(e){;}
 			}
 			currFigCaps=[];
-			last_psTime=[null,false,null];
+			last_psTime[0]=null;
+			last_psTime[1]=false;
+			last_psTime[2]=null;
 		}
 });
 
@@ -2336,7 +2359,7 @@ function LnkOp()
 				psCvs_visible=false;
 			}
 			scrubEnt=false;
-			last_psTime=[null,false,null];
+			last_psTime=[null,false,null,null,null];
 			isOneCol=false;
 			setStyle(document.documentElement,'min-height',doc_minHeight+'px');
 			//checkDur();
@@ -2495,7 +2518,7 @@ myVdo.addEventListener("ratechange", (event) => {
 			psCvs_visible=false;
 		}
 		scrubEnt=false;
-		last_psTime=[null,false,null];
+		last_psTime=[null,false,null,null,null];
 		isOneCol=false;
 		setStyle(document.documentElement,'min-height',doc_minHeight+'px');
 		checkDur();
