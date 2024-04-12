@@ -2451,7 +2451,7 @@ myVdo.addEventListener("timeupdate", (event) => {
 
 myVdo.addEventListener("durationchange", (event) => {
 	//un_hider(true);
-  checkDur(true);
+  checkDur();
 });
 
 myVdo.addEventListener("loadedmetadata", (event) => {
