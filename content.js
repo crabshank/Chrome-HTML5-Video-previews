@@ -1025,7 +1025,7 @@ var m_c=0;
 var m_l=0;
 var curr_thumb=0;
 var t=24;
-var done_t=t;
+var done_t=null;
 var loadFlag=false;
 var nowFlag=-1;
 var aseek=0;
@@ -1701,6 +1701,7 @@ function pgBar(ix,ths,ev,attr,nxt){
 			
 			
 var checkDur = function() {
+	if(done_t!==null && captions.length==done_t){ return; };
 	if(!!isFinite(myVdo.duration)){
 	loadFlag=true;
 	nowFlag=-1;	
@@ -2450,7 +2451,7 @@ myVdo.addEventListener("timeupdate", (event) => {
 
 myVdo.addEventListener("durationchange", (event) => {
 	//un_hider(true);
-  checkDur();
+  checkDur(true);
 });
 
 myVdo.addEventListener("loadedmetadata", (event) => {
