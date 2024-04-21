@@ -211,6 +211,7 @@ function setFA_wh(wcs,setWH){
 	setStyle(firstAncestor,'height',wcs['height']);
 	setStyle(firstAncestor,'min-height',wcs['min-height']);
 	setStyle(firstAncestor,'max-height',wcs['max-height']);
+	setStyle(firstAncestor,'display',wcs['display']);
 	if(setWH===true){
 		firstAncestor_wh['width']=wcs['width'];
 		firstAncestor_wh['min-width']=wcs['min-width'];
@@ -218,6 +219,7 @@ function setFA_wh(wcs,setWH){
 		firstAncestor_wh['height']=wcs['height'];
 		firstAncestor_wh['min-height']=wcs['min-height'];
 		firstAncestor_wh['max-height']=wcs['max-height'];
+		firstAncestor_wh['display']=wcs['display'];
 	}
 }
 
