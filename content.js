@@ -212,6 +212,8 @@ function setFA_wh(wcs,setWH){
 	setStyle(firstAncestor,'min-height',wcs['min-height']);
 	setStyle(firstAncestor,'max-height',wcs['max-height']);
 	setStyle(firstAncestor,'display',wcs['display']);
+	setStyle(firstAncestor,'visibility',wcs['visibility']);
+	setStyle(firstAncestor,'opacity',wcs['opacity']);
 	if(setWH===true){
 		firstAncestor_wh['width']=wcs['width'];
 		firstAncestor_wh['min-width']=wcs['min-width'];
@@ -220,6 +222,8 @@ function setFA_wh(wcs,setWH){
 		firstAncestor_wh['min-height']=wcs['min-height'];
 		firstAncestor_wh['max-height']=wcs['max-height'];
 		firstAncestor_wh['display']=wcs['display'];
+		firstAncestor_wh['visibility']=wcs['visibility'];
+		firstAncestor_wh['opacity']=wcs['opacity'];
 	}
 }
 
@@ -1592,39 +1596,53 @@ evry.onclick=()=>{
 evry.onwheel=()=>{
 	event.preventDefault();
 	event.stopPropagation();
-	if(aseek!=0){
+	let scd= event.deltaY<0 ? true : false;
+	if(aseek!=0 || (scd===true && t===3) || (scd===false && evry.intrv===1) ){
 		return
 	}
-	
-	if (event.deltaY>0){
-		if(evry.intrv<0){
-			evry.intrv=(evry.intrv<=-0.2)?evry.intrv+0.1:evry.intrv;
-			evry.innerText='At most every '+(	Math.abs(evry.intrv).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1})	)+' secs';
-		}else if(evry.intrv===null){
-			evry.val+=3;
-			evry.innerText=evry.val+' frames';
-		}else{
-			if(evry.intrv>=2){
-				evry.intrv-=1;
+	let eva_og=setEveryFrames();
+	let eva=[];
+	function handle_dy(event, scd){
+		if (scd===false || event.deltaY>0){
+			if(evry.intrv<0){
+				evry.intrv=(evry.intrv<=-0.2)?evry.intrv+0.1:evry.intrv;
+				evry.innerText='At most every '+(	Math.abs(evry.intrv).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1})	)+' secs';
+			}else if(evry.intrv===null){
+				evry.val+=3;
+				evry.innerText=evry.val+' frames';
+			}else{
+				if(evry.intrv>=2){
+					evry.intrv-=1;
+				}
+				evry.innerText='At least every '+(evry.intrv)+((evry.intrv===1)?' sec':' secs');
 			}
-			evry.innerText='At least every '+(evry.intrv)+((evry.intrv===1)?' sec':' secs');
 		}
-	}
-	
-	if(event.deltaY<0){
-		if(evry.intrv<0){
-			evry.intrv-=0.1;
-			evry.innerText='At most every '+(	Math.abs(evry.intrv).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1})	)+' secs';
-		}else if(evry.intrv===null){
-			evry.val= evry.val>3? evry.val-3 : 3;
-			evry.innerText=evry.val+' frames';
-		}else{
-			evry.intrv+=1;
-			evry.innerText='At least every '+(evry.intrv)+((evry.intrv===1)?' sec':' secs');
-		}
-	}
 		
-	setEveryFrames();
+		if(scd===true || event.deltaY<0){
+			if(evry.intrv<0){
+				evry.intrv-=0.1;
+				evry.innerText='At most every '+(	Math.abs(evry.intrv).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1})	)+' secs';
+			}else if(evry.intrv===null){
+				evry.val= evry.val>3? evry.val-3 : 3;
+				evry.innerText=evry.val+' frames';
+			}else{
+				evry.intrv+=1;
+				evry.innerText='At least every '+(evry.intrv)+((evry.intrv===1)?' sec':' secs');
+			}
+		}
+	}
+	handle_dy(event, scd);
+	eva=setEveryFrames();
+	let ev={deltaY: event.deltaY};
+	
+	while(
+		(	(evry.intrv>1 && scd===true) || (scd===false && t>3)	) &&
+		(eva===eva_og)
+	){
+		ev.deltaY=(scd===true)?ev.deltaY-1:ev.deltaY+1;
+		handle_dy(ev, scd);
+		eva=setEveryFrames();
+	}
 	rsz_ifrm();
 }
 
@@ -2112,25 +2130,30 @@ rsz_ifrm();
 	}	
 	
 	function setEveryFrames() {
+			let dt;
 			if(evry.intrv===null){
 				t=evry.val;
-				let dt=myVdo.duration/evry.val;
+				dt=myVdo.duration/evry.val;
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(dt,2):t;
 			}else if(myVdo.duration>=270){
 				t=Math.round(Math.ceil(((myVdo.duration)/(evry.intrv*3)))*3);
-				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;			
+				dt=myVdo.duration/t;
+				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(dt,2):t;			
 			}else if(myVdo.duration<4.5){
 				t=Math.round(Math.max(1,Math.floor((myVdo.duration*(1/Math.abs(evry.intrv)))/3))*3);
-				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+				dt=myVdo.duration/t;
+				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(dt,2):t;
 			}else{
 				t=9;
-				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
+				dt=myVdo.duration/t;
+				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(dt,2):t;
 			}
 			/*if(ev_t>-1 && t!=ev_t){
 				setStyle(evry,'display','initial');
 			}else{
 				setStyle(evry,'display','none');
 			}*/
+			return dt;
 	}
 
 function ifrScan()
