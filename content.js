@@ -1594,7 +1594,7 @@ evry.onwheel=()=>{
 	event.preventDefault();
 	event.stopPropagation();
 	let scd= event.deltaY<0 ? true : false;
-	if(aseek!=0 || (scd===true && t===3) || (scd===false && (evry.intrv===1) ) ){
+	if(aseek!=0 || (scd===true && t===3) || (scd===false && evry.intrv===1 ) ){
 		return
 	}
 	let eva_og=setEveryFrames();
