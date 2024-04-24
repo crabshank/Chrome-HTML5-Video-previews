@@ -1597,52 +1597,53 @@ evry.onwheel=()=>{
 	event.preventDefault();
 	event.stopPropagation();
 	let scd= event.deltaY<0 ? true : false;
-	if(aseek!=0 || (scd===true && t===3) || (scd===false && evry.intrv===1) ){
+	if(aseek!=0 || (scd===true && t===3) || (scd===false && (evry.intrv===1 || (evry.intrv>=-0.2 && evry.intrv<0) ) ) ){
 		return
 	}
 	let eva_og=setEveryFrames();
 	let eva=[];
+	let eit='';
 	function handle_dy(event, scd){
 		if (scd===false || event.deltaY>0){
 			if(evry.intrv<0){
 				evry.intrv=(evry.intrv<=-0.2)?evry.intrv+0.1:evry.intrv;
-				evry.innerText='At most every '+(	Math.abs(evry.intrv).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1})	)+' secs';
+				return ('At most every '+(	Math.abs(evry.intrv).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1})	)+' secs');
 			}else if(evry.intrv===null){
 				evry.val+=3;
-				evry.innerText=evry.val+' frames';
+				return (evry.val+' frames');
 			}else{
 				if(evry.intrv>=2){
 					evry.intrv-=1;
 				}
-				evry.innerText='At least every '+(evry.intrv)+((evry.intrv===1)?' sec':' secs');
+				return ('At least every '+(evry.intrv)+((evry.intrv===1)?' sec':' secs'));
 			}
 		}
 		
 		if(scd===true || event.deltaY<0){
 			if(evry.intrv<0){
 				evry.intrv-=0.1;
-				evry.innerText='At most every '+(	Math.abs(evry.intrv).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1})	)+' secs';
+				return ('At most every '+(	Math.abs(evry.intrv).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1})	)+' secs');
 			}else if(evry.intrv===null){
 				evry.val= evry.val>3? evry.val-3 : 3;
-				evry.innerText=evry.val+' frames';
+				return (evry.val+' frames');
 			}else{
 				evry.intrv+=1;
-				evry.innerText='At least every '+(evry.intrv)+((evry.intrv===1)?' sec':' secs');
+				return ('At least every '+(evry.intrv)+((evry.intrv===1)?' sec':' secs'));
 			}
 		}
 	}
-	handle_dy(event, scd);
+	eit=handle_dy(event, scd);
 	eva=setEveryFrames();
 	let ev={deltaY: event.deltaY};
-	
 	while(
-		(	(evry.intrv>1 && scd===true) || (scd===false && t>3)	) &&
+		( evry.intrv<0 || (evry.intrv>1 && scd===true) || (scd===false && t>3)	) &&
 		(eva===eva_og)
 	){
 		ev.deltaY=(scd===true)?ev.deltaY-1:ev.deltaY+1;
-		handle_dy(ev, scd);
+		eit=handle_dy(ev, scd);
 		eva=setEveryFrames();
 	}
+	evry.innerText=eit;
 	rsz_ifrm();
 }
 
