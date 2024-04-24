@@ -1581,9 +1581,6 @@ evry.onclick=()=>{
 			if(evry.intrv===null){
 				evry.val=9;
 				evry.innerText='9 frames';
-			}else if(evry.intrv<0){
-					evry.intrv=-0.5;
-					evry.innerText='At most every 0.5 secs';
 			}else{
 					evry.intrv=everyX_var;
 					evry.innerText=evry.innerText=`At least every ${everyX_var} secs`;
@@ -1597,7 +1594,7 @@ evry.onwheel=()=>{
 	event.preventDefault();
 	event.stopPropagation();
 	let scd= event.deltaY<0 ? true : false;
-	if(aseek!=0 || (scd===true && t===3) || (scd===false && (evry.intrv===1 || (evry.intrv>=-0.2 && evry.intrv<0) ) ) ){
+	if(aseek!=0 || (scd===true && t===3) || (scd===false && (evry.intrv===1) ) ){
 		return
 	}
 	let eva_og=setEveryFrames();
@@ -1605,10 +1602,7 @@ evry.onwheel=()=>{
 	let eit='';
 	function handle_dy(event, scd){
 		if (scd===false || event.deltaY>0){
-			if(evry.intrv<0){
-				evry.intrv=(evry.intrv<=-0.2)?evry.intrv+0.1:evry.intrv;
-				return ('At most every '+(	Math.abs(evry.intrv).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1})	)+' secs');
-			}else if(evry.intrv===null){
+			if(evry.intrv===null){
 				evry.val+=3;
 				return (evry.val+' frames');
 			}else{
@@ -1620,10 +1614,7 @@ evry.onwheel=()=>{
 		}
 		
 		if(scd===true || event.deltaY<0){
-			if(evry.intrv<0){
-				evry.intrv-=0.1;
-				return ('At most every '+(	Math.abs(evry.intrv).toLocaleString('en-GB', {minimumFractionDigits: 1, maximumFractionDigits: 1})	)+' secs');
-			}else if(evry.intrv===null){
+			if(evry.intrv===null){
 				evry.val= evry.val>3? evry.val-3 : 3;
 				return (evry.val+' frames');
 			}else{
@@ -1636,7 +1627,7 @@ evry.onwheel=()=>{
 	eva=setEveryFrames();
 	let ev={deltaY: event.deltaY};
 	while(
-		( evry.intrv<0 || (evry.intrv>1 && scd===true) || (scd===false && t>3)	) &&
+		( (evry.intrv>1 && scd===true) || (scd===false && t>3)	) &&
 		(eva===eva_og)
 	){
 		ev.deltaY=(scd===true)?ev.deltaY-1:ev.deltaY+1;
@@ -1734,13 +1725,7 @@ var checkDur = function() {
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
 				evry.innerText=`At least every ${everyX_var} secs`;
 				evry.title='Wheel down/up to increase/decrease frames. '+evry.defaultTitle;
-			}else if(myVdo.duration<4.5){
-				evry.intrv=-0.5;
-				t=Math.round(Math.max(1,Math.floor((myVdo.duration*2)/3))*3); // 2 => (1/*0.5)
-				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
-				evry.innerText='At most every 0.5 secs';
-				evry.title='Wheel down/up to increase/decrease frames. '+evry.defaultTitle;
-			}else{ //>=4.5 && <270
+			}else{
 				evry.intrv=null;
 				evry.val=9;
 				t=9;
@@ -2140,10 +2125,6 @@ rsz_ifrm();
 				t=Math.round(Math.ceil(((myVdo.duration)/(evry.intrv*3)))*3);
 				dt=myVdo.duration/t;
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(dt,2):t;			
-			}else if(myVdo.duration<4.5){
-				t=Math.round(Math.max(1,Math.floor((myVdo.duration*(1/Math.abs(evry.intrv)))/3))*3);
-				dt=myVdo.duration/t;
-				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(dt,2):t;
 			}else{
 				t=9;
 				dt=myVdo.duration/t;
