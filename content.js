@@ -1,13 +1,18 @@
 try {
 	//console.log(window.location.href+" - 'HTML5 Video previews page' has access");
 	var hed=document.getElementsByTagName("head")[0];	
-
+	var doc_ttl_og=[document.title,true,document.title];
 	var fr_id=null;
 	async function get_ids(){
 		return new Promise(function(resolve, reject) {
 			restore_options();
 			chrome.runtime.sendMessage({message: "get_info", chg:window.location.href}, function(response) {
 				fr_id=response.info.frameId;
+				let tbt=response.info.tab.title;
+				if(doc_ttl_og[2].trim()===''){
+					doc_ttl_og[0]=tbt;
+					doc_ttl_og[1]=false;
+				}
 				resolve();
 			});
 		});
@@ -32,8 +37,16 @@ try {
 	var ifrm,ifrm2,ifrm3;
 	var last_rng=[null,null];
 	var psGap=5.5;
-	var doc_ttl_og=document.title;
-	
+	function resetDocTitle(){
+		doc_ttl_og[2]=document.title;
+	}
+	function setDocTitle(){
+		if(doc_ttl_og[1]===true){ //if title
+			document.title=doc_ttl_og[2];
+		}else{ //if tab name
+			document.title=doc_ttl_og[0];
+		}
+	}
 	function setPix(pixels, x, y, r, g, b, a, width) {
 		let index = 4 * (x + y * width);
 		pixels[index] = r;
@@ -1752,7 +1765,7 @@ var checkDur = function() {
 	bsw=0;
 	vidSeek=false;
 	myVdo.currentTime=0;
-
+	resetDocTitle();
 	if(!tTrkFlg){
 	setStyle(bSect,'width','min-content');
 	setStyle(bSect,'min-width','');
@@ -2572,8 +2585,8 @@ progresses=[];
 	bsw=0;
 	vidSeek=false;
 	myVdo.currentTime = 0;
-	doc_ttl_og=document.title;
-aseek=1;
+	resetDocTitle();
+	aseek=1;
 
 if(!tTrkFlg){
 	setStyle(bSect,'width','min-content');
@@ -2821,28 +2834,28 @@ function thumbseek(bool){
 			generateThumbnail();
 			ttmp++;
 			if (ttmp<done_t) {
-			t_b=performance.now();
-			let tm=t_b-t_a;
-			mx=(tm>mx)?tm:mx;
-			tTrkFlg=true;
-			setStyle(bSect,'width','min-content');
-			setStyle(bSect,'min-width','');
-			setStyle(bSect,'max-width','');
-			thumb_track=ttmp+"/"+done_t;
-			curr.innerText= formatTime(myVdo.currentTime)+"\n"+thumb_track;
-			document.title=`[${thumb_track}] - ${doc_ttl_og}`;
-			let bSectR=absBoundingClientRect(bSect);
-			let bsrw=bSectR.width
-			bsw=(bsrw>bsw)?bsrw:bsw;
-			setStyle(bSect,'width',bsw+'px');
-			setStyle(bSect,'min-width',bsw+'px');
-			setStyle(bSect,'max-width',bsw+'px');
-			ifrmRsz(true);
-			if(ttmp===1){
-				ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
-			}
-			vidSeek=false;
-			myVdo.currentTime = ttmp*(myVdo.duration/t);
+				t_b=performance.now();
+				let tm=t_b-t_a;
+				mx=(tm>mx)?tm:mx;
+				tTrkFlg=true;
+				setStyle(bSect,'width','min-content');
+				setStyle(bSect,'min-width','');
+				setStyle(bSect,'max-width','');
+				thumb_track=ttmp+"/"+done_t;
+				curr.innerText= formatTime(myVdo.currentTime)+"\n"+thumb_track;
+				document.title=(doc_ttl_og[0].trim()==='')?`[${thumb_track}]`:`[${thumb_track}] - ${doc_ttl_og[0]}`;
+				let bSectR=absBoundingClientRect(bSect);
+				let bsrw=bSectR.width
+				bsw=(bsrw>bsw)?bsrw:bsw;
+				setStyle(bSect,'width',bsw+'px');
+				setStyle(bSect,'min-width',bsw+'px');
+				setStyle(bSect,'max-width',bsw+'px');
+				ifrmRsz(true);
+				if(ttmp===1){
+					ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
+				}
+				vidSeek=false;
+				myVdo.currentTime = ttmp*(myVdo.duration/t);
 			}else {
 				endGtMv();
 				aseek=0;
@@ -2853,7 +2866,7 @@ function thumbseek(bool){
 				bsw=0;
 				vidSeek=false;
 				myVdo.currentTime=0;
-				document.title=doc_ttl_og;
+				setDocTitle();
 				//zeroRsz=true;
 				setStyle(mvdb,'display','block');
 				setStyle(oneCol,'display','block');
