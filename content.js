@@ -1598,7 +1598,7 @@ evry.onwheel=()=>{
 		return
 	}
 	let eva_og=setEveryFrames();
-	let eva=[];
+	let eva=evry.intrv;
 	let eit='';
 	function handle_dy(event, scd){
 		if (scd===false || event.deltaY>0){
@@ -1609,7 +1609,8 @@ evry.onwheel=()=>{
 				if(evry.intrv>=2){
 					evry.intrv-=1;
 				}
-				return ('At least every '+(evry.intrv)+((evry.intrv===1)?' sec':' secs'));
+				eva=setEveryFrames();
+				return ('At least every '+(eva)+((eva===1)?' sec':' secs'));
 			}
 		}
 		
@@ -1619,12 +1620,12 @@ evry.onwheel=()=>{
 				return (evry.val+' frames');
 			}else{
 				evry.intrv+=1;
-				return ('At least every '+(evry.intrv)+((evry.intrv===1)?' sec':' secs'));
+				eva=setEveryFrames();
+				return ('At least every '+(eva)+((eva===1)?' sec':' secs'));
 			}
 		}
 	}
 	eit=handle_dy(event, scd);
-	eva=setEveryFrames();
 	let ev={deltaY: event.deltaY};
 	while(
 		( (evry.intrv>1 && scd===true) || (scd===false && t>3)	) &&
@@ -1632,7 +1633,6 @@ evry.onwheel=()=>{
 	){
 		ev.deltaY=(scd===true)?ev.deltaY-1:ev.deltaY+1;
 		eit=handle_dy(ev, scd);
-		eva=setEveryFrames();
 	}
 	evry.innerText=eit;
 	rsz_ifrm();
@@ -2135,7 +2135,7 @@ rsz_ifrm();
 			}else{
 				setStyle(evry,'display','none');
 			}*/
-			return dt;
+			return Math.ceil(dt);
 	}
 
 function ifrScan()
