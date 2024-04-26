@@ -1644,9 +1644,11 @@ evry.onwheel=()=>{
 				setEveryFrames();
 				return (evry.val+' frames');
 			}else{
-				evry.intrv+=1;
-				eva=setEveryFrames();
-				evry.intrv=eva;
+					evry.intrv+=1;
+					eva=setEveryFrames();
+					if(eva!==eva_og){
+						evry.intrv=eva;
+					}
 				return ('At least every '+(eva)+((eva===1)?' sec':' secs'));
 			}
 		}
