@@ -32,6 +32,8 @@ try {
 	var ifrm,ifrm2,ifrm3;
 	var last_rng=[null,null];
 	var psGap=5.5;
+	var doc_ttl_og=document.title;
+	
 	function setPix(pixels, x, y, r, g, b, a, width) {
 		let index = 4 * (x + y * width);
 		pixels[index] = r;
@@ -1041,6 +1043,7 @@ var ttmp=0;
 var cap=-1;
 var cap_el;
 var time_track=[-1,0];
+var thumb_track='';
 var tTrkFlg=false;
 var ev_t=-1;
 var mx=-3000;
@@ -1604,12 +1607,14 @@ evry.onwheel=()=>{
 		if (scd===false || event.deltaY>0){
 			if(evry.intrv===null){
 				evry.val+=3;
+				setEveryFrames();
 				return (evry.val+' frames');
 			}else{
 				if(evry.intrv>=2){
 					evry.intrv-=1;
 				}
 				eva=setEveryFrames();
+				evry.intrv=eva;
 				return ('At least every '+(eva)+((eva===1)?' sec':' secs'));
 			}
 		}
@@ -1617,10 +1622,12 @@ evry.onwheel=()=>{
 		if(scd===true || event.deltaY<0){
 			if(evry.intrv===null){
 				evry.val= evry.val>3? evry.val-3 : 3;
+				setEveryFrames();
 				return (evry.val+' frames');
 			}else{
 				evry.intrv+=1;
 				eva=setEveryFrames();
+				evry.intrv=eva;
 				return ('At least every '+(eva)+((eva===1)?' sec':' secs'));
 			}
 		}
@@ -2565,7 +2572,7 @@ progresses=[];
 	bsw=0;
 	vidSeek=false;
 	myVdo.currentTime = 0;
-
+	doc_ttl_og=document.title;
 aseek=1;
 
 if(!tTrkFlg){
@@ -2821,7 +2828,9 @@ function thumbseek(bool){
 			setStyle(bSect,'width','min-content');
 			setStyle(bSect,'min-width','');
 			setStyle(bSect,'max-width','');
-			curr.innerText= formatTime(myVdo.currentTime)+"\n"+ttmp+"/"+done_t;
+			thumb_track=ttmp+"/"+done_t;
+			curr.innerText= formatTime(myVdo.currentTime)+"\n"+thumb_track;
+			document.title=`[${thumb_track}] - ${doc_ttl_og}`;
 			let bSectR=absBoundingClientRect(bSect);
 			let bsrw=bSectR.width
 			bsw=(bsrw>bsw)?bsrw:bsw;
@@ -2844,6 +2853,7 @@ function thumbseek(bool){
 				bsw=0;
 				vidSeek=false;
 				myVdo.currentTime=0;
+				document.title=doc_ttl_og;
 				//zeroRsz=true;
 				setStyle(mvdb,'display','block');
 				setStyle(oneCol,'display','block');
