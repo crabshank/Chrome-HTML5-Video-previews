@@ -617,6 +617,19 @@ function expandFrame(frs){
 			}
 }
 
+function deQuot(chk){
+	let u=chk.split(' ').join('');
+	let q=';';
+	u=(u.endsWith(q))?u.slice(0,-q.length):u;
+	q=')';
+	u=(u.endsWith(q))?u.slice(0,-q.length):u; 
+	q=';';
+	u=(u.endsWith(q))?u.slice(0,-q.length):u;
+	q='&quot';
+	u=(u.endsWith(q))?u.slice(0,-q.length):u;
+	return u;
+}
+
 function messageHdl(request, sender, sendResponse) {
 	//console.log(request);
 	if(typeof request.type !=='undefined' && init!==null){
@@ -692,15 +705,7 @@ function messageHdl(request, sender, sendResponse) {
 				  for (let j = 0, len_j=extensions.length; j <len_j ; j++) {
 					let ej=extensions[j];
 					  if (chkl.includes('.' + ej)) {
-						  let u=chk.split(' ').join('');
-						  let q=';';
-						  u=(u.endsWith(q))?u.slice(0,-q.length):u;
-						  q=')';
-						  u=(u.endsWith(q))?u.slice(0,-q.length):u; 
-						  q=';';
-						  u=(u.endsWith(q))?u.slice(0,-q.length):u;
-						  q='&quot';
-						  u=(u.endsWith(q))?u.slice(0,-q.length):u;
+						  let u=deQuot(chk);
 						if(!fnl.includes(u)){
 							fnl.push(u);
 							console.log(ej+': '+u);
@@ -710,7 +715,8 @@ function messageHdl(request, sender, sendResponse) {
 					  }
 				  }
 					if(fExt===false && chkl.includes('embed') && !fnl.includes(chk)){
-							fnl.push(chk);
+						let u=deQuot(chk);
+						fnl.push(u);
 					}
 			}
 			
@@ -2321,8 +2327,9 @@ if(allFrames.length>0){
 			}
 		}
   });
-  
-  txtBx.dispatchEvent(new Event('change'));
+  if(txtBx.length>0){
+	txtBx.dispatchEvent(new Event('change'));
+  }
   chrome.runtime.sendMessage({type: "get_embeds"}, function(response) {;})
   
 }
