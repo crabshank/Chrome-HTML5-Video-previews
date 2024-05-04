@@ -975,6 +975,7 @@ input::-webkit-textfield-decoration-container {
 <input style="background-color: buttonface !important; visibility: initial !important;" id="opnVd" type="button" Value="Open link">
 <input style="background-color: buttonface !important; visibility: initial !important;" id="hideThumbs" type="button" Value="Hide thumbs">
 <input style="background-color: buttonface !important; visibility: initial !important; display: none !important;" id="scroll_curr1" type="button" Value="Scroll to current thumb">
+<input style="background-color: buttonface !important; visibility: initial !important; display: none !important;" title="If hovering over the video scrub bar is very slow, press this button to free some memory to speed it up" id="force_reload_vid" type="button" Value="Force reload video">
 `;
 
 if(typeof bgMsg.top !=='undefined'){
@@ -1364,6 +1365,7 @@ var pip= ifrm3.contentWindow.document.querySelectorAll("button#pnp")[0];
 var curr=ifrm3.contentWindow.document.querySelectorAll("div#currTime")[0];
 
 var scrl1=ifrm.contentWindow.document.querySelectorAll("input#scroll_curr1")[0];
+var forceReloadBtn=ifrm.contentWindow.document.querySelectorAll("input#force_reload_vid")[0];
 var evry= ifrm.contentWindow.document.querySelectorAll("button#every")[0];
 evry.defaultTitle=evry.title+'.';
 
@@ -2054,6 +2056,22 @@ scrl.onclick=function(){
 	scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
 };
 
+forceReloadBtn.onclick=function(){
+	let vp=myVdo.paused;
+	let ct=myVdo.currentTime;
+	let sc=myVdo.src;
+	myVdo.src='';
+	myVdo.src=sc;
+	sc=myVdo.currentSrc;
+	myVdo.currentSrc='';
+	myVdo.currentSrc=sc;
+	myVdo.currentTime=ct;
+	if(vp!==true && myVdo.paused===true){
+		myVdo.play();
+	}else if(vp===true && myVdo.paused!==true){
+		myVdo.pause();
+	}
+}
 scrl1.onclick=function(){
 	scrollElMidPage(captions[curr_thumb].parentElement.parentElement,ifrm2);
 };
@@ -2384,6 +2402,7 @@ function LnkOp()
 			threeSct=thumbs.firstChild;
 			setStyle(scrl,'display','none');
 			setStyle(scrl1,'display','none');
+			setStyle(forceReloadBtn,'display','none');
 			shiftBtns(true);
 			setStyle(rlcRsz,'display','none');
 			setStyle(mvdb,'display','none');
@@ -2543,6 +2562,7 @@ myVdo.addEventListener("ratechange", (event) => {
 		threeSct=thumbs.firstChild;
 		setStyle(scrl,'display','none');
 		setStyle(scrl1,'display','none');
+		setStyle(forceReloadBtn,'display','none');
 		shiftBtns(true);
 		setStyle(rlcRsz,'display','none');
 		setStyle(mvdb,'display','none');
@@ -2890,6 +2910,7 @@ function thumbseek(bool){
 				shiftBtns(false);
 				setStyle(scrl,'display','');
 				setStyle(scrl1,'display','');
+				setStyle(forceReloadBtn,'display','');
 				rsz_ifrm();
 				ifrmRsz();
 				ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
