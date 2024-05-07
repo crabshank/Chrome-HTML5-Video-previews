@@ -22,6 +22,7 @@ try {
 	var txtBx, scanB, gnrB;
 	var plRate_var= 6;
 	var everyX_var= 30;
+	var framesBelowSecs=270;
 	var relocScale_var="0.65";
 	var pointerScrub_var=0.023;
 	var isEnterScrub=0;
@@ -132,6 +133,7 @@ try {
 			}		
 			if(typeof(items.everyX_sett)!=='undefined'){
 				everyX_var=parseFloat(items.everyX_sett);
+				framesBelowSecs=9*everyX_var;
 			}
 			
 			if(typeof(items.relocScale_sett)!=='undefined'){
@@ -1749,7 +1751,7 @@ var checkDur = function() {
 	nowFlag=-1;	
 	shiftBtns(true);
 			if(ev_t==-1){
-			if(myVdo.duration>=270){
+			if(myVdo.duration>=framesBelowSecs){
 				evry.intrv=everyX_var;
 				t=Math.round(Math.ceil(((myVdo.duration)/(everyX_var*3)))*3);
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
@@ -2167,7 +2169,7 @@ rsz_ifrm();
 				t=evry.val;
 				dt=myVdo.duration/evry.val;
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(dt,2):t;
-			}else if(myVdo.duration>=270){
+			}else if(myVdo.duration>=framesBelowSecs){
 				t=Math.round(Math.ceil(((myVdo.duration)/(evry.intrv*3)))*3);
 				dt=myVdo.duration/t;
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(dt,2):t;			
