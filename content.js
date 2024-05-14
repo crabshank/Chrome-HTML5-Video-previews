@@ -2059,14 +2059,13 @@ scrl.onclick=function(){
 };
 
 forceReloadBtn.onclick=function(){
-	let vp=myVdo.paused;
 	let ct=myVdo.currentTime;
-	let sc=myVdo.src;
-	myVdo.src='';
-	myVdo.src=sc;
-	sc=myVdo.currentSrc;
-	myVdo.currentSrc='';
-	myVdo.currentSrc=sc;
+	let vp=myVdo.paused;
+	/*let sc=myVdo.src;
+	let csc=myVdo.currentSrc;*/
+	myVdo.load();
+	/*myVdo.src=sc;
+	myVdo.currentSrc=csc;*/
 	myVdo.currentTime=ct;
 	if(vp!==true && myVdo.paused===true){
 		myVdo.play();
