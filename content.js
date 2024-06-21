@@ -2860,6 +2860,7 @@ function thumbseek(bool){
 			time_track =[ttmp*(myVdo.duration/t),ttmp];
 			vhw.h=myVdo.videoHeight;
 			vhw.w=myVdo.videoWidth;
+			setStyle(forceReloadBtn,'display','');
 			gnrB.value='Generating thumbs';
 			generateThumbnail();
 			ttmp++;
@@ -2911,7 +2912,6 @@ function thumbseek(bool){
 				shiftBtns(false);
 				setStyle(scrl,'display','');
 				setStyle(scrl1,'display','');
-				setStyle(forceReloadBtn,'display','');
 				rsz_ifrm();
 				ifrmRsz();
 				ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
