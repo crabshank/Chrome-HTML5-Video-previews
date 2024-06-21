@@ -977,7 +977,7 @@ input::-webkit-textfield-decoration-container {
 <input style="background-color: buttonface !important; visibility: initial !important;" id="opnVd" type="button" Value="Open link">
 <input style="background-color: buttonface !important; visibility: initial !important;" id="hideThumbs" type="button" Value="Hide thumbs">
 <input style="background-color: buttonface !important; visibility: initial !important; display: none !important;" id="scroll_curr1" type="button" Value="Scroll to current thumb">
-<input style="background-color: buttonface !important; visibility: initial !important; display: none !important;" title="If hovering over the video scrub bar is very slow, press this button to free some memory to speed it up" id="force_reload_vid" type="button" Value="Force reload video">
+<input style="background-color: buttonface !important; visibility: initial !important; display: none !important;" title="If hovering over the video scrub bar is very slow, or the video ceases to be loaded, press this button to free some memory to speed it up" id="force_reload_vid" type="button" Value="Force reload video">
 `;
 
 if(typeof bgMsg.top !=='undefined'){
