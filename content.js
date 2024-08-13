@@ -446,7 +446,7 @@ function getScrollX(){
 	return Math.max(...tx);
 }
 
-function absBoundingClientRect(el){
+function absBoundingClientRect(el, forceVid){
 	let st = [window?.scrollY,
 					window?.pageYOffset,
 					el?.ownerDocument?.documentElement?.scrollTop,
@@ -503,7 +503,7 @@ function absBoundingClientRect(el){
 		r.vid_left=r.centre_x-hlf_w;
 		r.vid_right=r.centre_x+hlf_w;
 		r.vid_width=r.vid_right-r.vid_left;
-	}else{
+	}else if(forceVid===true){
 		r.vid_top=r.top;
 		r.vid_bottom=r.bottom;
 		r.vid_height=r.height;
@@ -1580,7 +1580,7 @@ var shiftVid=(force_default_place,justScroll)=>{
 								}							
 								firstAncestor_lastScale_tx[0]=s;
 								setStyle(firstAncestor,'transform','scale('+s+')');
-								myVdoR=absBoundingClientRect(mvl);
+								myVdoR=absBoundingClientRect(mvl,true);
 								controls_tag.innerHTML=`*{transition: none !important;} video::-webkit-media-controls {transform: translateY(${(myVdoR.vid_bottom-myVdoR.bottom)/s}px) !important;}`;//-
 								tx=((ifrm2R.right+vw2)-myVdoR.left)/s;
 								firstAncestor_lastScale_tx[1]=tx;
@@ -1591,13 +1591,13 @@ var shiftVid=(force_default_place,justScroll)=>{
 								let s=firstAncestor_lastScale_tx[0];
 								tx=firstAncestor_lastScale_tx[1];
 								setStyle(firstAncestor,'transform','scale('+s+')');
-								myVdoR=absBoundingClientRect(mvl);
+								myVdoR=absBoundingClientRect(mvl,true);
 								ty=(ifrm3R.top-myVdoR.vid_top+1)/s;
 								setStyle(firstAncestor,'transform','scale('+s+') translateX('+tx+'px) translateY('+ty+'px)');
 							}
 								
 							if(psCvs_visible===true){
-								myVdoR=absBoundingClientRect(mvl);
+								myVdoR=absBoundingClientRect(mvl,true);
 								setStyle(psCvs,'top',((
 									myVdoR.vid_bottom+psGap
 								))+'px');
@@ -3057,7 +3057,7 @@ function thumbseek(bool){
 								if( event.composedPath().includes(myVdo) || last_psTime[0]!==null){
 									sk=true;
 								}
-									let vr=absBoundingClientRect(mvl);
+									let vr=absBoundingClientRect(mvl,true);
 									let esx=event.clientX+getScrollX();
 									let esy=event.clientY+getScrollY();
 									let pst=vr.vid_bottom+psGap;
