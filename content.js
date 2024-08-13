@@ -231,6 +231,7 @@ function setFA_wh(wcs,setWH){
 	setStyle(firstAncestor,'display',wcs['display']);
 	setStyle(firstAncestor,'visibility',wcs['visibility']);
 	setStyle(firstAncestor,'opacity',wcs['opacity']);
+	setStyle(firstAncestor,'zoom',wcs['zoom']);
 	if(setWH===true){
 		firstAncestor_wh['width']=wcs['width'];
 		firstAncestor_wh['min-width']=wcs['min-width'];
@@ -241,6 +242,7 @@ function setFA_wh(wcs,setWH){
 		firstAncestor_wh['display']=wcs['display'];
 		firstAncestor_wh['visibility']=wcs['visibility'];
 		firstAncestor_wh['opacity']=wcs['opacity'];
+		firstAncestor_wh['zoom']=wcs['zoom'];
 	}
 }
 
@@ -484,6 +486,23 @@ function absBoundingClientRect(el){
 	r.bottom=rct.bottom+scrollTop;
 	r.height=rct.height;
 	r.width=rct.width;
+	
+	if(el.tagName==='VIDEO'){
+		r.centre_y=r.top+r.height*0.5;
+		let wScl= el.videoWidth===0 ? 1 : r.width/el.videoWidth;
+		let hScld=wScl*el.videoHeight;
+		let hScl=el.videoHeight===0 ? 1 : r.height/el.videoHeight;
+		let wScld=hScl*el.videoWidth; 
+		let hlf_h=0.5*((wScl<=hScl)?hScld:r.height);
+		r.vid_top=r.centre_y-hlf_h;
+		r.vid_bottom=r.centre_y+hlf_h;
+		r.vid_height=r.vid_bottom-r.vid_top;
+		let hlf_w=0.5*((wScl<=hScl)?r.width:wScld);
+		r.centre_x=r.left+r.width*0.5;
+		r.vid_left=r.centre_x-hlf_w;
+		r.vid_right=r.centre_x+hlf_w;
+		r.vid_width=r.vid_right-r.vid_left;
+	}
 	
 	return r;
 }
@@ -1164,7 +1183,7 @@ var rsz_ifrm=()=>{
 		let fprc=absBoundingClientRect(firstParent);
 		let vrc=absBoundingClientRect(myVdo);
 		
-		let tp=Math.max(fprc.bottom,vrc.bottom,ifR.bottom)+gapVid;
+		let tp=Math.max(fprc.bottom,vrc.vid_bottom,ifR.bottom)+gapVid;
 		setStyle(ifrm2,'top',tp+'px');
 		setStyle(ifrm3,'top',tp+'px');
 		setStyle(ifrm2,'left','0.22%');
@@ -1436,14 +1455,14 @@ var vhw={w:0,h:0};
 
 var ancsRsz= ()=>{
 	firstAncestorIFR=null;
-	g_ancestors=getAncestors(myVdo,true,true,false,true);
+	g_ancestors=getAncestors(myVdo,true,true,false,true).filter(a=>{let d=window.getComputedStyle(a)['display']; return d!=='none' && d!=='contents';});
 	let fa=g_ancestors.at(-1);
 	if(fa.ownerDocument!==document){
 		for(let i=allFrames.length-1; i>=0; i--){
 			let fri=allFrames[i][0]
 			if(myVdo_el[1].includes(allFrames[i][2]) && myVdo_el[1]!='' && document.documentElement.contains(fri)){
-				g_ancestors=getAncestors(fri,true,true,false,true);
 				firstAncestorIFR=fri;
+				g_ancestors=getAncestors(fri,true,true,false,true).filter(a=>{let d=window.getComputedStyle(a)['display']; return d!=='none' && d!=='contents';});
 				fa=g_ancestors.at(-1);
 				break
 			}
@@ -1462,7 +1481,7 @@ var ancsRsz= ()=>{
 		let fprc=absBoundingClientRect(firstParent);
 		let vrc=absBoundingClientRect(myVdo);
 		
-		let tp=Math.max(fprc.bottom,vrc.bottom,ifR.bottom)+gapVid;
+		let tp=Math.max(fprc.bottom,vrc.vid_bottom,ifR.bottom)+gapVid;
 		setStyle(ifrm2,'top',tp+'px');
 		setStyle(ifrm3,'top',tp+'px');
 		setStyle(ifrm2,'left','0.22%');
@@ -1534,14 +1553,13 @@ var shiftVid=(force_default_place,justScroll)=>{
 									zi=parseInt(window.getComputedStyle(firstAncestor)['z-index']);
 								}
 								setStyle(firstAncestor,'z-index',zi-1);
-								
+							
+							setStyle(firstAncestor,'zoom',1);
 							if(justScroll!==true){
 								myVdoR=mvl.getBoundingClientRect();
 								let faRect=firstAncestor.getBoundingClientRect();
-								s=fGap/((myVdoR.width/faRect.width)*firstAncestor.clientWidth);
-								
 								let psdr=(psCvs_visible===true)?psCvs.getBoundingClientRect():{height:0};
-								let shgt=document?.documentElement?. clientHeight-1-psGap-psdr.height;
+								let shgt=window.visualViewport.height-1-psGap-psdr.height;
 								myVdoR=mvl.getBoundingClientRect();
 								//centre
 								myVdoR.centre_y=myVdoR.top+myVdoR.height*0.5;
@@ -1555,12 +1573,6 @@ var shiftVid=(force_default_place,justScroll)=>{
 								firstAncestor_lastScale_tx[0]=s;
 								setStyle(firstAncestor,'transform','scale('+s+')');
 								myVdoR=absBoundingClientRect(mvl);
-								myVdoR.centre_y=myVdoR.top+myVdoR.height*0.5;
-								wScl=myVdoR.width/myVdo.videoWidth;
-								hScld=wScl*myVdo.videoHeight;
-								let hlf=0.5*(hScld);
-								myVdoR.vid_top=myVdoR.centre_y-hlf;
-								myVdoR.vid_bottom=myVdoR.centre_y+hlf;
 								controls_tag.innerHTML=`*{transition: none !important;} video::-webkit-media-controls {transform: translateY(${(myVdoR.vid_bottom-myVdoR.bottom)/s}px) !important;}`;//-
 								tx=((ifrm2R.right+vw2)-myVdoR.left)/s;
 								firstAncestor_lastScale_tx[1]=tx;
@@ -1572,20 +1584,12 @@ var shiftVid=(force_default_place,justScroll)=>{
 								tx=firstAncestor_lastScale_tx[1];
 								setStyle(firstAncestor,'transform','scale('+s+')');
 								myVdoR=absBoundingClientRect(mvl);
-								myVdoR.centre_y=myVdoR.top+myVdoR.height*0.5;
-								hScld=wScl*myVdo.videoHeight;
-								let hlf=0.5*(hScld);
-								myVdoR.vid_top=myVdoR.centre_y-hlf;
 								ty=(ifrm3R.top-myVdoR.vid_top+1)/s;
 								setStyle(firstAncestor,'transform','scale('+s+') translateX('+tx+'px) translateY('+ty+'px)');
 							}
 								
 							if(psCvs_visible===true){
 								myVdoR=absBoundingClientRect(mvl);
-								myVdoR.centre_y=myVdoR.top+myVdoR.height*0.5;
-								wScl=myVdoR.width/myVdo.videoWidth;
-								hScld=wScl*myVdo.videoHeight;
-								myVdoR.vid_bottom=myVdoR.centre_y+0.5*(hScld);
 								setStyle(psCvs,'top',((
 									myVdoR.vid_bottom+psGap
 								))+'px');
@@ -3048,10 +3052,10 @@ function thumbseek(bool){
 									let vr=absBoundingClientRect(mvl);
 									let esx=event.clientX+getScrollX();
 									let esy=event.clientY+getScrollY();
-									let pst=vr.bottom+psGap;
-									let inLR=(esx >= vr.left && esx <= vr.right)?true:false;
+									let pst=vr.vid_bottom+psGap;
+									let inLR=(esx >= vr.vid_left && esx <= vr.vid_right)?true:false;
 									let inCvsTB=(psCvs_visible===true && (esy >= (pst) && esy <= (pst+psCvs.height)) )?true:false;
-									let inVidTB=(esy >= vr.top && esy <= vr.bottom)?true:false;
+									let inVidTB=(esy >= vr.vid_top && esy <= vr.vid_bottom)?true:false;
 									if(!sk){
 										sk=( inLR && ( inCvsTB || ( inVidTB && hasAncestor(myVdo,event.target) ) )  )?true:sk;
 									}
@@ -3258,7 +3262,7 @@ try{
 	let fprc=absBoundingClientRect(firstParent);
 	let vrc=absBoundingClientRect(myVdo);
 	let ifR=absBoundingClientRect(ifrm);
-	let btm=Math.max(fprc.bottom,vrc.bottom,ifR.bottom);
+	let btm=Math.max(fprc.bottom,vrc.vid_bottom,ifR.bottom);
 	if(parseFloat(ifrm2.style.top)<parseFloat(btm+gapVid)){
 		let tp=btm+gapVid;
 		setStyle(ifrm2,'top',tp+'px');
