@@ -487,8 +487,10 @@ function absBoundingClientRect(el){
 	r.height=rct.height;
 	r.width=rct.width;
 	
+	r.centre_y=r.top+r.height*0.5;
+	r.centre_x=r.left+r.width*0.5;
+	
 	if(el.tagName==='VIDEO'){
-		r.centre_y=r.top+r.height*0.5;
 		let wScl= el.videoWidth===0 ? 1 : r.width/el.videoWidth;
 		let hScld=wScl*el.videoHeight;
 		let hScl=el.videoHeight===0 ? 1 : r.height/el.videoHeight;
@@ -498,10 +500,16 @@ function absBoundingClientRect(el){
 		r.vid_bottom=r.centre_y+hlf_h;
 		r.vid_height=r.vid_bottom-r.vid_top;
 		let hlf_w=0.5*((wScl<=hScl)?r.width:wScld);
-		r.centre_x=r.left+r.width*0.5;
 		r.vid_left=r.centre_x-hlf_w;
 		r.vid_right=r.centre_x+hlf_w;
 		r.vid_width=r.vid_right-r.vid_left;
+	}else{
+		r.vid_top=r.top;
+		r.vid_bottom=r.bottom;
+		r.vid_height=r.height;
+		r.vid_left=r.left;
+		r.vid_right=r.right;
+		r.vid_width=r.width;
 	}
 	
 	return r;
