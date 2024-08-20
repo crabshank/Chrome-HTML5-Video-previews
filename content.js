@@ -3062,12 +3062,16 @@ function thumbseek(bool){
 									let esy=event.clientY+getScrollY();
 									let pst=vr.vid_bottom+psGap;
 									let inLR=(esx >= vr.vid_left && esx <= vr.vid_right)?true:false;
+									let inLR_vid=(esx >= vr.left && esx <= vr.right)?true:false;
 									let inCvsTB=(psCvs_visible===true && (esy >= (pst) && esy <= (pst+psCvs.height)) )?true:false;
 									let inVidTB=(esy >= vr.vid_top && esy <= vr.vid_bottom)?true:false;
+									let inTB=(esy >= vr.top && esy <= vr.bottom)?true:false;
 									if(!sk){
 										sk=( inLR && ( inCvsTB || ( inVidTB && hasAncestor(myVdo,event.target) ) )  )?true:sk;
 									}
-								if(sk){
+								if( (!inLR || !inVidTB) && inLR_vid && inTB ){
+									event.stopPropagation();
+								}else if(sk){
 									if(inLR && inCvsTB){
 										event.stopPropagation();
 									}
