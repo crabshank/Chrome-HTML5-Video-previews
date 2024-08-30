@@ -3060,10 +3060,10 @@ function thumbseek(bool){
 									let vr=absBoundingClientRect(mvl,true);
 									let esx=event.clientX+getScrollX();
 									let esy=event.clientY+getScrollY();
-									let pst=vr.vid_bottom+psGap;
+									let cvsR=absBoundingClientRect(psCvs);
 									let inLR=(esx >= vr.vid_left && esx <= vr.vid_right)?true:false;
 									let inLR_vid=(esx >= vr.left && esx <= vr.right)?true:false;
-									let inCvsTB=(psCvs_visible===true && (esy >= (pst) && esy <= (pst+psCvs.height)) )?true:false;
+									let inCvsTB=(psCvs_visible===true && (esy >= cvsR.top && esy <= cvsR.bottom) )?true:false;
 									let inVidTB=(esy >= vr.vid_top && esy <= vr.vid_bottom)?true:false;
 									let inTB=(esy >= vr.top && esy <= vr.bottom)?true:false;
 									if(!sk){
