@@ -101,21 +101,21 @@ try {
 		}
 	}
 	function setStyle(el,prop,val,pat){
-		pat=(typeof(pat)==='undefined')?new RegExp(`(?<=(^\\s*|;\\s*))${prop}\\s*\:\\s*[^;]*;?`):new RegExp(pat);
 		let c=el.style.cssText;
+		pat=(typeof(pat)==='undefined')?new RegExp(`(?<=(^\\s*|;\\s*))${prop}\\s*\:\\s*[^;]*;?`):new RegExp(pat);
 		let cs=[...c];
 		let p=c.match(pat);
 		let nv=`${prop}: ${val} !important;`;
 		if(p===null){
 			let sc=(c.trim().endsWith(';'))?'':';';
-			el.style.cssText+=sc+nv;
+			el.setAttribute('style',c+sc+nv);
 		}else if(p[0]!==nv){
 			let px=p.index;
 			for(let i=px+1, z=px+p[0].length; i<z; ++i){
 				cs[i]='';
 			}
 			cs[px]=nv;
-			el.style.cssText=cs.join('');
+			el.setAttribute('style',cs.join(''));
 		}
 	}
 	
@@ -1155,9 +1155,9 @@ var ifrmRsz=(nf2)=>{
 						}
 						fPrp=(sctW==0)?1:(i2w/(sctW/figs.length))* (1/3);
 						setStyle(scts[j],'zoom',fPrp);
-					}else{
+					}/*else{
 						setStyle(scts[j],'zoom',i2w/(scts[j].getBoundingClientRect().width));
-					}
+					}*/
 				}
 		}
 			
@@ -2411,7 +2411,7 @@ function LnkOp()
 			captions=[];
 			progresses=[];
 			curr_thumb=0;
-			thumbs.innerHTML = '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;align-items: flex-end !important;"></section>';
+			thumbs.innerHTML = '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;align-items: baseline !important;"></section>';
 			threeSct=thumbs.firstChild;
 			setStyle(scrl,'display','none');
 			setStyle(scrl1,'display','none');
@@ -2571,7 +2571,7 @@ myVdo.addEventListener("ratechange", (event) => {
 		captions=[];
 		progresses=[];
 		curr_thumb=0;
-		thumbs.innerHTML = '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;align-items: flex-end !important;"></section>';
+		thumbs.innerHTML = '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;align-items: baseline !important;"></section>';
 		threeSct=thumbs.firstChild;
 		setStyle(scrl,'display','none');
 		setStyle(scrl1,'display','none');
@@ -2617,7 +2617,7 @@ captions=[];
 progresses=[];
 
 	ttmp=0;
-	thumbs.innerHTML =  '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;align-items: flex-end !important;"></section>';
+	thumbs.innerHTML =  '<section style="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;align-items: baseline !important;"></section>';
 	threeSct=thumbs.firstChild;
 	if(vMut!==null){
 		myVdo.pause();
@@ -2956,7 +2956,7 @@ function thumbseek(bool){
 								let fg0=fgs[0];
 								setStyle(fg0,'height','');
 								setStyle(fg0,'zoom',1);
-								let sz=tw/(fg0.getBoundingClientRect().width*getFloat(fg0.style.zoom));
+								let sz=tw/(fg0.getBoundingClientRect().width/getFloat(si.style.zoom));
 								setStyle(si,'zoom',sz);
 							for(let j=1, len_j=fgs.length; j<len_j; j++){
 								let fj=fgs[j];
@@ -2965,7 +2965,7 @@ function thumbseek(bool){
 								let ns=document.createElement('section');
 								ls.insertAdjacentElement('afterend',ns);
 								ns.style.cssText=si.style.cssText;
-								setStyle(ns,'zoom',tw/(fj.getBoundingClientRect().width*getFloat(fj.zoom)));
+								setStyle(ns,'zoom',tw/(fj.getBoundingClientRect().width/getFloat(si.style.zoom)));
 								ns.insertAdjacentElement('afterbegin',fj);
 								ls=ns;
 							}
@@ -3292,7 +3292,7 @@ shiftBtns(true);
 if (threeSct.children.length===3){
 	threeSct=ifrm2.contentWindow.document.createElement("section");
 	thumbs.appendChild(threeSct);
-	threeSct.style.cssText="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;align-items: flex-end !important;";
+	threeSct.style.cssText="display: inline-flex !important; margin: 0px !important; border: 0px !important; padding: 0px !important;align-items: baseline !important;";
 }
 
 threeSct.appendChild(f);
