@@ -3069,7 +3069,7 @@ function thumbseek(bool){
 									if(!sk){
 										sk=( inLR && ( inCvsTB || ( inVidTB && hasAncestor(myVdo,event.target) ) )  )?true:sk;
 									}
-								if( (!inLR || !inVidTB) && inLR_vid && inTB ){
+								if( (!inLR || !inVidTB) && inLR_vid && inTB && !inCvsTB ){
 									event.stopPropagation();
 								}else if(sk){
 									if(inLR && inCvsTB){
