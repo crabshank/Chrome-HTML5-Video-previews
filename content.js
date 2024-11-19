@@ -1013,7 +1013,7 @@ if(typeof bgMsg.top !=='undefined'){
 
 ht_a+=`
 <br>
-<span style="color: #dfdfdf !important;font-size: 1.83ch !important;visibility: initial !important;background-color: #f0f0f0d4 !important;" id="frames" title="Scroll here to change number of frames.">24</span>
+<span style="color: white !important;font-size: 1.83ch !important;visibility: initial !important;background-color: #080808 !important;" id="frames" title="Scroll here to change number of frames.">24</span>
 <span style="color: #dfdfdf !important; font-size: 1.83ch !important; margin-inline-start: 4.4ch !important; visibility: initial !important;background-color: #000000b5 !important;" title="Maximum speed when speeding through; scroll to change.">Max speed: </span>
 <input title="Maximum speed when speeding through; scroll to change." type="number" id="mxs" min="1" max="16" step="0.5" value="${plRate_var}" style="width: 9ch !important; background-color: buttonface !important; border-width: 0px !important; visibility: initial !important;"></input>
 </main>
