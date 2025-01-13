@@ -18,4 +18,4 @@ function getUrl(tab){
 
 send();
   
-setTimeout(function(){window.close();}, 5000);
+setTimeout(function(){window.close();}, 1000);

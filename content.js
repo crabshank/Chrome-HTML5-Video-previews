@@ -212,8 +212,8 @@ var doc_minHeight=null;
 var suppressTU=false;
 //var postRsz=false;
 //let lastFigIx;
-let vidSeek=true;
-let justSeek=false;
+//let vidSeek=true;
+//let justSeek=false;
 
 function getFloat(z){
 	let fz=parseFloat(z);
@@ -951,6 +951,7 @@ setStyle(ifrm,'display','flex');
 setStyle(ifrm,'visibility','visible');
 setStyle(ifrm,'position','absolute');
 setStyle(ifrm,'transform','translateY(0px)');
+setStyle(ifrm,'clip-path','none');
 
 
 setStyle(ifrm,'top','0.37ch');
@@ -971,6 +972,7 @@ setStyle(ifrm2,'visibility','visible');
 setStyle(ifrm2,'background','#121212');
 setStyle(ifrm2,'transform','translateY(0px)');
 setStyle(ifrm2,'transform-origin','left top');
+setStyle(ifrm2,'clip-path','none');
 
 ifrm3=document.createElement('iframe');
 setStyle(ifrm3,'transition','none');
@@ -986,17 +988,22 @@ setStyle(ifrm3,'display','flex');
 setStyle(ifrm3,'visibility','visible');
 setStyle(ifrm3,'transform','translateY(0px)');
 setStyle(ifrm3,'transform-origin','left top');
+setStyle(ifrm3,'clip-path','none');
 
 let ht_a=`
 <style>
 input::-webkit-textfield-decoration-container {
     background: buttonface;
 }
+div#every *{
+	text-anchor: middle !important;
+}
 </style>
 <main style="margin: 0px !important; border: 0px !important; padding: 0px !important; background-color: black !important;">
-<button style="background-color: buttonface !important; visibility: initial !important;" id="three_plus" type="button">+ 3 thumbs</button>
-<button style="background-color: buttonface !important; visibility: initial !important;" id="three_neg" type="button">- 3 thumbs</button>
-<button title="Click to reset to default" style="background-color: buttonface !important; display: none; visibility: initial !important;" type="button" id="every"></button>
+<button style="background-color: buttonface !important; visibility: initial !important;" id="three_plus">+ 3 thumbs</button>
+<button style="background-color: buttonface !important; visibility: initial !important;" id="three_neg">- 3 thumbs</button>
+<button title="Click to reset to default" style="background-color: buttonface !important; display: none; visibility: initial !important;" id="every"></button>
+<div title="Wheel down/up to increase/decrease frames by 3. Type frames (resolves to the nearest multiple of 3, >=3), or seconds in the editable span. Double click to reset to default." style="display: initial !important; background-color: buttonface !important; visibility: initial !important;" id="every"><span style="user-select: none !important;"></span><span contenteditable style="min-width: 1ch !important; display: -webkit-inline-box !important;">9</span><span style="user-select: none !important;"> frames</span></div>
 <select style="width: 46.6vw; color: black; background-color: buttonface; visibility: initial !important;" name="txt_Bx" id="txt_Bx"></select>
 
 <input style="background-color: buttonface !important; visibility: initial !important;" id="scnB" type="button" Value="Scan for video">
@@ -1143,11 +1150,11 @@ var ifrmRsz=(nf2)=>{
 					setStyle(thumbs,'width',i2w+'px');
 					setStyle(thumbs,'max-width',i2w+'px');
 					let scts=[...thumbs.children];
-
+					
 				for(let j = 0; j < scts.length; j++){
 					
 					let figs=[...scts[j].children];
-
+					
 					if(!isOneCol){
 						let sctW=0;
 						for (let i = 0; i < figs.length; i++) {
@@ -1155,9 +1162,10 @@ var ifrmRsz=(nf2)=>{
 						}
 						fPrp=(sctW==0)?1:(i2w/(sctW/figs.length))* (1/3);
 						setStyle(scts[j],'zoom',fPrp);
-					}/*else{
-						setStyle(scts[j],'zoom',i2w/(scts[j].getBoundingClientRect().width));
-					}*/
+					}else{
+						setStyle(figs[0],'zoom',1);
+						setStyle(scts[j],'zoom',i2w/getFloat(window.getComputedStyle(figs[0]).width)); //i2w/(scts[j].getBoundingClientRect().width)
+					}
 				}
 		}
 			
@@ -1338,10 +1346,10 @@ var thumbs=ifrm2.contentWindow.document.querySelectorAll("div#thumbs")[0];
 
 function figSize(f,g,x){
 	currentFig=f;
-	if(justSeek===true){
+	/*if(justSeek===true){
 		justSeek=false;
 		scrollElMidPage(f,ifrm2);
-	}
+	}*/
 	if(psCvs_visible===true && x!==null && typeof(x)!=='undefined'){
 		let figSt=x/done_t;
 		let figEnd=(x+1)/done_t;
@@ -1395,7 +1403,7 @@ var curr=ifrm3.contentWindow.document.querySelectorAll("div#currTime")[0];
 
 var scrl1=ifrm.contentWindow.document.querySelectorAll("input#scroll_curr1")[0];
 var forceReloadBtn=ifrm.contentWindow.document.querySelectorAll("input#force_reload_vid")[0];
-var evry= ifrm.contentWindow.document.querySelectorAll("button#every")[0];
+var evry= ifrm.contentWindow.document.querySelectorAll("div#every")[0];
 evry.defaultTitle=evry.title+'.';
 
 scanB= ifrm.contentWindow.document.querySelectorAll("input#scnB")[0];
@@ -1614,14 +1622,45 @@ var shiftVid=(force_default_place,justScroll)=>{
 		}
 }
 
-evry.onclick=()=>{
+evry.children[1].oninput=()=>{
+		if (aseek==0){
+			let sp=evry.children;
+			let x=sp[1].innerText;
+			let s=parseFloat(x);
+			if(evry.intrv===null){
+				let sf=Math.max(3,Math.round(s/3)*3);
+				evry.val=x===''?3:sf;
+				//evry.innerText='9 frames';
+				sp[0].innerText='';
+				//sp[1].innerText=x===''?'':sf.toString();
+				sp[2].innerText=' frames';
+			}else{
+					evry.intrv=x===''?everyX_var:s;
+					//evry.innerText=evry.innerText=`At least every ${everyX_var} secs`;
+					sp[0].innerText='At least every ';
+					//sp[1].innerText=s;
+					sp[2].innerText=s===1?' sec':' secs';
+			}
+			
+		rsz_ifrm();
+		setEveryFrames();
+	}
+}
+evry.ondblclick=()=>{
 	if (aseek==0){
+			let sp=evry.children;
 			if(evry.intrv===null){
 				evry.val=9;
-				evry.innerText='9 frames';
+				//evry.innerText='9 frames';
+				sp[0].innerText='';
+				sp[1].innerText='9';
+				sp[2].innerText=' frames';
 			}else{
 					evry.intrv=everyX_var;
-					evry.innerText=evry.innerText=`At least every ${everyX_var} secs`;
+					//evry.innerText=evry.innerText=`At least every ${everyX_var} secs`;
+					sp[0].innerText='At least every ';
+					sp[1].innerText=everyX_var;
+					sp[2].innerText=' secs';
 			}
 		rsz_ifrm();
 		setEveryFrames();
@@ -1643,14 +1682,15 @@ evry.onwheel=()=>{
 			if(evry.intrv===null){
 				evry.val+=3;
 				setEveryFrames();
-				return (evry.val+' frames');
+				return ['',evry.val,' frames'];
 			}else{
 				if(evry.intrv>=2){
 					evry.intrv-=1;
 				}
 				eva=setEveryFrames();
 				evry.intrv=eva;
-				return ('At least every '+(eva)+((eva===1)?' sec':' secs'));
+				//return ('At least every '+(eva)+((eva===1)?' sec':' secs'));
+				return ['At least every ',eva,(eva===1)?' sec':' secs'];
 			}
 		}
 		
@@ -1658,14 +1698,15 @@ evry.onwheel=()=>{
 			if(evry.intrv===null){
 				evry.val= evry.val>3? evry.val-3 : 3;
 				setEveryFrames();
-				return (evry.val+' frames');
+				return ['',evry.val,' frames'];
 			}else{
 					evry.intrv+=1;
 					eva=setEveryFrames();
 					if(eva!==eva_og){
 						evry.intrv=eva;
 					}
-				return ('At least every '+(eva)+((eva===1)?' sec':' secs'));
+				//return ('At least every '+(eva)+((eva===1)?' sec':' secs'));
+				return ['At least every ',eva,(eva===1)?' sec':' secs'];
 			}
 		}
 	}
@@ -1678,7 +1719,11 @@ evry.onwheel=()=>{
 		ev.deltaY=(scd===true)?ev.deltaY-1:ev.deltaY+1;
 		eit=handle_dy(ev, scd);
 	}
-	evry.innerText=eit;
+	//evry.innerText=eit;
+	let sp=evry.children;
+	sp[0].innerText=eit[0];
+	sp[1].innerText=eit[1];
+	sp[2].innerText=eit[2];
 	rsz_ifrm();
 }
 
@@ -1744,12 +1789,13 @@ function pgBar(ix,ths,ev,attr,nxt){
 		let rct=absBoundingClientRect(ths);
 		let fg=captions[ix].parentElement.parentElement;
 		let sct=fg.parentElement;
-		let fz=fg.style.zoom;
-		let pfz=getFloat(fz);
+		//let fz=fg.style.zoom;
+		//let pfz=getFloat(fz);
 		//let z=( isNaN(pfz) || isOneCol)?1:0.01*pfz;
-		let fct=getFloat(sct.style.zoom);
-		progresses[ix].value=ev.offsetX/(rct.width*fct*pfz);
-		vidSeek=false;
+		//let fct=getFloat(sct.style.zoom);
+		//progresses[ix].value=ev.offsetX/(rct.width*fct*pfz);
+		progresses[ix].value=ev.offsetX/Math.floor(rct.width);
+		//vidSeek=false;
 		myVdo.currentTime=(progresses[ix].value)*(nxt-cur)+cur;
 		curr_thumb=ix;
 	}
@@ -1763,18 +1809,25 @@ var checkDur = function() {
 	nowFlag=-1;	
 	shiftBtns(true);
 			if(ev_t==-1){
+			let sp=evry.children;
 			if(myVdo.duration>=framesBelowSecs){
 				evry.intrv=everyX_var;
 				t=Math.round(Math.ceil(((myVdo.duration)/(everyX_var*3)))*3);
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
-				evry.innerText=`At least every ${everyX_var} secs`;
+				//evry.innerText=`At least every ${everyX_var} secs`;
+				sp[0].innerText='At least every ';
+				sp[1].innerText=everyX_var;
+				sp[2].innerText=' secs';
 				evry.title='Wheel down/up to increase/decrease frames. '+evry.defaultTitle;
 			}else{
 				evry.intrv=null;
 				evry.val=9;
 				t=9;
 				frame_btn.innerHTML =(loadFlag===true)?t+" - Thumbnails every: "+formatTime(myVdo.duration/t,2):t;
-				evry.innerText='9 frames';
+				//evry.innerText='9 frames';
+				sp[0].innerText='';
+				sp[1].innerText=9;
+				sp[2].innerText=' frames';
 				evry.title='Wheel down/up to increase/decrease frames by 3. '+evry.defaultTitle;
 			}
 			ev_t=t;
@@ -1787,7 +1840,7 @@ var checkDur = function() {
 		vMut=null;
 	}
 	bsw=0;
-	vidSeek=false;
+	//vidSeek=false;
 	myVdo.currentTime=0;
 	resetDocTitle();
 	if(!tTrkFlg){
@@ -1900,11 +1953,11 @@ calcSp();
 function skip(event) {
 	event.preventDefault();
 	if(event.deltaY>0){
-		vidSeek=false;
+		//vidSeek=false;
 	   myVdo.currentTime -= (myVdo.duration/t)*0.05;
 	}
 	if (event.deltaY<0){
-		vidSeek=false;
+		//vidSeek=false;
 		myVdo.currentTime +=  (myVdo.duration/t)*0.05;
 	}
 }
@@ -2625,7 +2678,7 @@ progresses=[];
 		vMut=null;
 	}
 	bsw=0;
-	vidSeek=false;
+	//vidSeek=false;
 	myVdo.currentTime = 0;
 	resetDocTitle();
 	aseek=1;
@@ -2842,7 +2895,7 @@ myVdo.addEventListener("playing", (event)=>{
 				myVdo.play();
 				jBack=(jBack===true)?false:jBack;
 			}else{
-				vidSeek=false;
+				//vidSeek=false;
 				myVdo.currentTime=time_track[0];
 				jBack=true;
 			}
@@ -2897,7 +2950,7 @@ function thumbseek(bool){
 				if(ttmp===1){
 					ifrm2.scrollIntoView({behavior: "instant", block: 'start', inline: "start"});
 				}
-				vidSeek=false;
+				//vidSeek=false;
 				myVdo.currentTime = ttmp*(myVdo.duration/t);
 			}else {
 				endGtMv();
@@ -2907,7 +2960,7 @@ function thumbseek(bool){
 				time_track=[-1,0];
 				ttmp=0;
 				bsw=0;
-				vidSeek=false;
+				//vidSeek=false;
 				myVdo.currentTime=0;
 				setDocTitle();
 				//zeroRsz=true;
@@ -2956,7 +3009,9 @@ function thumbseek(bool){
 								let fg0=fgs[0];
 								setStyle(fg0,'height','');
 								setStyle(fg0,'zoom',1);
-								let sz=tw/(fg0.getBoundingClientRect().width/getFloat(si.style.zoom));
+								setStyle(si,'height','');
+								setStyle(si,'zoom',1);
+								let sz=tw/fg0.getBoundingClientRect().width;
 								setStyle(si,'zoom',sz);
 							for(let j=1, len_j=fgs.length; j<len_j; j++){
 								let fj=fgs[j];
@@ -2964,8 +3019,11 @@ function thumbseek(bool){
 								setStyle(fj,'zoom',1);
 								let ns=document.createElement('section');
 								ls.insertAdjacentElement('afterend',ns);
+								//setStyle(ns,'height','');
+								//setStyle(ns,'zoom',1);
 								ns.style.cssText=si.style.cssText;
-								setStyle(ns,'zoom',tw/(fj.getBoundingClientRect().width/getFloat(si.style.zoom)));
+								//setStyle(ns,'zoom',tw/fj.getBoundingClientRect().width);
+								setStyle(ns,'zoom',sz);
 								ns.insertAdjacentElement('afterbegin',fj);
 								ls=ns;
 							}
@@ -3175,15 +3233,15 @@ myVdo.addEventListener("seeking", (event) => {
 		if(myVdo.currentTime>time_track[0]){
 			thumbseek(true);
 		}else{
-			vidSeek=false;
+			//vidSeek=false;
 			myVdo.currentTime=ttmp*(myVdo.duration/t);
 		}
 	}else{
-		if(vidSeek===true){
+		/*if(vidSeek===true){
 			justSeek=true;
 		}else{
 			vidSeek=true;
-		}
+		}*/
 		thumbseek(false);
 	}
 }); 
@@ -3194,7 +3252,7 @@ myVdo.playbackRate=1;
 		if(myVdo.currentTime>time_track[0]){
 			thumbseek(true);
 		}else{
-			vidSeek=false;
+			//vidSeek=false;
 			myVdo.currentTime=ttmp*(myVdo.duration/t);
 		}
 	}else{
@@ -3214,15 +3272,15 @@ myVdo.addEventListener("seeked", (event) => {
 		if(myVdo.currentTime>time_track[0]){
 			thumbseek(true);
 		}else{
-			vidSeek=false;
+			//vidSeek=false;
 			myVdo.currentTime=ttmp*(myVdo.duration/t);
 		}
 	}else{
-		if(vidSeek===true){
+		/*if(vidSeek===true){
 			justSeek=true;
 		}else{
 			vidSeek=true;
-		}
+		}*/
 		thumbseek(false);
 	}
 });
@@ -3353,7 +3411,7 @@ setStyle(ct,'zoom',(f.scrollWidth/ct.clientWidth)*0.2);
 	  if(window.getComputedStyle(progresses[index]).display==='none'){
 	nowFlag=index;
 	cap=index;
-	vidSeek=false;
+	//vidSeek=false;
 	suppressScr=true;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
 /*if(!myVdo.ownerDocument.pictureInPictureElement && !vfr){
@@ -3384,7 +3442,7 @@ setStyle(ct,'zoom',(f.scrollWidth/ct.clientWidth)*0.2);
 			prg.value=pv;
 			let nxt=(index===captions.length-1)?myVdo.duration:parseFloat(captions[index+1].parentElement.previousElementSibling.getAttribute('timestamp'));
 			suppressTU=true;
-			vidSeek=false;
+			//vidSeek=false;
 			myVdo.currentTime=(1-pv)*cur+pv*nxt;
 	  }
 } 
@@ -3394,7 +3452,7 @@ setStyle(ct,'zoom',(f.scrollWidth/ct.clientWidth)*0.2);
 	  if(window.getComputedStyle(progresses[index]).display!=='none'){
 	nowFlag=index;
 	cap=index;
-	vidSeek=false;
+	//vidSeek=false;
 	suppressScr=true;
 	suppressTU=false;
 	myVdo.currentTime =c.attributes.timestamp.nodeValue;
