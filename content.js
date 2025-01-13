@@ -1009,6 +1009,8 @@ div#every *{
 <input style="background-color: buttonface !important; visibility: initial !important;" id="scnB" type="button" Value="Scan for video">
 <input style="background-color: buttonface !important; visibility: initial !important;" id="genB" type="button" Value="Select video">
 <input style="background-color: buttonface !important; visibility: initial !important;" id="opnVd" type="button" Value="Open link">
+<input style="background-color: buttonface !important; visibility: initial !important;" id="cpyVd" type="button" Value="Copy link">
+
 <input style="background-color: buttonface !important; visibility: initial !important;" id="hideThumbs" type="button" Value="Hide thumbs">
 <input style="background-color: buttonface !important; visibility: initial !important; display: none !important;" id="scroll_curr1" type="button" Value="Scroll to current thumb">
 <input style="background-color: buttonface !important; visibility: initial !important; display: none !important;" title="If hovering over the video scrub bar is very slow, or the video ceases to be loaded, press this button to free some memory to speed it up" id="force_reload_vid" type="button" Value="Force reload video">
@@ -1410,6 +1412,7 @@ scanB= ifrm.contentWindow.document.querySelectorAll("input#scnB")[0];
 gnrB= ifrm.contentWindow.document.querySelectorAll("input#genB")[0];
 
 var opnr= ifrm.contentWindow.document.querySelectorAll("input#opnVd")[0];
+var cpyr=ifrm.contentWindow.document.querySelectorAll("input#cpyVd")[0];
 var hide_thumbs= ifrm.contentWindow.document.querySelectorAll("input#hideThumbs")[0];
 
 hide_thumbs.onclick=()=>{
@@ -1750,6 +1753,11 @@ gnrB.onclick=()=>{
 opnr.onclick=()=>{
 	rsz_ifrm();
 	LnkOp();
+}
+
+cpyr.onclick=()=>{
+	rsz_ifrm();
+	LnkCpy();
 }
 
 main.onwheel=(event)=>{
@@ -2418,6 +2426,27 @@ if(allFrames.length>0){
   }
   chrome.runtime.sendMessage({type: "get_embeds"}, function(response) {;})
   
+}
+
+function LnkCpy()
+{
+    let txt = document.createElement("textarea");
+    txt.style.maxHeight = '0px'
+    let s=txtBx[txtBx.selectedIndex];
+    let elk=s.getAttribute("extracted_link");
+    document.body.appendChild(txt);
+    if(elk!==null){
+        txt.value=elk;
+    }else if(txtBx.children.length>0){
+        txt.value=s.attributes.link.value;
+    }
+    txt.select();
+    document.execCommand("copy");
+    elRemover(txt);
+    cpyr.innerText="Copied";
+    setTimeout(()=>{
+        cpyr.innerText="Copy link";
+    }, 1500);
 }
 
 function LnkOp()
