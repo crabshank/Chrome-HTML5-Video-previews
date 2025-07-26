@@ -1191,21 +1191,19 @@ var ifrmRsz=(nf2)=>{
 	}
 }
 
-var rsz_ifrm=(wnd)=>{
+var rsz_ifrm=()=>{
 	let mainRct=absBoundingClientRect(main); 
 	if(!!firstAncestor){
 		setStyle(firstAncestor,'transform-origin','left bottom');
 		setStyle(firstAncestor,'transform','scale(0.97) translateY('+mainRct.height+'px)');
-        if(wnd!==true){
-            let ifR=absBoundingClientRect(ifrm);
-            
-            let fprc=absBoundingClientRect(firstParent);
-            let vrc=absBoundingClientRect(myVdo);
-            
-            let tp=Math.max(fprc.bottom,vrc.vid_bottom,ifR.bottom)+gapVid;
-            setStyle(ifrm2,'top',tp+'px');
-            setStyle(ifrm3,'top',tp+'px');
-        }
+		let ifR=absBoundingClientRect(ifrm);
+		
+		let fprc=absBoundingClientRect(firstParent);
+		let vrc=absBoundingClientRect(myVdo);
+		
+		let tp=Math.max(fprc.bottom,vrc.vid_bottom,ifR.bottom)+gapVid;
+		setStyle(ifrm2,'top',tp+'px');
+		setStyle(ifrm3,'top',tp+'px');
 		setStyle(ifrm2,'left','0.22%');
 	}
 	
@@ -2100,7 +2098,7 @@ window.addEventListener('pointermove', function (event) {
 
 window.addEventListener('resize', function () {
 	ifrmRsz();
-	rsz_ifrm(true);
+	rsz_ifrm();
 	if(shiftBtns2!==null){
 		shiftBtns2(false);
 	}
