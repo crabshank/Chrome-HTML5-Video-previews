@@ -1204,7 +1204,7 @@ var rsz_ifrm=(wnd)=>{
 	if(!!firstAncestor){
 		setStyle(firstAncestor,'transform-origin','left bottom');
 		setStyle(firstAncestor,'transform','scale(0.97) translateY('+mainRct.height+'px)');
-		if(wnd!==true && vfr){
+		if(wnd!==true || !vfr){
             let ifR=absBoundingClientRect(ifrm);
             
             let fprc=absBoundingClientRect(firstParent);
