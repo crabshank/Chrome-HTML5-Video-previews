@@ -254,6 +254,14 @@ function elRemover(el){
 	}
 }
 
+function clearSelection(){
+    if(window.getSelection){
+     window.getSelection().removeAllRanges();
+    }else if(document.selection){
+     document.selection.empty();
+    }
+}
+
 function keepMatchesShadow(els,slcArr,isNodeName){
    if(slcArr[0]===false){
       return els;
@@ -1196,7 +1204,7 @@ var rsz_ifrm=(wnd)=>{
 	if(!!firstAncestor){
 		setStyle(firstAncestor,'transform-origin','left bottom');
 		setStyle(firstAncestor,'transform','scale(0.97) translateY('+mainRct.height+'px)');
-		if(wnd!==true){
+		if(wnd!==true && vfr){
             let ifR=absBoundingClientRect(ifrm);
             
             let fprc=absBoundingClientRect(firstParent);
@@ -2442,12 +2450,13 @@ function LnkCpy()
     }else if(txtBx.children.length>0){
         txt.value=s.attributes.link.value;
     }
+    clearSelection();
     txt.select();
     document.execCommand("copy");
     elRemover(txt);
-    cpyr.innerText="Copied";
+    cpyr.value="Copied";
     setTimeout(()=>{
-        cpyr.innerText="Copy link";
+        cpyr.value="Copy link";
     }, 1500);
 }
 
