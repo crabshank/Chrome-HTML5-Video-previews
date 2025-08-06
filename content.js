@@ -254,6 +254,14 @@ function elRemover(el){
 	}
 }
 
+function openInNewTab(u) {
+  Object.assign(ifrm.contentWindow.document.createElement('a'), {
+    target: '_blank',
+    rel: 'noopener noreferrer',
+    href: u,
+  }).click();
+}
+
 function clearSelection(){
     if(window.getSelection){
      window.getSelection().removeAllRanges();
@@ -2444,7 +2452,7 @@ function LnkCpy()
     txt.style.maxHeight = '0px'
     let s=txtBx[txtBx.selectedIndex];
     let elk=s.getAttribute("extracted_link");
-    document.body.appendChild(txt);
+    ifrm.contentWindow.document.body.appendChild(txt);
     if(elk!==null){
         txt.value=elk;
     }else if(txtBx.children.length>0){
@@ -2465,9 +2473,11 @@ function LnkOp()
 		let s=txtBx[txtBx.selectedIndex];
 		let elk=s.getAttribute("extracted_link");
 		if(elk!==null){
-			chrome.runtime.sendMessage({msg: elk, type: 'open'}, function(response){});
+			//chrome.runtime.sendMessage({msg: elk, type: 'open'}, function(response){});
+            openInNewTab(elk);
 		}else if(txtBx.children.length>0){
-			chrome.runtime.sendMessage({msg: s.attributes.link.value, type: 'open'}, function(response){});
+			//chrome.runtime.sendMessage({msg: s.attributes.link.value, type: 'open'}, function(response){});
+            openInNewTab(s.attributes.link.value);
 		}
 	
 }
