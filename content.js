@@ -3280,11 +3280,14 @@ function thumbseek(bool){
 
 myVdo.addEventListener("seeking", (event) => {
 	if((aseek==1)&&(myVdo.readyState>=2)){
-		if(myVdo.currentTime>time_track[0]){
+        let corrTm=ttmp*(myVdo.duration/t);
+        let dif=corrTm-time_track[0];
+        let halfDif=dif*0.5;
+		if(dif>0 && (myVdo.currentTime>(corrTm-halfDif) ) && (myVdo.currentTime<(corrTm+halfDif)  )){
 			thumbseek(true);
 		}else{
 			//vidSeek=false;
-			myVdo.currentTime=ttmp*(myVdo.duration/t);
+			myVdo.currentTime=corrTm;
 		}
 	}else{
 		/*if(vidSeek===true){
@@ -3299,11 +3302,14 @@ myVdo.addEventListener("seeking", (event) => {
 myVdo.addEventListener("wating", (event) => {
 myVdo.playbackRate=1;
 	if((aseek==1)&&(myVdo.readyState>=2)){
-		if(myVdo.currentTime>time_track[0]){
+		let corrTm=ttmp*(myVdo.duration/t);
+        let dif=corrTm-time_track[0];
+        let halfDif=dif*0.5;
+		if(dif>0 && (myVdo.currentTime>(corrTm-halfDif) ) && (myVdo.currentTime<(corrTm+halfDif)  )){
 			thumbseek(true);
 		}else{
 			//vidSeek=false;
-			myVdo.currentTime=ttmp*(myVdo.duration/t);
+			myVdo.currentTime=corrTm;
 		}
 	}else{
 		thumbseek(false);
@@ -3319,11 +3325,14 @@ myVdo.addEventListener("seeked", (event) => {
 	}
 
 	if((aseek==1)&&(myVdo.readyState>=2)){
-		if(myVdo.currentTime>time_track[0]){
+		let corrTm=ttmp*(myVdo.duration/t);
+        let dif=corrTm-time_track[0];
+        let halfDif=dif*0.5;
+		if(dif>0 && (myVdo.currentTime>(corrTm-halfDif) ) && (myVdo.currentTime<(corrTm+halfDif)  )){
 			thumbseek(true);
 		}else{
 			//vidSeek=false;
-			myVdo.currentTime=ttmp*(myVdo.duration/t);
+			myVdo.currentTime=corrTm;
 		}
 	}else{
 		/*if(vidSeek===true){
