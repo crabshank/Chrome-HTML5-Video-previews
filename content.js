@@ -957,6 +957,7 @@ var controls_tag=document.createElement('style');
 hed.insertAdjacentElement('afterbegin',controls_tag);
 
 ifrm=document.createElement('iframe');
+ifrm.popover='manual'
 setStyle(ifrm,'transition','none');
 setStyle(ifrm,'z-index',Number.MAX_SAFE_INTEGER);
 setStyle(ifrm,'width','-webkit-fill-available');
@@ -968,12 +969,14 @@ setStyle(ifrm,'visibility','visible');
 setStyle(ifrm,'position','absolute');
 setStyle(ifrm,'transform','translateY(0px)');
 setStyle(ifrm,'clip-path','none');
+setStyle(ifrm,'filter','blur(0px)');
 
 
 setStyle(ifrm,'top','0.37ch');
 setStyle(ifrm,'left','0.66ch');
 
 ifrm2=document.createElement('iframe');
+ifrm2.popover='manual'
 setStyle(ifrm2,'transition','none');
 setStyle(ifrm2,'position','absolute');
 setStyle(ifrm2,'z-index',Number.MAX_SAFE_INTEGER);
@@ -989,8 +992,10 @@ setStyle(ifrm2,'background','#121212');
 setStyle(ifrm2,'transform','translateY(0px)');
 setStyle(ifrm2,'transform-origin','left top');
 setStyle(ifrm2,'clip-path','none');
+setStyle(ifrm2,'filter','blur(0px)');
 
 ifrm3=document.createElement('iframe');
+ifrm3.popover='manual'
 setStyle(ifrm3,'transition','none');
 setStyle(ifrm3,'position','absolute');
 setStyle(ifrm3,'z-index',Number.MAX_SAFE_INTEGER);
@@ -1005,6 +1010,7 @@ setStyle(ifrm3,'visibility','visible');
 setStyle(ifrm3,'transform','translateY(0px)');
 setStyle(ifrm3,'transform-origin','left top');
 setStyle(ifrm3,'clip-path','none');
+setStyle(ifrm3,'filter','blur(0px)');
 
 let ht_a=`
 <style>
@@ -3539,6 +3545,7 @@ setStyle(document.documentElement,'overflow','visible');
 setStyle(document.body,'overflow','scroll');
 
 document.body.insertAdjacentElement('afterbegin',ifrm);
+ifrm.showPopover();
 
 //ifrm.src = "";
 
@@ -3547,6 +3554,8 @@ ifrm.contentWindow.document.write(ht_a);
 ifrm.contentWindow.document.close();
 
 document.body.insertAdjacentElement('beforeend',ifrm2);
+ifrm2.showPopover();
+
 
 //ifrm2.src = "";
 
@@ -3555,6 +3564,8 @@ ifrm2.contentWindow.document.write(ht_c);
 ifrm2.contentWindow.document.close();
 
 ifrm2.insertAdjacentElement('afterend',ifrm3);
+ifrm3.showPopover();
+
 
 //ifrm3.src = "";
 
